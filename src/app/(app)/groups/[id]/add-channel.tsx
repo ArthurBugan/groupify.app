@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useGroup, useChannels } from '../../../../hooks';
 import { Card, CardContent, Checkbox, Button, Input } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function AddChannelToGroupScreen() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function AddChannelToGroupScreen() {
   const { data: group } = useGroup(id);
   const { data: channelsData } = useChannels();
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+  const { isDark } = useTheme();
 
   const toggleChannel = (channelId: string) => {
     setSelectedChannels((prev) =>
@@ -26,7 +28,7 @@ export default function AddChannelToGroupScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
           <Text className="text-blue-500">← Back</Text>
@@ -55,7 +57,7 @@ export default function AddChannelToGroupScreen() {
               />
               <View className="ml-3">
                 <Text className="font-medium">{channel.name}</Text>
-                <Text className="text-gray-500 text-sm">{channel.url}</Text>
+                <Text className="text-muted-foreground text-sm">{channel.url}</Text>
               </View>
             </CardContent>
           </Card>

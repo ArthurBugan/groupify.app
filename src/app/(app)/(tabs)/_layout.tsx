@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
+import { Text, useColorScheme } from 'react-native';
 
-function TabIcon({ color, name }: { color: string; name: string }) {
+function TabIcon({ name }: { name: string }) {
   const icons: Record<string, string> = {
     home: '🏠',
     users: '👥',
@@ -13,15 +13,18 @@ function TabIcon({ color, name }: { color: string; name: string }) {
 }
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+  
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#3B82F6',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: isDark ? '#fb7185' : '#f43f5e',
+        tabBarInactiveTintColor: isDark ? '#94a3b8' : '#9CA3AF',
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? '#1e293b' : '#ffffff',
           borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
+          borderTopColor: isDark ? '#334155' : '#E5E7EB',
         },
         headerShown: false,
       }}
@@ -30,35 +33,35 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabIcon color={color} name="home" />,
+          tabBarIcon: () => <TabIcon name="home" />,
         }}
       />
       <Tabs.Screen
         name="groups"
         options={{
           title: 'Groups',
-          tabBarIcon: ({ color }) => <TabIcon color={color} name="users" />,
+          tabBarIcon: () => <TabIcon name="users" />,
         }}
       />
       <Tabs.Screen
         name="channels"
         options={{
           title: 'Channels',
-          tabBarIcon: ({ color }) => <TabIcon color={color} name="tv" />,
+          tabBarIcon: () => <TabIcon name="tv" />,
         }}
       />
       <Tabs.Screen
         name="animes"
         options={{
           title: 'Animes',
-          tabBarIcon: ({ color }) => <TabIcon color={color} name="film" />,
+          tabBarIcon: () => <TabIcon name="film" />,
         }}
       />
       <Tabs.Screen
         name="more"
         options={{
           title: 'More',
-          tabBarIcon: ({ color }) => <TabIcon color={color} name="more-horizontal" />,
+          tabBarIcon: () => <TabIcon name="more-horizontal" />,
         }}
       />
     </Tabs>

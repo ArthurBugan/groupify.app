@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useLogin } from '@/hooks';
+import { useLogin, useGoogleLogin, useDiscordLogin, useIsOAuthLoading } from '@/hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { isDark } = useTheme();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   const login = useLogin();
+  const googleLogin = useGoogleLogin();
+  const discordLogin = useDiscordLogin();
+  const isOAuthLoading = useIsOAuthLoading();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -21,11 +28,55 @@ export default function LoginScreen() {
       Alert.alert('Login Failed', 'Invalid email or password');
     }
   };
-  
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin.signIn();
+    } catch (error) {
+      Alert.alert('Google Login Failed', 'Unable to sign in with Google');
+    }
+  };
+
+  const handleDiscordLogin = async () => {
+    try {
+      await discordLogin.signIn();
+    } catch (error) {
+      Alert.alert('Discord Login Failed', 'Unable to sign in with Discord');
+    }
+  };
+ 
   return (
     <View className="flex-1 bg-background p-6 justify-center">
       <Text className="text-3xl font-bold text-foreground mb-2">Welcome Back</Text>
-      <Text className="text-base text-foreground mb-8">Sign in to continue</Text>
+      <Text className="text-base text-muted-foreground mb-8">Sign in to continue</Text>
+
+      <View className="gap-4">
+        <TouchableOpacity
+          className="bg-secondary border border-input rounded-lg p-4 items-center"
+          onPress={handleGoogleLogin}
+          disabled={googleLogin.isLoading || isOAuthLoading}
+        >
+          <Text className="text-foreground font-medium">
+            {googleLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Google'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-secondary border border-input rounded-lg p-4 items-center"
+          onPress={handleDiscordLogin}
+          disabled={discordLogin.isLoading || isOAuthLoading}
+        >
+          <Text className="text-foreground font-medium">
+            {discordLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Discord'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="flex-row items-center my-6">
+        <View className="flex-1 h-px bg-border" />
+        <Text className="text-muted-foreground text-sm mx-3">or</Text>
+        <View className="flex-1 h-px bg-border" />
+      </View>
 
       <View className="gap-4">
         <TextInput
@@ -35,7 +86,7 @@ export default function LoginScreen() {
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
         />
         <TextInput
           className="bg-secondary rounded-lg p-4 text-base text-foreground"
@@ -43,7 +94,7 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
         />
 
         <TouchableOpacity
@@ -51,7 +102,7 @@ export default function LoginScreen() {
           onPress={handleLogin}
           disabled={login.isPending}
         >
-          <Text className="text-foreground text-base font-semibold">
+          <Text className="text-primary-foreground text-base font-semibold">
             {login.isPending ? 'Signing in...' : 'Sign In'}
           </Text>
         </TouchableOpacity>
@@ -59,14 +110,14 @@ export default function LoginScreen() {
 
       <View className="flex-row justify-center mt-6">
         <TouchableOpacity onPress={() => router.push('/(auth)/forgot-password')}>
-          <Text className="text-foreground text-sm font-semibold">Forgot Password?</Text>
+          <Text className="text-primary text-sm font-semibold">Forgot Password?</Text>
         </TouchableOpacity>
       </View>
 
       <View className="flex-row justify-center mt-6">
-        <Text className="text-foreground text-sm">Don't have an account? </Text>
+        <Text className="text-muted-foreground text-sm">Don't have an account? </Text>
         <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-          <Text className="text-foreground text-sm font-semibold">Sign Up</Text>
+          <Text className="text-primary text-sm font-semibold">Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>

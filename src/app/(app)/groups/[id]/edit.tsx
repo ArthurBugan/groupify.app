@@ -3,12 +3,14 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Input, Button, Switch, Card, CardContent } from '@/components/ui';
 import { useGroup, useUpdateGroup } from '../../../../hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function EditGroupScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: group, isLoading } = useGroup(id);
   const updateGroup = useUpdateGroup();
+  const { isDark } = useTheme();
   
   const [name, setName] = useState(group?.name || '');
   const [description, setDescription] = useState(group?.description || '');
@@ -28,18 +30,18 @@ export default function EditGroupScreen() {
   };
 
   if (isLoading) {
-    return <View className="flex-1 bg-gray-50 p-4" />;
+    return <View className="flex-1 bg-background p-4" />;
   }
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <Button variant="ghost" onPress={() => router.back()}>
           ← Back
         </Button>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Edit Group</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Edit Group</Text>
 
       <Card>
         <CardContent>
@@ -58,7 +60,7 @@ export default function EditGroupScreen() {
             numberOfLines={4}
           />
           <View className="flex-row items-center justify-between py-2">
-            <Text className="text-gray-700 dark:text-gray-300">Active</Text>
+            <Text className="text-foreground">Active</Text>
             <Switch value={isActive} onValueChange={setIsActive} />
           </View>
         </CardContent>

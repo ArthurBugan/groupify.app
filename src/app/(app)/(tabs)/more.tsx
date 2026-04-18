@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores';
+import { useTheme } from '@/theme/ThemeProvider';
 
 const menuItems = [
   { label: 'Websites', path: '/websites', icon: '🌐' },
@@ -12,6 +13,7 @@ const menuItems = [
 
 export default function MoreScreen() {
   const router = useRouter();
+  const { isDark } = useTheme();
   const logout = useAuthStore((s) => s.logout);
 
   const handleLogout = async () => {
@@ -20,24 +22,25 @@ export default function MoreScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
-      <Text className="text-3xl font-bold text-gray-900 mb-6">More</Text>
+    <ScrollView className="flex-1 bg-background p-4">
+      <Text className="text-3xl font-bold text-foreground mb-6">More</Text>
 
-      <View className="bg-white rounded-xl overflow-hidden">
-        {menuItems.map((item) => (
+      <View className="bg-card rounded-xl overflow-hidden">
+        {menuItems.map((item, index) => (
           <TouchableOpacity
             key={item.path}
-            className="flex-row items-center p-4 border-b border-gray-200"
             onPress={() => router.push(item.path)}
+            className={`flex-row items-center p-4 ${index < menuItems.length - 1 ? 'border-b border-border' : ''}`}
           >
             <Text className="text-xl mr-3">{item.icon}</Text>
-            <Text className="text-base text-gray-900">{item.label}</Text>
+            <Text className="flex-1 text-foreground">{item.label}</Text>
+            <Text className="text-muted-foreground">›</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <TouchableOpacity className="mt-6 bg-red-100 p-4 rounded-xl items-center" onPress={handleLogout}>
-        <Text className="text-red-600 font-semibold text-base">Sign Out</Text>
+      <TouchableOpacity className="bg-destructive/10 mt-6 p-4 rounded-xl items-center" onPress={handleLogout}>
+        <Text className="text-destructive font-semibold">Sign Out</Text>
       </TouchableOpacity>
     </ScrollView>
   );

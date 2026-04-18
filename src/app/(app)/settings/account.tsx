@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useCurrentUser } from '../../../hooks';
 import { Input, Button, Card, CardContent, Avatar } from '@/components/ui';
 import { useAuthStore } from '@/stores';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function AccountSettingsScreen() {
   const router = useRouter();
   const { data: user } = useCurrentUser();
   const logout = useAuthStore((s) => s.logout);
+  const { isDark } = useTheme();
   
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
@@ -23,14 +25,14 @@ export default function AccountSettingsScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
           <Text className="text-blue-500">← Back</Text>
         </TouchableOpacity>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Account</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Account</Text>
 
       <View className="items-center mb-6">
         <Avatar name={user?.name} size="lg" />

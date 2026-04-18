@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Input, Button, Select, Switch, Card, CardContent } from '@/components/ui';
 import { useCreateGroup } from '@/hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function CreateGroupScreen() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function CreateGroupScreen() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+  const { isDark } = useTheme();
 
   const handleSubmit = async () => {
     if (!name.trim()) {
@@ -25,14 +27,14 @@ export default function CreateGroupScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <Button variant="ghost" onPress={() => router.back()}>
           ← Back
         </Button>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Create Group</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Create Group</Text>
 
       <Card>
         <CardContent>
@@ -51,7 +53,7 @@ export default function CreateGroupScreen() {
             numberOfLines={4}
           />
           <View className="flex-row items-center justify-between py-2">
-            <Text className="text-gray-700 dark:text-gray-300">Public Group</Text>
+            <Text className="text-foreground">Public Group</Text>
             <Switch value={isPublic} onValueChange={setIsPublic} />
           </View>
         </CardContent>

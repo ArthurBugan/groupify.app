@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Card, CardContent } from '@/components/ui';
+import { useTheme } from '@/theme/ThemeProvider';
 
 const menuItems = [
   { label: 'Account', path: '/settings/account', icon: '👤' },
@@ -11,16 +12,17 @@ const menuItems = [
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { isDark } = useTheme();
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
           <Text className="text-blue-500">← Back</Text>
         </TouchableOpacity>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Settings</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Settings</Text>
 
       <Card>
         {menuItems.map((item, index) => (
@@ -30,11 +32,11 @@ export default function SettingsScreen() {
           >
             <CardContent className="flex-row items-center">
               <Text className="text-xl mr-3">{item.icon}</Text>
-              <Text className="flex-1 text-gray-900">{item.label}</Text>
-              <Text className="text-gray-400">›</Text>
+              <Text className="flex-1 text-foreground">{item.label}</Text>
+              <Text className="text-muted-foreground">›</Text>
             </CardContent>
             {index < menuItems.length - 1 && (
-              <View className="h-px bg-gray-200 mx-4" />
+              <View className="h-px border-border mx-4" />
             )}
           </TouchableOpacity>
         ))}

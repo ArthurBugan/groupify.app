@@ -10,7 +10,7 @@ class ApiClient {
   private authToken: string | null = null;
   private correlationId: string | null = null;
 
-  constructor(baseURL: string = 'https://your-api.com/api') {
+  constructor(baseURL: string = process.env.EXPO_PUBLIC_GROUPIFY_API_URL || 'http://192.168.68.55:3010/api') {
     this.client = axios.create({
       baseURL,
       timeout: 30000,

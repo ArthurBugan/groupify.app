@@ -1,20 +1,23 @@
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useChannels } from '@/hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 import type { Channel } from '@/types';
 
 export default function ChannelsListScreen() {
   const router = useRouter();
+  const { isDark } = useTheme();
   const { data, isLoading } = useChannels();
+  const channels = data?.data || [];
 
   const renderItem = ({ item }: { item: Channel }) => (
     <TouchableOpacity 
-      className="bg-white rounded-xl p-4"
+      className="bg-card rounded-xl p-4 mb-3"
       onPress={() => router.push(`/channels/edit/${item.id}`)}
     >
-      <Text className="text-lg font-semibold text-gray-900">{item.name}</Text>
+      <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
       {item.description && (
-        <Text className="text-sm text-gray-500" numberOfLines={2}>
+        <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
           {item.description}
         </Text>
       )}
@@ -22,18 +25,18 @@ export default function ChannelsListScreen() {
   );
 
   return (
-    <View className="flex-1 bg-gray-50 p-4">
+    <View className="flex-1 bg-background p-4">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-3xl font-bold text-gray-900">Channels</Text>
+        <Text className="text-3xl font-bold text-foreground">Channels</Text>
       </View>
 
       <FlatList
-        data={data?.data || []}
+        data={channels}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         refreshing={isLoading}
         ListEmptyComponent={
-          <Text className="text-center text-gray-500 mt-10">No channels yet.</Text>
+          <Text className="text-center text-muted-foreground mt-10">No channels yet.</Text>
         }
       />
     </View>

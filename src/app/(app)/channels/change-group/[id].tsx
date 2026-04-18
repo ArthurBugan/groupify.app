@@ -3,6 +3,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useChannel, useGroups } from '../../../../hooks';
 import { Card, CardContent, Button } from '@/components/ui';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function ChangeChannelGroupScreen() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function ChangeChannelGroupScreen() {
   const { data: channel } = useChannel(id);
   const { data: groupsData } = useGroups();
   const [selectedGroupId, setSelectedGroupId] = useState(channel?.groupId || '');
+  const { isDark } = useTheme();
 
   const handleSave = () => {
     Alert.alert('Success', 'Group updated');
@@ -17,16 +19,16 @@ export default function ChangeChannelGroupScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
           <Text className="text-blue-500">← Back</Text>
         </TouchableOpacity>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Change Group</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Change Group</Text>
 
-      <Text className="text-gray-600 mb-4">
+      <Text className="text-muted-foreground mb-4">
         Select a group for "{channel?.name}"
       </Text>
 

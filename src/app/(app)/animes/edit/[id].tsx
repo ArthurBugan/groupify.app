@@ -3,12 +3,14 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Input, Button, Card, CardContent, Select } from '@/components/ui';
 import { useAnime, useGroups } from '../../../../hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function EditAnimeScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: anime, isLoading } = useAnime(id);
   const { data: groupsData } = useGroups();
+  const { isDark } = useTheme();
 
   const [name, setName] = useState(anime?.name || '');
   const [description, setDescription] = useState(anime?.description || '');
@@ -22,18 +24,18 @@ export default function EditAnimeScreen() {
   };
 
   if (isLoading) {
-    return <View className="flex-1 bg-gray-50 p-4" />;
+    return <View className="flex-1 bg-background p-4" />;
   }
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <Button variant="ghost" onPress={() => router.back()}>
           ← Back
         </Button>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Edit Anime</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Edit Anime</Text>
 
       <Card>
         <CardContent>

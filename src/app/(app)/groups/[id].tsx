@@ -3,12 +3,14 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useGroup, useDeleteGroup } from '@/hooks';
 import { Card, CardContent, Badge, Avatar, Button, Skeleton } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function GroupDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: group, isLoading } = useGroup(id);
   const deleteGroup = useDeleteGroup();
+  const { isDark } = useTheme();
 
   const handleDelete = () => {
     Alert.alert('Delete Group', 'Are you sure?', [
@@ -30,7 +32,7 @@ export default function GroupDetailScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-gray-50 p-4">
+      <View className="flex-1 bg-background p-4">
         <Skeleton height={40} className="mb-4" />
         <Skeleton height={100} />
       </View>
@@ -39,14 +41,14 @@ export default function GroupDetailScreen() {
 
   if (!group) {
     return (
-      <View className="flex-1 bg-gray-50 p-4 items-center justify-center">
-        <Text className="text-gray-500">Group not found</Text>
+      <View className="flex-1 bg-background p-4 items-center justify-center">
+        <Text className="text-muted-foreground">Group not found</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-gray-50">
+    <ScrollView className="flex-1 bg-background">
       <View className="p-4">
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
@@ -59,13 +61,13 @@ export default function GroupDetailScreen() {
         <Card>
           <CardContent>
             {group.description && (
-              <Text className="text-gray-600 mb-4">{group.description}</Text>
+              <Text className="text-muted-foreground mb-4">{group.description}</Text>
             )}
             <View className="flex-row items-center gap-2">
               <Badge variant={group.isActive ? 'success' : 'error'}>
                 {group.isActive ? 'Active' : 'Inactive'}
               </Badge>
-              <Text className="text-gray-500 text-sm">
+              <Text className="text-muted-foreground text-sm">
                 Order: {group.displayOrder}
               </Text>
             </View>

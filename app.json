@@ -1,13 +1,32 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "groupify",
+    "associatedDomains": [
+      "applinks:groupify.dev"
+    ],
     "userInterfaceStyle": "automatic",
     "orientation": "default",
-    "plugins": ["expo-router"],
+    "ios": {
+      "bundleIdentifier": "com.groupifyapp",
+      "appleTeamId": "UM6SZWPURL"
+    },
+    "android": {
+      "package": "com.groupifyapp"
+    },
+    "plugins": [
+      "expo-router"
+    ],
     "web": {
       "output": "static"
     },
     "name": "groupifyapp",
-    "slug": "groupifyapp"
+    "slug": "groupify",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4d4f4c57-802b-4766-a035-07ad7cd3f21e"
+      }
+    },
+    "owner": "arthurbugan"
   }
 }
