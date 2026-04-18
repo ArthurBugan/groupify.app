@@ -1,12 +1,12 @@
 {
   "expo": {
     "scheme": "groupify",
-    "associatedDomains": [
-      "applinks:groupify.dev"
-    ],
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "ios": {
+      "associatedDomains": [
+        "applinks:groupify.dev"
+      ],
       "bundleIdentifier": "com.groupifyapp",
       "appleTeamId": "UM6SZWPURL"
     },
@@ -27,6 +27,7 @@
         "projectId": "4d4f4c57-802b-4766-a035-07ad7cd3f21e"
       }
     },
-    "owner": "arthurbugan"
+    "owner": "arthurbugan",
+    "version": "1.1.0"
   }
 }
