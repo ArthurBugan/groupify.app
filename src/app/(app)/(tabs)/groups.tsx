@@ -3,15 +3,16 @@ import { useRouter } from 'expo-router';
 import { useGroups } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Group } from '@/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function GroupsListScreen() {
   const router = useRouter();
   const { isDark } = useTheme();
   const { data, isLoading } = useGroups();
-  const groups = data?.data || [];
+  const groups = data || [];
 
   const renderItem = ({ item }: { item: Group }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       className="bg-card rounded-xl p-4 mb-3"
       onPress={() => router.push(`/groups/${item.id}`)}
     >
@@ -24,11 +25,21 @@ export default function GroupsListScreen() {
     </TouchableOpacity>
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View className="flex-1 bg-background p-4">
+    <View
+      style={{
+        paddingTop: insets.top,
+        paddingLeft: insets.left,
+        paddingBottom: insets.bottom,
+        paddingRight: insets.right,
+      }}
+      className="flex-1 bg-background p-4"
+    >
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-3xl font-bold text-foreground">Groups</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           className="bg-primary px-4 py-2 rounded-lg"
           onPress={() => router.push('/groups/new')}
         >

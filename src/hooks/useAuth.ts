@@ -22,13 +22,13 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => authApi.login(credentials),
     onSuccess: async (data) => {
-      if (data.token) {
-        await apiClient.setAuthToken(data.token);
-        await storage.setToken(data.token);
+      if (data) {
+        await apiClient.setAuthToken(data);
+        await storage.setToken(data);
         setAuthenticated(true);
+      } else {
+        console.log('No token in response');
       }
-      setUser(data.user);
-      queryClient.setQueryData(['currentUser'], data.user);
     },
   });
 };

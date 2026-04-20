@@ -21,12 +21,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   isOAuthLoading: false,
 
-  checkAuth: async () => {
+checkAuth: async () => {
     set({ isLoading: true });
     try {
       const token = await storage.getToken();
       if (!token) {
-        set({ isAuthenticated: false, isLoading: false });
+        set({ user: null, isAuthenticated: false, isLoading: false });
         return;
       }
       await apiClient.loadAuthToken();
@@ -34,6 +34,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch {
       await storage.removeToken();
       set({ user: null, isAuthenticated: false, isLoading: false });
+    }
+  },
+
+  setAuthenticated: (value: boolean) => {
+    if (!value) {
+      apiClient.removeAuthToken();
+      storage.removeToken();
+      set({ user: null, isAuthenticated: false });
+    } else {
+      set({ isAuthenticated: true });
     }
   },
 
@@ -52,7 +62,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     await apiClient.removeAuthToken();
     await storage.removeToken();
-    set({ user: null, isAuthenticated: false });
+    set({ 
+      user: null, 
+      isAuthenticated: false,
+      isLoading: false,
+      isOAuthLoading: false 
+    });
   },
 }));
 

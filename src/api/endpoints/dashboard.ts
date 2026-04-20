@@ -3,6 +3,6 @@ import type { DashboardTotals } from '../../types';
 
 export const dashboardApi = {
   getTotals: async () => {
-    return apiClient.get<DashboardTotals>('/api/v3/dashboard');
+    return apiClient.get<DashboardTotals>('/api/v2/dashboard/total');
   },
 };

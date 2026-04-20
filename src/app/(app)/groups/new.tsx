@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Input, Button, Select, Switch, Card, CardContent } from '@/components/ui';
 import { useCreateGroup } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CreateGroupScreen() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function CreateGroupScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
+      <SafeAreaView edges={['top']}>
       <View className="flex-row items-center mb-4">
         <Button variant="ghost" onPress={() => router.back()}>
           ← Back
@@ -67,6 +69,7 @@ export default function CreateGroupScreen() {
           Create
         </Button>
       </View>
+    </SafeAreaView>
     </ScrollView>
   );
 }

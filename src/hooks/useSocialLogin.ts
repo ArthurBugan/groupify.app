@@ -8,7 +8,7 @@ const API_URL = process.env.EXPO_PUBLIC_GROUPIFY_API_URL || '';
 const APP_SCHEME = 'groupify';
 
 export const oauthCallbackUrl = (provider: string) => 
-  `${APP_SCHEME}://oauth/callback/${provider}`;
+  `${APP_SCHEME}://oauth?provider=${provider}`;
 
 export const useOAuthLoading = () => useAuthStore((s) => s.setOAuthLoading);
 export const useIsOAuthLoading = () => useAuthStore((s) => s.isOAuthLoading);
@@ -42,10 +42,8 @@ export function useDiscordLogin() {
     setIsLoading(true);
     setOAuthLoading(true);
     try {
-      console.log('EXPO_PUBLIC_GROUPIFY_API_URL', API_URL);
       const redirectUrl = oauthCallbackUrl('discord');
       const authUrl = `${API_URL}/auth/discord?redirect_uri=${encodeURIComponent(redirectUrl)}&origin=app`;
-      console.log('authUrl', authUrl);
       await Linking.openURL(authUrl);
     } catch (error) {
       console.error('Discord login error:', error);
@@ -67,10 +65,10 @@ export function useHandleOAuthCallback() {
       const parsedUrl = Linking.parse(url);
       const token = parsedUrl.queryParams?.token as string | undefined;
       const error = parsedUrl.queryParams?.error as string | undefined;
-
+      
       if (token) {
-        await apiClient.setAuthToken(token);
         await storage.setToken(token);
+        await apiClient.setAuthToken(token);
         setAuthenticated(true);
         setOAuthLoading(false);
         return { success: true };
@@ -81,6 +79,7 @@ export function useHandleOAuthCallback() {
       setOAuthLoading(false);
       return { success: false, error: 'No token received' };
     } catch (error) {
+      console.error('handleCallback error:', error);
       setOAuthLoading(false);
       return { success: false, error: 'Failed to parse callback' };
     }

@@ -1,7 +1,7 @@
 import '../../global.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useRef } from 'react';
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
@@ -26,9 +26,9 @@ function AppContent() {
   useEffect(() => {
     const handleInitialUrl = async () => {
       if (initialUrlHandled.current) return;
-      
+
       const initialUrl = await Linking.getInitialURL();
-      if (initialUrl && initialUrl.includes('oauth/callback')) {
+      if (initialUrl && (initialUrl.includes('oauth') || initialUrl.includes('token='))) {
         initialUrlHandled.current = true;
         const result = await handleCallback(initialUrl);
         if (result.success) {
@@ -36,13 +36,13 @@ function AppContent() {
         }
       }
     };
-    
+
     handleInitialUrl();
   }, []);
 
   useEffect(() => {
     const subscription = Linking.addEventListener('url', async (event) => {
-      if (event.url.includes('oauth/callback')) {
+      if (event.url.includes('oauth') || event.url.includes('token=')) {
         const result = await handleCallback(event.url);
         if (result.success) {
           router.replace('/(app)');
@@ -55,7 +55,7 @@ function AppContent() {
 
   useEffect(() => {
     const handleUrlCallback = async () => {
-      if (url && url.includes('oauth/callback')) {
+      if (url && (url.includes('oauth') || url.includes('token='))) {
         const result = await handleCallback(url);
         if (result.success) {
           router.replace('/(app)');

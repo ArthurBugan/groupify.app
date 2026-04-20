@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useGroup, useChannels } from '../../../../hooks';
 import { Card, CardContent, Checkbox, Button, Input } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useTheme } from '@/theme/ThemeProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AddChannelToGroupScreen() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function AddChannelToGroupScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
+      <SafeAreaView edges={['top']}>
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
           <Text className="text-blue-500">← Back</Text>
@@ -44,7 +46,7 @@ export default function AddChannelToGroupScreen() {
 
       <Text className="text-lg font-semibold mb-3">Available Channels</Text>
 
-      {channelsData?.data.map((channel) => (
+      {channelsData?.map((channel) => (
         <TouchableOpacity
           key={channel.id}
           onPress={() => toggleChannel(channel.id)}
@@ -67,6 +69,7 @@ export default function AddChannelToGroupScreen() {
       <Button onPress={handleSave} fullWidth className="mt-4">
         Add Selected ({selectedChannels.length})
       </Button>
+      </SafeAreaView>
     </ScrollView>
   );
 }

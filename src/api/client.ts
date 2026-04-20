@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import type { ApiError } from '../types';
 
 const TOKEN_KEY = 'auth_token';
@@ -20,9 +20,6 @@ class ApiClient {
     });
 
     this.client.interceptors.request.use((config) => {
-      if (this.authToken) {
-        config.headers.Authorization = `Bearer ${this.authToken}`;
-      }
       if (this.correlationId) {
         config.headers['x-correlation-id'] = this.correlationId;
       }
@@ -42,48 +39,65 @@ class ApiClient {
 
   async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
     const response = await this.client.get<T>(endpoint, { params });
-    return response.data;
+    const payload = response.data as { data?: T; success?: boolean; message?: string };
+    return payload.data as T;
   }
 
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await this.client.post<T>(endpoint, data);
-    return response.data;
+    const payload = response.data as { data?: T; success?: boolean; message?: string };
+    return payload.data as T;
   }
 
   async put<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await this.client.put<T>(endpoint, data);
-    return response.data;
+    const payload = response.data as { data?: T; success?: boolean; message?: string };
+    return payload.data as T;
   }
 
   async patch<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await this.client.patch<T>(endpoint, data);
-    return response.data;
+    const payload = response.data as { data?: T; success?: boolean; message?: string };
+    return payload.data as T;
   }
 
   async delete<T>(endpoint: string): Promise<T> {
     const response = await this.client.delete<T>(endpoint);
-    return response.data;
+    const payload = response.data as { data?: T; success?: boolean; message?: string };
+    return payload.data as T;
   }
 
   async setAuthToken(token: string): Promise<void> {
     this.authToken = token;
-    this.correlationId = token;
-    await AsyncStorage.setItem(TOKEN_KEY, token);
+    try {
+      await SecureStore.setItemAsync(TOKEN_KEY, token);
+    } catch (error) {
+      console.error('Failed to save authToken:', error);
+    }
   }
 
   async removeAuthToken(): Promise<void> {
     this.authToken = null;
     this.correlationId = null;
-    await AsyncStorage.removeItem(TOKEN_KEY);
+    try {
+      await SecureStore.deleteItemAsync(TOKEN_KEY);
+    } catch (error) {
+      console.error('Failed to remove authToken:', error);
+    }
   }
 
   async loadAuthToken(): Promise<string | null> {
-    const token = await AsyncStorage.getItem(TOKEN_KEY);
-    if (token) {
-      this.authToken = token;
-      this.correlationId = token;
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      if (token) {
+        this.authToken = token;
+        this.correlationId = token;
+      }
+      return token;
+    } catch (error) {
+      console.error('Failed to load authToken:', error);
+      return null;
     }
-    return token;
   }
 
   getAuthToken(): string | null {

@@ -1,8 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useGroup } from '../../../../hooks';
+import { useGroup } from '@/hooks';
 import { Card, CardContent, Button, Badge } from '@/components/ui';
 import { useTheme } from '@/theme/ThemeProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ShareGroupScreen() {
   const router = useRouter();
@@ -22,6 +23,7 @@ export default function ShareGroupScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
+      <SafeAreaView edges={['top']}>
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
           <Text className="text-blue-500">← Back</Text>
@@ -41,6 +43,7 @@ export default function ShareGroupScreen() {
           </Button>
         </CardContent>
       </Card>
+      </SafeAreaView>
     </ScrollView>
   );
 }

@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores';
 import { useTheme } from '@/theme/ThemeProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const menuItems = [
   { label: 'Websites', path: '/websites', icon: '🌐' },
@@ -21,8 +22,17 @@ export default function MoreScreen() {
     router.replace('/(auth)/login');
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView
+      style={{
+        paddingTop: insets.top,
+        paddingLeft: insets.left,
+        paddingBottom: insets.bottom,
+        paddingRight: insets.right,
+      }}
+      className="flex-1 bg-background p-4">
       <Text className="text-3xl font-bold text-foreground mb-6">More</Text>
 
       <View className="bg-card rounded-xl overflow-hidden">
