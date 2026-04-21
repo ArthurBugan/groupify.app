@@ -10,7 +10,7 @@ export default function PrivacyScreen() {
     <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-blue-500">← Back</Text>
+          <Text className="text-primary">← Back</Text>
         </TouchableOpacity>
       </View>
 

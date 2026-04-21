@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Platform } from 'react-native';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function TabLayout() {
@@ -8,15 +8,26 @@ export default function TabLayout() {
   const activeColor = isDark ? '#fb7185' : '#f43f5e';
   const inactiveColor = isDark ? '#94a3b8' : '#9CA3AF';
   
+  const isIOS = Platform.OS === 'ios';
+  
+  const tabBarBg = isDark ? '#0a0a0a' : '#fafafa';
+  const borderColor = isDark ? '#1e1e1e' : '#e5e7eb';
+  
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: inactiveColor,
         tabBarStyle: {
-          backgroundColor: isDark ? '#1e293b' : '#ffffff',
-          borderTopWidth: 1,
-          borderTopColor: isDark ? '#334155' : '#E5E7EB',
+          backgroundColor: tabBarBg,
+          borderTopWidth: isIOS ? 0 : 1,
+          borderTopColor: borderColor,
+          paddingTop: isIOS ? 8 : 4,
+          height: isIOS ? 88 : 60,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '500',
         },
         headerShown: false,
       }}
@@ -28,7 +39,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <IconifyIcon 
               name="lucide:layout" 
-              size={22} 
+              size={24} 
               color={focused ? activeColor : inactiveColor} 
             />
           ),
@@ -41,7 +52,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <IconifyIcon 
               name="lucide:folder" 
-              size={22} 
+              size={24} 
               color={focused ? activeColor : inactiveColor} 
             />
           ),
@@ -54,7 +65,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <IconifyIcon 
               name="lucide:tv" 
-              size={22} 
+              size={24} 
               color={focused ? activeColor : inactiveColor} 
             />
           ),
@@ -67,7 +78,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <IconifyIcon 
               name="lucide:video" 
-              size={22} 
+              size={24} 
               color={focused ? activeColor : inactiveColor} 
             />
           ),
@@ -80,7 +91,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <IconifyIcon 
               name="tdesign:more" 
-              size={22} 
+              size={24} 
               color={focused ? activeColor : inactiveColor} 
             />
           ),

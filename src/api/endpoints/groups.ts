@@ -31,7 +31,8 @@ export const groupsApi = {
   },
 
   get: async (id: string) => {
-    return apiClient.get<Group>(`/api/v2/groups/${id}`);
+    const response = await apiClient.get<{ data: Group }>(`/api/v2/groups/${id}`);
+    return response?.data as Group;
   },
 
   create: async (data: CreateGroupRequest) => {

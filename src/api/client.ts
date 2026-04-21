@@ -39,32 +39,31 @@ class ApiClient {
 
   async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
     const response = await this.client.get<T>(endpoint, { params });
-    const payload = response.data as { data?: T; success?: boolean; message?: string };
-    return payload as T;
+    return response.data;
   }
 
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.post<T>(endpoint, data);
+    const response = await this.client.post<{ data?: T }>(endpoint, data);
     const payload = response.data as { data?: T; success?: boolean; message?: string };
-    return payload as T;
+    return payload.data as T;
   }
 
   async put<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.put<T>(endpoint, data);
+    const response = await this.client.put<{ data?: T }>(endpoint, data);
     const payload = response.data as { data?: T; success?: boolean; message?: string };
-    return payload as T;
+    return payload.data as T;
   }
 
   async patch<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.patch<T>(endpoint, data);
+    const response = await this.client.patch<{ data?: T }>(endpoint, data);
     const payload = response.data as { data?: T; success?: boolean; message?: string };
-    return payload as T;
+    return payload.data as T;
   }
 
   async delete<T>(endpoint: string): Promise<T> {
-    const response = await this.client.delete<T>(endpoint);
+    const response = await this.client.delete<{ data?: T }>(endpoint);
     const payload = response.data as { data?: T; success?: boolean; message?: string };
-    return payload as T;
+    return payload.data as T;
   }
 
   async setAuthToken(token: string): Promise<void> {

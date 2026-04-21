@@ -5,6 +5,7 @@ import { useCurrentUser } from '../../../hooks';
 import { Input, Button, Card, CardContent, Avatar } from '@/components/ui';
 import { useAuthStore } from '@/stores';
 import { useTheme } from '@/theme/ThemeProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AccountSettingsScreen() {
   const router = useRouter();
@@ -26,9 +27,11 @@ export default function AccountSettingsScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
+      <SafeAreaView edges={['top']}>
+
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-blue-500">← Back</Text>
+          <Text className="text-primary">← Back</Text>
         </TouchableOpacity>
       </View>
 
@@ -55,6 +58,7 @@ export default function AccountSettingsScreen() {
       <Button variant="danger" onPress={handleLogout} fullWidth className="mt-4">
         Sign Out
       </Button>
+      </SafeAreaView>
     </ScrollView>
   );
 }

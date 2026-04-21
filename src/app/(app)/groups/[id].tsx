@@ -34,7 +34,7 @@ export default function GroupDetailScreen() {
 
   const getGroupIcon = (icon?: string) => {
     if (icon) return icon;
-    return 'mdi:folder-group';
+    return 'lucide:folder';
   };
 
   if (isLoading) {
@@ -68,7 +68,7 @@ export default function GroupDetailScreen() {
         <View className="p-4">
           <View className="flex-row items-center mb-4">
             <TouchableOpacity onPress={() => router.back()} className="mr-2">
-              <Text className="text-blue-500">← Back</Text>
+              <Text className="text-primary">← Back</Text>
             </TouchableOpacity>
           </View>
 
@@ -85,18 +85,10 @@ export default function GroupDetailScreen() {
           </View>
 
           <Card>
-            <CardContent>
+            <CardContent className='bg-secondary rounded-xl'>
               {group.description && (
                 <Text className="text-muted-foreground mb-4">{group.description}</Text>
               )}
-              <View className="flex-row items-center gap-2">
-                <Badge variant={group.isActive ? 'success' : 'error'}>
-                  {group.isActive ? 'Active' : 'Inactive'}
-                </Badge>
-                <Text className="text-muted-foreground text-sm">
-                  Order: {group.displayOrder}
-                </Text>
-              </View>
             </CardContent>
           </Card>
 

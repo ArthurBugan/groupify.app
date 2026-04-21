@@ -68,14 +68,22 @@ function AppContent() {
   return <Slot />;
 }
 
-export default function RootLayout() {
-  Uniwind.setTheme('dark')
+function AppContentWithTheme() {
+  const { isDark } = useTheme();
+  
+  useEffect(() => {
+    Uniwind.setTheme(isDark ? 'dark' : 'light');
+  }, [isDark]);
 
+  return <AppContent />;
+}
+
+export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <AppContent />
+          <AppContentWithTheme />
         </QueryClientProvider>
       </ThemeProvider>
     </SafeAreaProvider>

@@ -8,7 +8,7 @@ export default function DashboardHomeScreen() {
   const router = useRouter();
   const { data: dashboard, isLoading } = useDashboard();
   const insets = useSafeAreaInsets();
-  
+
   return (
     <ScrollView
       style={{
@@ -19,9 +19,9 @@ export default function DashboardHomeScreen() {
       }}
       className="flex-1 bg-background p-4"
     >
-      <Text className="text-3xl font-bold text-foreground mb-6">Dashboard</Text>
+      <Text className="text-3xl font-bold text-foreground mb-6 pl-4">Dashboard</Text>
 
-      <View className="flex-row flex-wrap gap-3">
+      <View className="flex-row flex-wrap gap-3 p-4">
         <TouchableOpacity
           className="w-[47%] bg-card rounded-xl p-5 items-center"
           onPress={() => router.push('/groups')}
@@ -55,9 +55,9 @@ export default function DashboardHomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <Text className="text-xl font-semibold text-foreground mt-8 mb-4">Quick Actions</Text>
+      <Text className="text-xl font-semibold text-foreground mt-8 mb-4 pl-4">Quick Actions</Text>
 
-      <View className="gap-3">
+      <View className="gap-3 p-4">
         <TouchableOpacity
           className="bg-primary rounded-xl p-4 flex-row items-center gap-3"
           onPress={() => router.push('/groups/new')}

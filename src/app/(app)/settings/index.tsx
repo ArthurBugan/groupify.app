@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Card, CardContent } from '@/components/ui';
 import { useTheme } from '@/theme/ThemeProvider';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const menuItems = [
   { label: 'Account', path: '/settings/account', icon: '👤' },
@@ -16,31 +17,34 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
-      <View className="flex-row items-center mb-4">
-        <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-blue-500">← Back</Text>
-        </TouchableOpacity>
-      </View>
+      <SafeAreaView edges={['top']}>
 
-      <Text className="text-2xl font-bold text-foreground mb-6">Settings</Text>
-
-      <Card>
-        {menuItems.map((item, index) => (
-          <TouchableOpacity
-            key={item.path}
-            onPress={() => router.push(item.path)}
-          >
-            <CardContent className="flex-row items-center">
-              <Text className="text-xl mr-3">{item.icon}</Text>
-              <Text className="flex-1 text-foreground">{item.label}</Text>
-              <Text className="text-muted-foreground">›</Text>
-            </CardContent>
-            {index < menuItems.length - 1 && (
-              <View className="h-px border-border mx-4" />
-            )}
+        <View className="flex-row items-center mb-4">
+          <TouchableOpacity onPress={() => router.back()} className="mr-2">
+            <Text className="text-primary">← Back</Text>
           </TouchableOpacity>
-        ))}
-      </Card>
+        </View>
+
+        <Text className="text-2xl font-bold text-foreground mb-6">Settings</Text>
+
+        <Card>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={item.path}
+              onPress={() => router.push(item.path)}
+            >
+              <CardContent className="flex-row items-center">
+                <Text className="text-xl mr-3">{item.icon}</Text>
+                <Text className="flex-1 text-foreground">{item.label}</Text>
+                <Text className="text-muted-foreground">›</Text>
+              </CardContent>
+              {index < menuItems.length - 1 && (
+                <View className="h-px border-border mx-4" />
+              )}
+            </TouchableOpacity>
+          ))}
+        </Card>
+      </SafeAreaView>
     </ScrollView>
   );
 }

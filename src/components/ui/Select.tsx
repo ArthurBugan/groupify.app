@@ -57,7 +57,7 @@ export function Select({ value, onChange, options, placeholder = 'Select...', la
                   <Text
                     className={`text-base ${
                       item.value === value
-                        ? 'text-blue-500 font-medium'
+                        ? 'text-primary font-medium'
                         : 'text-gray-700 dark:text-gray-300'
                     }`}
                   >

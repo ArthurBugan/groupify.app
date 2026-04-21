@@ -5,7 +5,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 import type { Anime } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui/Icons';
-import {LegendList} from '@legendapp/list';
+import { LegendList } from '@legendapp/list';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function AnimesListScreen() {
   const router = useRouter();
@@ -23,10 +24,15 @@ export default function AnimesListScreen() {
     refetch,
   } = useAnimesInfinite();
 
+  const getGroupIcon = (icon?: string) => {
+    if (icon) return icon;
+    return 'lucide:folder';
+  };
+
   const renderItem = ({ item }: { item: Anime }) => (
     <TouchableOpacity
       className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
-      onPress={() => router.push(`/animes/edit/${item.id}`)}
+      onPress={() => router.push(`/animes/change-group/${item.id}`)}
     >
       {item.thumbnail || item.imageUrl ? (
         <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-12 h-12 rounded-xl" />
@@ -41,6 +47,12 @@ export default function AnimesListScreen() {
           <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
             {item.description}
           </Text>
+        )}
+        {item.groupIcon && (
+          <View className="flex-row items-center gap-1 mt-1">
+            <IconifyIcon name={getGroupIcon(item.groupIcon)} size={12} />
+            <Text className="text-xs text-muted-foreground">{item.groupName}</Text>
+          </View>
         )}
       </View>
     </TouchableOpacity>
@@ -64,9 +76,9 @@ export default function AnimesListScreen() {
       }}
       className="flex-1 bg-background p-4"
     >
-      <Text className="text-3xl font-bold text-foreground mb-4">Animes</Text>
+      <Text className="text-3xl font-bold text-foreground mb-4 pl-4">Animes</Text>
 
-      <View className="mb-4">
+      <View className="mb-4 p-4">
         <TextInput
           className="bg-card rounded-xl p-3 text-foreground"
           placeholder="Search animes..."
@@ -81,6 +93,7 @@ export default function AnimesListScreen() {
         data={animes}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        className="p-4 pt-0"
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}

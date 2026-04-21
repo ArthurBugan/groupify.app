@@ -56,7 +56,7 @@ export default function ForgotPasswordScreen() {
 
       <View className="flex-row justify-center mt-6">
         <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-          <Text className="text-blue-500 text-sm font-semibold">Back to Sign In</Text>
+          <Text className="text-primary text-sm font-semibold">Back to Sign In</Text>
         </TouchableOpacity>
       </View>
     </View>

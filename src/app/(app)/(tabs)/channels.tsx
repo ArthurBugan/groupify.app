@@ -6,7 +6,8 @@ import type { Channel } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui/Icons';
 import { useState } from 'react';
-import {LegendList} from '@legendapp/list';
+import { LegendList } from '@legendapp/list';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function ChannelsListScreen() {
   const router = useRouter();
@@ -22,10 +23,15 @@ export default function ChannelsListScreen() {
     isLoading
   } = useChannelsInfinite({ limit: 20, page: 1, search });
 
+  const getGroupIcon = (icon?: string) => {
+    if (icon) return icon;
+    return 'lucide:folder';
+  };
+
   const renderItem = ({ item }: { item: Channel }) => (
     <TouchableOpacity
       className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
-      onPress={() => router.push(`/channels/edit/${item.id}`)}
+      onPress={() => router.push(`/channels/change-group/${item.id}`)}
     >
       {item.thumbnail || item.imageUrl ? (
         <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-12 h-12 rounded-xl" />
@@ -40,6 +46,12 @@ export default function ChannelsListScreen() {
           <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
             {item.description}
           </Text>
+        )}
+        {item.groupName && (
+          <View className="flex-row items-center gap-1 mt-1">
+            <IconifyIcon name={getGroupIcon(item.groupIcon)} size={12} />
+            <Text className="text-xs text-muted-foreground">{item.groupName}</Text>
+          </View>
         )}
       </View>
     </TouchableOpacity>
@@ -63,9 +75,9 @@ export default function ChannelsListScreen() {
       }}
       className="flex-1 bg-background p-4"
     >
-      <Text className="text-3xl font-bold text-foreground mb-4">Channels</Text>
+      <Text className="text-3xl font-bold text-foreground mb-4 pl-4">Channels</Text>
 
-      <View className="mb-4">
+      <View className="mb-4 p-4">
         <TextInput
           className="bg-card rounded-xl p-3 text-foreground"
           placeholder="Search channels..."
@@ -80,7 +92,8 @@ export default function ChannelsListScreen() {
         data={channels || []}
         onEndReached={loadMore}
         renderItem={renderItem}
-        keyExtractor={(item, index) => item.channelId ?? '' + item.createdAt}
+        className="p-4 pt-0"
+        keyExtractor={(item, index) => String(item.channelId ?? '' + item.createdAt + index)}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
