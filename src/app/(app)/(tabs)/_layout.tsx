@@ -1,26 +1,18 @@
 import { Tabs } from 'expo-router';
-import { Text, useColorScheme } from 'react-native';
-
-function TabIcon({ name }: { name: string }) {
-  const icons: Record<string, string> = {
-    home: '🏠',
-    users: '👥',
-    tv: '📺',
-    film: '🎬',
-    'more-horizontal': '•••',
-  };
-  return <Text style={{ fontSize: 20 }}>{icons[name] || '•'}</Text>;
-}
+import { useColorScheme } from 'react-native';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const activeColor = isDark ? '#fb7185' : '#f43f5e';
+  const inactiveColor = isDark ? '#94a3b8' : '#9CA3AF';
   
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: isDark ? '#fb7185' : '#f43f5e',
-        tabBarInactiveTintColor: isDark ? '#94a3b8' : '#9CA3AF',
+        tabBarActiveTintColor: activeColor,
+        tabBarInactiveTintColor: inactiveColor,
         tabBarStyle: {
           backgroundColor: isDark ? '#1e293b' : '#ffffff',
           borderTopWidth: 1,
@@ -33,35 +25,65 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: () => <TabIcon name="home" />,
+          tabBarIcon: ({ focused }) => (
+            <IconifyIcon 
+              name="lucide:layout" 
+              size={22} 
+              color={focused ? activeColor : inactiveColor} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="groups"
         options={{
           title: 'Groups',
-          tabBarIcon: () => <TabIcon name="users" />,
+          tabBarIcon: ({ focused }) => (
+            <IconifyIcon 
+              name="lucide:folder" 
+              size={22} 
+              color={focused ? activeColor : inactiveColor} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="channels"
         options={{
           title: 'Channels',
-          tabBarIcon: () => <TabIcon name="tv" />,
+          tabBarIcon: ({ focused }) => (
+            <IconifyIcon 
+              name="lucide:tv" 
+              size={22} 
+              color={focused ? activeColor : inactiveColor} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="animes"
         options={{
           title: 'Animes',
-          tabBarIcon: () => <TabIcon name="film" />,
+          tabBarIcon: ({ focused }) => (
+            <IconifyIcon 
+              name="lucide:video" 
+              size={22} 
+              color={focused ? activeColor : inactiveColor} 
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="more"
         options={{
           title: 'More',
-          tabBarIcon: () => <TabIcon name="more-horizontal" />,
+          tabBarIcon: ({ focused }) => (
+            <IconifyIcon 
+              name="tdesign:more" 
+              size={22} 
+              color={focused ? activeColor : inactiveColor} 
+            />
+          ),
         }}
       />
     </Tabs>

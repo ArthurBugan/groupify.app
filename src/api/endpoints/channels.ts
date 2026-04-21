@@ -34,11 +34,11 @@ export const channelsApi = {
   },
 
   get: async (id: string) => {
-    return apiClient.get<Channel>(`/api/v2/channels/${id}`);
+    return await apiClient.get<Channel>(`/api/v2/channels/${id}`);
   },
 
   getByGroup: async (groupId: string) => {
-    return apiClient.get<PaginatedResponse<Channel>>(`/api/v2/channels/group/${groupId}`);
+    return await apiClient.get<PaginatedResponse<Channel>>(`/api/v2/channels/group/${groupId}`);
   },
 
   create: async (data: CreateChannelRequest) => {

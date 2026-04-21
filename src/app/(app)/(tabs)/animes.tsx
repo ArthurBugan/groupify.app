@@ -1,52 +1,93 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAnimes } from '@/hooks';
+import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Anime } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Icon } from '@/components/ui/Icons';
+import {LegendList} from '@legendapp/list';
 
 export default function AnimesListScreen() {
   const router = useRouter();
   const { isDark } = useTheme();
-  const { data, isLoading } = useAnimes();
-  const animes = data || [];
+  const insets = useSafeAreaInsets();
+  
+  const {
+    animes,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    loadMore,
+    search,
+    setSearch,
+    refetch,
+  } = useAnimesInfinite();
 
   const renderItem = ({ item }: { item: Anime }) => (
-    <TouchableOpacity 
-      className="bg-card rounded-xl p-4 mb-3"
+    <TouchableOpacity
+      className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
       onPress={() => router.push(`/animes/edit/${item.id}`)}
     >
-      <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
-      {item.description && (
-        <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
-          {item.description}
-        </Text>
+      {item.thumbnail || item.imageUrl ? (
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-12 h-12 rounded-xl" />
+      ) : (
+        <View className="w-12 h-12 rounded-xl bg-secondary items-center justify-center">
+          <Icon name="film" size={20} />
+        </View>
       )}
+      <View className="flex-1">
+        <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
+        {item.description && (
+          <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
+            {item.description}
+          </Text>
+        )}
+      </View>
     </TouchableOpacity>
   );
 
-  const insets = useSafeAreaInsets();
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View className="py-4">
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
   return (
     <View
       style={{
         paddingTop: insets.top,
         paddingLeft: insets.left,
-        paddingBottom: insets.bottom,
         paddingRight: insets.right,
       }}
       className="flex-1 bg-background p-4"
     >
-      <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-3xl font-bold text-foreground">Animes</Text>
+      <Text className="text-3xl font-bold text-foreground mb-4">Animes</Text>
+
+      <View className="mb-4">
+        <TextInput
+          className="bg-card rounded-xl p-3 text-foreground"
+          placeholder="Search animes..."
+          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+          value={search}
+          onChangeText={setSearch}
+          onSubmitEditing={refetch}
+        />
       </View>
 
-      <FlatList
+      <LegendList
         data={animes}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        refreshing={isLoading}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          <Text className="text-center text-muted-foreground mt-10">No animes yet.</Text>
+          <Text className="text-center text-muted-foreground mt-10">
+            {isLoading ? 'Loading...' : 'No animes found.'}
+          </Text>
         }
       />
     </View>

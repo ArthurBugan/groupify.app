@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, FlatList, Alert, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useGroup, useDeleteGroup } from '@/hooks';
 import { Card, CardContent, Badge, Avatar, Button, Skeleton } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useTheme } from '@/theme/ThemeProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function GroupDetailScreen() {
   const router = useRouter();
@@ -29,6 +30,11 @@ export default function GroupDetailScreen() {
         },
       },
     ]);
+  };
+
+  const getGroupIcon = (icon?: string) => {
+    if (icon) return icon;
+    return 'mdi:folder-group';
   };
 
   if (isLoading) {
@@ -66,7 +72,17 @@ export default function GroupDetailScreen() {
             </TouchableOpacity>
           </View>
 
-          <DashboardHeader title={group.name} />
+          <View className="flex-row items-center gap-3 mb-4">
+            <View className="w-16 h-16 rounded-xl bg-card items-center justify-center">
+              <IconifyIcon name={getGroupIcon(group.icon)} size={32} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-2xl font-bold text-foreground">{group.name}</Text>
+              {group.category && (
+                <Text className="text-muted-foreground">{group.category}</Text>
+              )}
+            </View>
+          </View>
 
           <Card>
             <CardContent>
@@ -103,6 +119,41 @@ export default function GroupDetailScreen() {
               Delete
             </Button>
           </View>
+
+          {group.channels && group.channels.length > 0 && (
+            <View className="mt-6">
+              <Text className="text-lg font-semibold text-foreground mb-3">Channels ({group.channels.length})</Text>
+              <View className="gap-2">
+                {group.channels.map((channel) => (
+                  <TouchableOpacity
+                    key={channel.id}
+                    className="flex-row items-center gap-3 bg-card p-3 rounded-lg"
+                    onPress={() => router.push(`/channels/edit/${channel.id}`)}
+                  >
+                    {channel.thumbnail || channel.imageUrl ? (
+                      <Image
+                        source={{ uri: channel.thumbnail || channel.imageUrl }}
+                        className="w-12 h-12 rounded-lg"
+                      />
+                    ) : (
+                      <View className="w-12 h-12 rounded-lg bg-secondary items-center justify-center">
+                        <IconifyIcon name="mdi:television-play" size={20} />
+                      </View>
+                    )}
+                    <View className="flex-1">
+                      <Text className="text-foreground font-medium">{channel.name}</Text>
+                      {channel.contentType && (
+                        <Text className="text-muted-foreground text-sm">{channel.contentType}</Text>
+                      )}
+                    </View>
+                    <Badge variant={channel.isActive ? 'success' : 'error'}>
+                      {channel.isActive ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
 
           <View className="mt-6">
             <Button

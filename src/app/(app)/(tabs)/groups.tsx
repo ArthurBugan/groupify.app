@@ -4,6 +4,7 @@ import { useGroups } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Group } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function GroupsListScreen() {
   const router = useRouter();
@@ -11,17 +12,27 @@ export default function GroupsListScreen() {
   const { data, isLoading } = useGroups();
   const groups = data || [];
 
+  const getGroupIcon = (icon?: string) => {
+    if (icon) return icon;
+    return 'mdi:folder-group';
+  };
+
   const renderItem = ({ item }: { item: Group }) => (
     <TouchableOpacity
-      className="bg-card rounded-xl p-4 mb-3"
+      className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
       onPress={() => router.push(`/groups/${item.id}`)}
     >
-      <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
-      {item.description && (
-        <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
-          {item.description}
-        </Text>
-      )}
+      <View className="w-12 h-12 rounded-xl bg-secondary items-center justify-center">
+        <IconifyIcon name={getGroupIcon(item.icon)} size={24} />
+      </View>
+      <View className="flex-1">
+        <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
+        {item.description && (
+          <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
+            {item.description}
+          </Text>
+        )}
+      </View>
     </TouchableOpacity>
   );
 
