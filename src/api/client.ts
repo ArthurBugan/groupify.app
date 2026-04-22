@@ -90,7 +90,6 @@ class ApiClient {
       const token = await SecureStore.getItemAsync(TOKEN_KEY);
       if (token) {
         this.authToken = token;
-        this.correlationId = token;
       }
       return token;
     } catch (error) {
