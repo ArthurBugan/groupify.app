@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, FlatList, Alert, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useGroup, useDeleteGroup } from '@/hooks';
+import { useGroup, useDeleteGroup, useGroupSubgroups } from '@/hooks';
 import { Card, CardContent, Badge, Avatar, Button, Skeleton } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -11,8 +11,11 @@ export default function GroupDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: group, isLoading } = useGroup(id);
+  const { data: subgroupsData, isLoading: subgroupsLoading } = useGroupSubgroups(id);
   const deleteGroup = useDeleteGroup();
   const { isDark } = useTheme();
+
+  const childGroups = subgroupsData?.data || [];
 
   const handleDelete = () => {
     Alert.alert('Delete Group', 'Are you sure?', [
@@ -112,6 +115,34 @@ export default function GroupDetailScreen() {
             </Button>
           </View>
 
+          {childGroups.length > 0 && (
+            <View className="mt-6">
+              <Text className="text-lg font-semibold text-foreground mb-3">Subgroups ({childGroups.length})</Text>
+              <View className="gap-2">
+                {childGroups.map((childGroup) => (
+                  <TouchableOpacity
+                    key={childGroup.id}
+                    className="flex-row items-center gap-3 bg-card p-3 rounded-lg"
+                    onPress={() => router.push(`/groups/${childGroup.id}`)}
+                  >
+                    <View className="w-12 h-12 rounded-lg bg-secondary items-center justify-center">
+                      <IconifyIcon name={getGroupIcon(childGroup.icon)} size={20} />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-foreground font-medium">{childGroup.name}</Text>
+                      {childGroup.description && (
+                        <Text className="text-muted-foreground text-sm" numberOfLines={1}>
+                          {childGroup.description}
+                        </Text>
+                      )}
+                    </View>
+                    <IconifyIcon name="lucide:chevron-right" size={20} className="text-muted-foreground" />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+
           {group.channels && group.channels.length > 0 && (
             <View className="mt-6">
               <Text className="text-lg font-semibold text-foreground mb-3">Channels ({group.channels.length})</Text>
@@ -147,11 +178,18 @@ export default function GroupDetailScreen() {
             </View>
           )}
 
-          <View className="mt-6">
+          <View className="mt-6 flex-row gap-3">
+            <Button
+              variant="secondary"
+              onPress={() => router.push(`/groups/new?parentId=${id}`)}
+              className="flex-1"
+            >
+              Add Subgroup
+            </Button>
             <Button
               variant="secondary"
               onPress={() => router.push(`/groups/${id}/add-channel`)}
-              fullWidth
+              className="flex-1"
             >
               Add Channels
             </Button>

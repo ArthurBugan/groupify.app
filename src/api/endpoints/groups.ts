@@ -58,4 +58,8 @@ export const groupsApi = {
   syncVideos: async (id: string) => {
     return apiClient.post<{ synced: number }>(`/api/v3/groups/${id}/videos/sync`);
   },
+
+  getSubgroups: async (groupId: string) => {
+    return apiClient.get<PaginatedResponse<Group>>(`/api/v3/groups/subgroups/${groupId}`);
+  },
 };

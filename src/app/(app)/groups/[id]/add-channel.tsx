@@ -153,8 +153,8 @@ export default function AddChannelToGroupScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background p-4">
-      <SafeAreaView edges={['top']} className="flex-1 p-4 pb-0">
+    <View className="flex-1 bg-background">
+      <SafeAreaView edges={['top']} className="flex-1 p-4">
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
             <Text className="text-primary">← Back</Text>
@@ -265,9 +265,11 @@ export default function AddChannelToGroupScreen() {
         )}
       </SafeAreaView>
 
-      <Button onPress={handleSave} fullWidth>
-        Add Selected ({selectedChannels.length})
-      </Button>
+      <View className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-card">
+        <Button onPress={handleSave} fullWidth>
+          Add Selected ({selectedChannels.length})
+        </Button>
+      </View>
     </View>
   );
 }
