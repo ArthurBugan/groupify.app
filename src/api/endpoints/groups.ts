@@ -1,6 +1,6 @@
 import apiClient from '../client';
 import type { PaginatedResponse, Pagination } from '../../types';
-import type { Group } from '../../types';
+import type { Group, Channel, Anime, Website } from '../../types';
 
 export interface CreateGroupRequest {
   name: string;
@@ -60,6 +60,6 @@ export const groupsApi = {
   },
 
   getSubgroups: async (groupId: string) => {
-    return apiClient.get<PaginatedResponse<Group>>(`/api/v3/groups/subgroups/${groupId}`);
+    return apiClient.get<Group[]>(`/api/v3/groups/subgroups/${groupId}`);
   },
 };

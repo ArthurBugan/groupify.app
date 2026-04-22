@@ -54,7 +54,7 @@ export const channelsApi = {
   },
 
   batchUpdate: async (groupId: string, data: BatchUpdateChannelRequest) => {
-    return apiClient.post<void>(`/api/v3/channels/${groupId}/batch`, data);
+    return apiClient.patch<void>(`/api/v3/channels/${groupId}/batch`, data);
   },
 
   fetchUrl: async (url: string) => {
