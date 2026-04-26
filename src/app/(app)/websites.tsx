@@ -1,14 +1,28 @@
-import { View, Text, ScrollView, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useWebsites, useDeleteWebsite } from '@/hooks';
-import { Card, CardContent, Button } from '@/components/ui';
-import DashboardHeader from '@/components/DashboardHeader';
+import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
+import { useDeleteWebsite } from '@/hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 import type { Website } from '@/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { LegendList } from '@legendapp/list';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function WebsitesScreen() {
   const router = useRouter();
-  const { data, isLoading } = useWebsites();
+  const { isDark } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [search, setSearch] = useState('');
   const deleteWebsite = useDeleteWebsite();
+
+  const {
+    websites,
+    loadMore,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading
+  } = useWebsitesInfinite({ limit: 20, page: 1, search });
 
   const handleDelete = (id: string) => {
     Alert.alert('Delete Website', 'Are you sure?', [
@@ -27,33 +41,78 @@ export default function WebsitesScreen() {
     ]);
   };
 
-  return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
-      <View className="flex-row items-center mb-4">
-        <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-blue-500">← Back</Text>
-        </TouchableOpacity>
-      </View>
-
-      <DashboardHeader title="Websites" />
-
-      {data?.data.length === 0 ? (
-        <Text className="text-gray-500 text-center mt-8">No websites yet</Text>
+  const renderWebsite = ({ item }: { item: Website }) => (
+    <TouchableOpacity
+      className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
+      onPress={() => router.push(`/websites/edit/${item.id}`)}
+    >
+      {item.thumbnail ? (
+        <Image source={{ uri: item.thumbnail }} className="w-6 h-6 rounded-xl" />
       ) : (
-        data?.data.map((website: Website) => (
-          <Card key={website.id} className="mb-2">
-            <CardContent className="flex-row items-center justify-between">
-              <View className="flex-1">
-                <Text className="font-medium">{website.name}</Text>
-                <Text className="text-gray-500 text-sm">{website.url}</Text>
-              </View>
-              <TouchableOpacity onPress={() => handleDelete(website.id)}>
-                <Text className="text-red-500">🗑️</Text>
-              </TouchableOpacity>
-            </CardContent>
-          </Card>
-        ))
+        <View className="w-6 h-6 rounded-xl bg-secondary items-center justify-center">
+          <IconifyIcon name="lucide:globe" size={20} />
+        </View>
       )}
-    </ScrollView>
+      <View className="flex-1">
+        <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
+        <Text className="text-sm text-muted-foreground" numberOfLines={1}>{item.url}</Text>
+      </View>
+      <TouchableOpacity onPress={() => handleDelete(item.id)}>
+        <IconifyIcon name="lucide:trash-2" size={20} className="text-destructive" />
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
+
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View className="py-4">
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
+  return (
+    <View
+      className="flex-1 bg-background"
+      style={{
+        paddingTop: insets.top,
+        paddingLeft: insets.left,
+        paddingBottom: insets.bottom,
+        paddingRight: insets.right,
+      }}
+    >
+      <View className="p-4">
+        <View className="flex-row items-center mb-4">
+          <TouchableOpacity onPress={() => router.back()} className="mr-2">
+            <Text className="text-primary">← Back</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text className="text-3xl font-bold text-foreground mb-4">Websites</Text>
+
+        <TextInput
+          className="bg-card rounded-xl p-3 text-foreground mb-4"
+          placeholder="Search websites..."
+          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+          value={search}
+          onChangeText={setSearch}
+        />
+
+        <LegendList
+          data={websites || []}
+          onEndReached={loadMore}
+          renderItem={({ item }) => renderWebsite(item)}
+          keyExtractor={(item, index) => String(item.id + index)}
+          onEndReachedThreshold={0.1}
+          ListFooterComponent={renderFooter}
+          ListEmptyComponent={
+            <Text className="text-center text-muted-foreground mt-10">
+              {isLoading ? 'Loading...' : 'No websites found.'}
+            </Text>
+          }
+        />
+      </View>
+    </View>
   );
 }

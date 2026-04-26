@@ -1,10 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authApi } from '../api/endpoints';
-import type { LoginCredentials, RegisterCredentials, ForgotPasswordRequest } from '../types';
-import type { User } from '../types';
-import apiClient from '../api/client';
-import storage from '../services/storage';
-import { useAuthStore } from '../stores';
+import { authApi } from '@/api/endpoints';
+import type { LoginCredentials, RegisterCredentials, ForgotPasswordRequest } from '@/types';
+import apiClient from '@/api/client';
+import storage from '@/services/storage';
+import { useAuthStore } from '@/stores';
 
 export const useCurrentUser = () => {
   return useQuery({
@@ -18,16 +17,18 @@ export const useCurrentUser = () => {
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const setUser = useAuthStore((s) => s.setUser);
+  const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
 
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => authApi.login(credentials),
     onSuccess: async (data) => {
-      if (data.token) {
-        await apiClient.setAuthToken(data.token);
-        await storage.setToken(data.token);
+      if (data) {
+        await apiClient.setAuthToken(data);
+        await storage.setToken(data);
+        setAuthenticated(true);
+      } else {
+        console.log('No token in response');
       }
-      setUser(data.user);
-      queryClient.setQueryData(['currentUser'], data.user);
     },
   });
 };
@@ -35,6 +36,7 @@ export const useLogin = () => {
 export const useRegister = () => {
   const queryClient = useQueryClient();
   const setUser = useAuthStore((s) => s.setUser);
+  const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
 
   return useMutation({
     mutationFn: (credentials: RegisterCredentials) => authApi.register(credentials),
@@ -42,6 +44,7 @@ export const useRegister = () => {
       if (data.token) {
         await apiClient.setAuthToken(data.token);
         await storage.setToken(data.token);
+        setAuthenticated(true);
       }
       setUser(data.user);
       queryClient.setQueryData(['currentUser'], data.user);

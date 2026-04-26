@@ -34,11 +34,11 @@ export const channelsApi = {
   },
 
   get: async (id: string) => {
-    return apiClient.get<Channel>(`/api/v2/channels/${id}`);
+    return await apiClient.get<Channel>(`/api/v2/channels/${id}`);
   },
 
   getByGroup: async (groupId: string) => {
-    return apiClient.get<PaginatedResponse<Channel>>(`/api/v2/channels/group/${groupId}`);
+    return await apiClient.get<PaginatedResponse<Channel>>(`/api/v2/channels/group/${groupId}`);
   },
 
   create: async (data: CreateChannelRequest) => {
@@ -54,6 +54,10 @@ export const channelsApi = {
   },
 
   batchUpdate: async (groupId: string, data: BatchUpdateChannelRequest) => {
-    return apiClient.post<void>(`/api/v3/channels/${groupId}/batch`, data);
+    return apiClient.patch<void>(`/api/v3/channels/${groupId}/batch`, data);
+  },
+
+  fetchUrl: async (url: string) => {
+    return apiClient.post<Channel>('/api/v3/proxy/fetch-url', { url });
   },
 };

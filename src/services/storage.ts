@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 const KEYS = {
   AUTH_TOKEN: 'auth_token',
@@ -7,30 +7,40 @@ const KEYS = {
 
 export const storage = {
   async setToken(token: string): Promise<void> {
-    await AsyncStorage.setItem(KEYS.AUTH_TOKEN, token);
+    try {
+      await SecureStore.setItemAsync(KEYS.AUTH_TOKEN, token);
+    } catch (error) {
+      console.error('Failed to save token:', error);
+    }
   },
 
   async getToken(): Promise<string | null> {
-    return AsyncStorage.getItem(KEYS.AUTH_TOKEN);
+    try {
+      const token = await SecureStore.getItemAsync(KEYS.AUTH_TOKEN);
+      return token;
+    } catch (error) {
+      console.error('Failed to get token:', error);
+      return null;
+    }
   },
 
   async removeToken(): Promise<void> {
-    await AsyncStorage.removeItem(KEYS.AUTH_TOKEN);
+    await SecureStore.deleteItemAsync(KEYS.AUTH_TOKEN);
   },
 
   async setObject<T>(key: string, value: T): Promise<void> {
     const json = JSON.stringify(value);
-    await AsyncStorage.setItem(key, json);
+    await SecureStore.setItemAsync(key, json);
   },
 
   async getObject<T>(key: string): Promise<T | null> {
-    const json = await AsyncStorage.getItem(key);
+    const json = await SecureStore.getItemAsync(key);
     if (!json) return null;
     return JSON.parse(json) as T;
   },
 
   async remove(key: string): Promise<void> {
-    await AsyncStorage.removeItem(key);
+    await SecureStore.deleteItemAsync(key);
   },
 };
 

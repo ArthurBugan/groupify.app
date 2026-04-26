@@ -1,4 +1,5 @@
 import { Switch, View, Text } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider';
 
 interface SwitchProps {
   value: boolean;
@@ -7,6 +8,9 @@ interface SwitchProps {
 }
 
 export function SwitchToggle({ value, onValueChange, label }: SwitchProps) {
+  const { isDark } = useTheme();
+  const primaryColor = isDark ? '#fb7185' : '#f43f5e';
+
   return (
     <View className="flex-row items-center justify-between">
       {label && (
@@ -15,7 +19,7 @@ export function SwitchToggle({ value, onValueChange, label }: SwitchProps) {
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#E5E7EB', true: '#3B82F6' }}
+        trackColor={{ false: '#E5E7EB', true: primaryColor }}
         thumbColor="#FFFFFF"
       />
     </View>

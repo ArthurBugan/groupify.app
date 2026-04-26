@@ -1,39 +1,105 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useChannels } from '@/hooks';
+import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
+import { useTheme } from '@/theme/ThemeProvider';
 import type { Channel } from '@/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Icon } from '@/components/ui/Icons';
+import { useState } from 'react';
+import { LegendList } from '@legendapp/list';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function ChannelsListScreen() {
   const router = useRouter();
-  const { data, isLoading } = useChannels();
+  const { isDark } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [search, setSearch] = useState('');
 
-  const renderItem = ({ item }: { item: Channel }) => (
-    <TouchableOpacity 
-      className="bg-white rounded-xl p-4"
-      onPress={() => router.push(`/channels/edit/${item.id}`)}
+  const {
+    channels,
+    loadMore,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading
+  } = useChannelsInfinite({ limit: 20, page: 1, search });
+
+  const getGroupIcon = (icon?: string) => {
+    if (icon) return icon;
+    return 'lucide:folder';
+  };
+
+  const renderChannel = ({ item }: { item: Channel }) => (
+    <TouchableOpacity
+      className="bg-card rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
+      onPress={() => router.push(`/channels/change-group/${item.id}`)}
     >
-      <Text className="text-lg font-semibold text-gray-900">{item.name}</Text>
-      {item.description && (
-        <Text className="text-sm text-gray-500" numberOfLines={2}>
-          {item.description}
-        </Text>
+      {item.thumbnail || item.imageUrl ? (
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
+      ) : (
+        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
+          <Icon name="tv" size={20} />
+        </View>
       )}
+      <View className="flex-1">
+        <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
+        {item.description && (
+          <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
+            {item.description}
+          </Text>
+        )}
+        {item.groupName && (
+          <View className="flex-row items-center gap-1 mt-1">
+            <IconifyIcon name={getGroupIcon(item.groupIcon)} size={12} />
+            <Text className="text-xs text-muted-foreground">{item.groupName}</Text>
+          </View>
+        )}
+      </View>
     </TouchableOpacity>
   );
 
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View className="py-4">
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
   return (
-    <View className="flex-1 bg-gray-50 p-4">
-      <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-3xl font-bold text-gray-900">Channels</Text>
+    <View
+      style={{
+        paddingTop: insets.top,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+      className="flex-1 bg-background p-4"
+    >
+      <Text className="text-3xl font-bold text-foreground mb-4 pl-4">Channels</Text>
+
+      <View className="mb-4 p-4">
+        <TextInput
+          className="bg-card rounded-xl p-3 text-foreground"
+          placeholder="Search channels..."
+          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+          value={search}
+          onChangeText={setSearch}
+
+        />
       </View>
 
-      <FlatList
-        data={data?.data || []}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        refreshing={isLoading}
+      <LegendList
+        data={channels || []}
+        onEndReached={loadMore}
+        renderItem={renderChannel}
+        className="p-4 pt-0"
+        keyExtractor={(item, index) => String(item.channelId ?? '' + item.createdAt) + index}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          <Text className="text-center text-gray-500 mt-10">No channels yet.</Text>
+          <Text className="text-center text-muted-foreground mt-10">
+            {isLoading ? 'Loading...' : 'No channels found.'}
+          </Text>
         }
       />
     </View>

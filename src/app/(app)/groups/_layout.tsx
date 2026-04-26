@@ -5,7 +5,12 @@ export default function GroupsStack() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="new" />
-      <Stack.Screen name="[id]" />
+      <Stack.Screen
+        name="[id]/(tabs)"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="[id]/edit" />
       <Stack.Screen name="[id]/share" />
       <Stack.Screen name="[id]/add-channel" />

@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { groupsApi, type CreateGroupRequest, type UpdateGroupRequest, type GroupDisplayOrder } from '@/api/endpoints/groups';
+import type { PaginatedResponse } from '@/types';
+import type { Group } from '@/types';
 
 export const useGroups = (params?: { page?: number; limit?: number; search?: string }) => {
   return useQuery({
@@ -65,5 +67,13 @@ export const useBulkUpdateGroupOrder = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
     },
+  });
+};
+
+export const useGroupSubgroups = (groupId: string) => {
+  return useQuery({
+    queryKey: ['groupSubgroups', groupId],
+    queryFn: () => groupsApi.getSubgroups(groupId),
+    enabled: !!groupId,
   });
 };

@@ -5,6 +5,7 @@ import { useGroupShelf, useGroups, useUpdateGroupShelf } from '@/hooks';
 import { Card, CardContent, Button, Checkbox } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import type { Group } from '@/types';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function GroupShelfScreen() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function GroupShelfScreen() {
   const { data: groupsData } = useGroups();
   const updateGroupShelf = useUpdateGroupShelf();
   const [selectedIds, setSelectedIds] = useState<string[]>(shelfData?.groupIds || []);
+  const { isDark } = useTheme();
 
   const toggleGroup = (id: string) => {
     setSelectedIds((prev) =>
@@ -29,10 +31,10 @@ export default function GroupShelfScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-blue-500">← Back</Text>
+          <Text className="text-primary">← Back</Text>
         </TouchableOpacity>
       </View>
 

@@ -4,12 +4,14 @@ import { useShareLinks, useDeleteShareLink } from '@/hooks';
 import { Card, CardContent, Button } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import type { ShareLink } from '@/types';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function ShareLinksScreen() {
   const router = useRouter();
   const { data: response } = useShareLinks();
   const data = response?.data;
   const deleteShareLink = useDeleteShareLink();
+  const { isDark } = useTheme();
 
   const handleShare = async (url: string) => {
     try {
@@ -37,17 +39,17 @@ export default function ShareLinksScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-blue-500">← Back</Text>
+          <Text className="text-primary">← Back</Text>
         </TouchableOpacity>
       </View>
 
       <DashboardHeader title="Share Links" />
 
       {data?.length === 0 ? (
-        <Text className="text-gray-500 text-center mt-8">No share links yet</Text>
+        <Text className="text-muted-foreground text-center mt-8">No share links yet</Text>
       ) : (
         data?.map((link: ShareLink) => (
           <Card key={link.id} className="mb-2">
@@ -55,7 +57,7 @@ export default function ShareLinksScreen() {
               <View className="flex-row items-center justify-between mb-2">
                 <View>
                   <Text className="font-medium capitalize">{link.type}</Text>
-                  <Text className="text-gray-500 text-sm">{link.shareUrl}</Text>
+                  <Text className="text-muted-foreground text-sm">{link.shareUrl}</Text>
                 </View>
               </View>
               <View className="flex-row gap-2">

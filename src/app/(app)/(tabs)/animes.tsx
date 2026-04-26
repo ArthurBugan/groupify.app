@@ -1,39 +1,106 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAnimes } from '@/hooks';
+import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
+import { useTheme } from '@/theme/ThemeProvider';
 import type { Anime } from '@/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Icon } from '@/components/ui/Icons';
+import { LegendList } from '@legendapp/list';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function AnimesListScreen() {
   const router = useRouter();
-  const { data, isLoading } = useAnimes();
+  const { isDark } = useTheme();
+  const insets = useSafeAreaInsets();
+  
+  const {
+    animes,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    loadMore,
+    search,
+    setSearch,
+    refetch,
+  } = useAnimesInfinite();
 
-  const renderItem = ({ item }: { item: Anime }) => (
-    <TouchableOpacity 
-      className="bg-white rounded-xl p-4"
-      onPress={() => router.push(`/animes/edit/${item.id}`)}
+  const getGroupIcon = (icon?: string) => {
+    if (icon) return icon;
+    return 'lucide:folder';
+  };
+
+  const renderAnime = ({ item }: { item: Anime }) => (
+    <TouchableOpacity
+      className="bg-card rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
+      onPress={() => router.push(`/animes/change-group/${item.id}`)}
     >
-      <Text className="text-lg font-semibold text-gray-900">{item.name}</Text>
-      {item.description && (
-        <Text className="text-sm text-gray-500" numberOfLines={2}>
-          {item.description}
-        </Text>
+      {item.thumbnail || item.imageUrl ? (
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
+      ) : (
+        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
+          <Icon name="film" size={20} />
+        </View>
       )}
+      <View className="flex-1">
+        <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
+        {item.description && (
+          <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
+            {item.description}
+          </Text>
+        )}
+        {item.groupIcon && (
+          <View className="flex-row items-center gap-1 mt-1">
+            <IconifyIcon name={getGroupIcon(item.groupIcon)} size={12} />
+            <Text className="text-xs text-muted-foreground">{item.groupName}</Text>
+          </View>
+        )}
+      </View>
     </TouchableOpacity>
   );
 
+  const renderFooter = () => {
+    if (!isFetchingNextPage) return null;
+    return (
+      <View className="py-4">
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
   return (
-    <View className="flex-1 bg-gray-50 p-4">
-      <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-3xl font-bold text-gray-900">Animes</Text>
+    <View
+      style={{
+        paddingTop: insets.top,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+      className="flex-1 bg-background p-4"
+    >
+      <Text className="text-3xl font-bold text-foreground mb-4 pl-4">Animes</Text>
+
+      <View className="mb-4 p-4">
+        <TextInput
+          className="bg-card rounded-xl p-3 text-foreground"
+          placeholder="Search animes..."
+          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+          value={search}
+          onChangeText={setSearch}
+          onSubmitEditing={refetch}
+        />
       </View>
 
-      <FlatList
-        data={data?.data || []}
-        renderItem={renderItem}
+      <LegendList
+        data={animes}
+        renderItem={renderAnime}
         keyExtractor={(item) => item.id}
-        refreshing={isLoading}
+        className="p-4 pt-0"
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          <Text className="text-center text-gray-500 mt-10">No animes yet.</Text>
+          <Text className="text-center text-muted-foreground mt-10">
+            {isLoading ? 'Loading...' : 'No animes found.'}
+          </Text>
         }
       />
     </View>

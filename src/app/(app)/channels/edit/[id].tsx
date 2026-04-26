@@ -3,6 +3,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Input, Button, Card, CardContent, Select } from '@/components/ui';
 import { useChannel, useUpdateChannel, useGroups } from '../../../../hooks';
+import { useTheme } from '@/theme/ThemeProvider';
 
 export default function EditChannelScreen() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function EditChannelScreen() {
   const { data: channel, isLoading } = useChannel(id);
   const { data: groupsData } = useGroups();
   const updateChannel = useUpdateChannel();
+  const { isDark } = useTheme();
 
   const [name, setName] = useState(channel?.name || '');
   const [description, setDescription] = useState(channel?.description || '');
@@ -35,18 +37,18 @@ export default function EditChannelScreen() {
   };
 
   if (isLoading) {
-    return <View className="flex-1 bg-gray-50 p-4" />;
+    return <View className="flex-1 bg-background p-4" />;
   }
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 p-4">
+    <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <Button variant="ghost" onPress={() => router.back()}>
           ← Back
         </Button>
       </View>
 
-      <Text className="text-2xl font-bold text-gray-900 mb-6">Edit Channel</Text>
+      <Text className="text-2xl font-bold text-foreground mb-6">Edit Channel</Text>
 
       <Card>
         <CardContent>

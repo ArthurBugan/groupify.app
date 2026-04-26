@@ -10,4 +10,5 @@ export { Select } from './Select';
 export { SwitchToggle as Switch } from './Switch';
 export { Separator } from './Separator';
 export { Icon } from './Icons';
+export { IconPicker } from './IconPicker';
 export { Progress } from './Progress';
