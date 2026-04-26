@@ -3,6 +3,7 @@ import { useState, useCallback, useRef } from 'react';
 import BottomSheet, { BottomSheetFlatList, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useTheme } from '@/theme/ThemeProvider';
+import { getThemeColor } from '@/theme/themeColors';
 import { Portal } from 'react-native-portalize';
 
 interface SelectOption {
@@ -104,10 +105,10 @@ export function Select({
           backdropComponent={renderBackdrop}
           enableDynamicSizing={false}
           handleIndicatorStyle={{
-            backgroundColor: isDark ? '#6B7280' : '#9CA3AF',
+            backgroundColor: getThemeColor('muted-foreground', isDark),
           }}
           backgroundStyle={{
-            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+            backgroundColor: getThemeColor('popover', isDark),
           }}
         >
           <View style={{ padding: 16 }}>
@@ -116,13 +117,16 @@ export function Select({
             </Text>
 
             {/* Search */}
-            <View className="flex-row items-center gap-2 mb-3 bg-secondary rounded-lg px-3 py-2">
+            <View
+              className="flex-row items-center gap-2 mb-3 rounded-lg px-3 py-2"
+              style={{ backgroundColor: getThemeColor('secondary', isDark) }}
+            >
               <Text className="text-muted-foreground">🔍</Text>
               <TextInput
                 value={searchTerm}
                 onChangeText={setSearchTerm}
                 placeholder="Search..."
-                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+                placeholderTextColor={getThemeColor('muted-foreground', isDark)}
                 className="flex-1 text-foreground py-1"
               />
               {searchTerm !== '' && (
@@ -138,25 +142,20 @@ export function Select({
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleSelect(item.value)}
-                  className={`flex-row items-center gap-3 p-4 border-b ${
-                    isDark ? 'border-gray-700' : 'border-gray-200'
-                  }`}
+                  className="flex-row items-center gap-3 p-4 border-b"
+                  style={{
+                    borderBottomColor: getThemeColor('border', isDark),
+                  }}
                 >
-                  {item.icon ? (
-                    <View
-                      className="w-8 h-8 rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: isDark ? '#1F2937' : '#F3F4F6' }}
-                    >
-                      <IconifyIcon name={getGroupIcon(item.icon)} size={18} />
-                    </View>
-                  ) : (
-                    <View
-                      className="w-8 h-8 rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: isDark ? '#1F2937' : '#F3F4F6' }}
-                    >
-                      <IconifyIcon name="lucide:folder" size={18} />
-                    </View>
-                  )}
+                  <View
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: getThemeColor('muted', isDark) }}
+                  >
+                    <IconifyIcon
+                      name={item.icon ? getGroupIcon(item.icon) : 'lucide:folder'}
+                      size={18}
+                    />
+                  </View>
                   <Text
                     className={`flex-1 text-base ${
                       item.value === value
@@ -167,7 +166,11 @@ export function Select({
                     {item.label}
                   </Text>
                   {item.value === value && (
-                    <IconifyIcon name="lucide:check" size={18} color={isDark ? '#60A5FA' : '#2563EB'} />
+                    <IconifyIcon
+                      name="lucide:check"
+                      size={18}
+                      color={getThemeColor('primary', isDark)}
+                    />
                   )}
                 </TouchableOpacity>
               )}

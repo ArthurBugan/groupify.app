@@ -1,12 +1,12 @@
 import { View, Text, Alert, ScrollView, TouchableOpacity } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroup, useDeleteGroup } from '@/hooks';
 import { Button } from '@/components/ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function GroupSettingsScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { data: group } = useGroup(id);
   const deleteGroup = useDeleteGroup();
 
@@ -27,6 +27,8 @@ export default function GroupSettingsScreen() {
       },
     ]);
   };
+
+  console.log(group, id)
 
   return (
     <ScrollView className="flex-1 bg-background p-4">

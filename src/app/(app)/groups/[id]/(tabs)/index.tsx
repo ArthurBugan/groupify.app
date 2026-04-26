@@ -1,14 +1,13 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, Linking } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroup, useGroupSubgroups } from '@/hooks';
-import { Card, CardContent, Badge, Button } from '@/components/ui';
-import { useTheme } from '@/theme/ThemeProvider';
+import { Card, CardContent, Button } from '@/components/ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function GroupOverviewScreen() {
   const router = useRouter();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useGlobalSearchParams<{ id: string }>();
   const { data: group } = useGroup(id);
   const { data: subgroupsData } = useGroupSubgroups(id);
 

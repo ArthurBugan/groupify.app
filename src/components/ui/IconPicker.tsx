@@ -3,7 +3,7 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import {
   useCallback,
@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useTheme } from '@/theme/ThemeProvider';
+import { getThemeColor } from '@/theme/themeColors';
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { Portal } from 'react-native-portalize';
 
@@ -132,8 +133,9 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
       {/* Trigger button */}
       <TouchableOpacity
         onPress={() => handleOpenChange(true)}
-        className={`flex-row items-center justify-between bg-secondary border rounded-lg px-4 py-3 ${error ? 'border-destructive' : 'border-input'
-          }`}
+        className={`flex-row items-center justify-between bg-secondary border rounded-lg px-4 py-3 ${
+          error ? 'border-destructive' : 'border-input'
+        }`}
       >
         <View className="flex-row items-center gap-3">
           <IconifyIcon name={value || 'lucide:folder'} size={20} />
@@ -157,10 +159,10 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
           backdropComponent={renderBackdrop}
           enableDynamicSizing={false}
           handleIndicatorStyle={{
-            backgroundColor: isDark ? '#6B7280' : '#9CA3AF',
+            backgroundColor: getThemeColor('muted-foreground', isDark),
           }}
           backgroundStyle={{
-            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+            backgroundColor: getThemeColor('popover', isDark),
           }}
         >
           <BottomSheetScrollView contentContainerStyle={{ padding: 16 }}>
@@ -168,13 +170,16 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
             <Text className="text-lg font-bold text-foreground mb-3">Choose an Icon</Text>
 
             {/* Search */}
-            <View className="flex-row items-center gap-2 mb-3 bg-secondary rounded-lg px-3 py-2">
+            <View
+              className="flex-row items-center gap-2 mb-3 rounded-lg px-3 py-2"
+              style={{ backgroundColor: getThemeColor('secondary', isDark) }}
+            >
               <Text className="text-muted-foreground">🔍</Text>
               <TextInput
                 value={searchTerm}
                 onChangeText={handleFilter}
                 placeholder="Search icons..."
-                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+                placeholderTextColor={getThemeColor('muted-foreground', isDark)}
                 className="flex-1 text-foreground py-1"
               />
               {searchTerm !== '' && (
@@ -201,6 +206,7 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                       iconName={iconName}
                       isSelected={value === iconName}
                       onSelect={handleIconSelect}
+                      isDark={isDark}
                     />
                   ))}
                 </View>
@@ -217,14 +223,16 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                     <TouchableOpacity
                       key={cat.key}
                       onPress={() => setActiveCategory(cat.key)}
-                      className={`px-3 py-1.5 rounded-full ${activeCategory === cat.key ? 'bg-primary' : 'bg-secondary'
-                        }`}
+                      className={`px-3 py-1.5 rounded-full ${
+                        activeCategory === cat.key ? 'bg-primary' : 'bg-secondary'
+                      }`}
                     >
                       <Text
-                        className={`text-xs font-medium ${activeCategory === cat.key
-                          ? 'text-primary-foreground'
-                          : 'text-muted-foreground'
-                          }`}
+                        className={`text-xs font-medium ${
+                          activeCategory === cat.key
+                            ? 'text-primary-foreground'
+                            : 'text-muted-foreground'
+                        }`}
                       >
                         {cat.name}
                       </Text>
@@ -240,6 +248,7 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                       iconName={iconName}
                       isSelected={value === `twemoji:${iconName}`}
                       onSelect={handleIconSelect}
+                      isDark={isDark}
                     />
                   ))}
                 </View>
@@ -256,16 +265,18 @@ interface IconButtonProps {
   iconName: string;
   isSelected: boolean;
   onSelect: (iconName: string) => void;
+  isDark: boolean;
 }
 
-function IconButton({ iconName, isSelected, onSelect }: IconButtonProps) {
+function IconButton({ iconName, isSelected, onSelect, isDark }: IconButtonProps) {
   const displayName = iconName.includes(':') ? iconName : `twemoji:${iconName}`;
 
   return (
     <TouchableOpacity
       onPress={() => onSelect(displayName)}
-      className={`w-12 h-12 items-center justify-center rounded-lg ${isSelected ? 'bg-primary/20 border-2 border-primary' : 'bg-secondary'
-        }`}
+      className={`w-12 h-12 items-center justify-center rounded-lg ${
+        isSelected ? 'bg-primary/20 border-2 border-primary' : 'bg-secondary'
+      }`}
     >
       <IconifyIcon name={displayName} size={24} />
       {isSelected && (
