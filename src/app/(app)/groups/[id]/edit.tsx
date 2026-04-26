@@ -99,7 +99,7 @@ export default function EditGroupScreen() {
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
-      <SafeAreaView edges={['top']}>
+      <SafeAreaView edges={['top', 'bottom']}>
         <View className="flex-row items-center mb-4">
           <Button variant="ghost" onPress={() => router.back()}>
             ← Back

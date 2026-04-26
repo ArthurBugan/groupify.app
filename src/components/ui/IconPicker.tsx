@@ -3,7 +3,6 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  ScrollView,
 } from 'react-native';
 import {
   useCallback,
@@ -16,6 +15,7 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
 import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { Portal } from 'react-native-portalize';
+import { FlashList } from '@shopify/flash-list';
 
 // Timer for debouncing search
 let searchTimer: ReturnType<typeof setTimeout>;
@@ -70,8 +70,6 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
     (iconName: string) => {
       const formatted = iconName.includes(':') ? iconName : `twemoji:${iconName}`;
       onChange(formatted);
-      setIsOpen(false);
-      setSearchTerm('');
     },
     [onChange]
   );
@@ -199,31 +197,33 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 <Text className="text-sm text-muted-foreground mb-2">
                   Found {filteredIcons.length} icons matching "{searchTerm}"
                 </Text>
-                <View className="flex-row flex-wrap gap-1">
-                  {filteredIcons.map((iconName) => (
+                <FlashList
+                  data={filteredIcons}
+                  numColumns={6}
+                  keyExtractor={(item) => item}
+                  renderItem={({ item: iconName }) => (
                     <IconButton
-                      key={iconName}
                       iconName={iconName}
-                      isSelected={value === iconName}
+                      selectedValue={value}
                       onSelect={handleIconSelect}
                       isDark={isDark}
                     />
-                  ))}
-                </View>
+                  )}
+                />
               </View>
             ) : (
               <View>
                 {/* Category tabs */}
-                <ScrollView
+                <FlashList
+                  data={categories}
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  className="flex-row gap-1 mb-3"
-                >
-                  {categories.map((cat) => (
+                  keyExtractor={(item) => item.key}
+                  contentContainerStyle={{ gap: 4, marginBottom: 12 }}
+                  renderItem={({ item: cat }) => (
                     <TouchableOpacity
-                      key={cat.key}
                       onPress={() => setActiveCategory(cat.key)}
-                      className={`px-3 py-1.5 rounded-full ${
+                      className={`px-3 m-1 py-1.5 rounded-full ${
                         activeCategory === cat.key ? 'bg-primary' : 'bg-secondary'
                       }`}
                     >
@@ -237,21 +237,23 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                         {cat.name}
                       </Text>
                     </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                  )}
+                />
 
                 {/* Icons grid */}
-                <View className="flex-row flex-wrap gap-1">
-                  {activeIcons.map((iconName) => (
+                <FlashList
+                  data={activeIcons}
+                  numColumns={6}
+                  keyExtractor={(item) => item}
+                  renderItem={({ item: iconName }) => (
                     <IconButton
-                      key={iconName}
                       iconName={iconName}
-                      isSelected={value === `twemoji:${iconName}`}
+                      selectedValue={value}
                       onSelect={handleIconSelect}
                       isDark={isDark}
                     />
-                  ))}
-                </View>
+                  )}
+                />
               </View>
             )}
           </BottomSheetScrollView>
@@ -263,18 +265,19 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
 
 interface IconButtonProps {
   iconName: string;
-  isSelected: boolean;
+  selectedValue: string;
   onSelect: (iconName: string) => void;
   isDark: boolean;
 }
 
-function IconButton({ iconName, isSelected, onSelect, isDark }: IconButtonProps) {
+function IconButton({ iconName, selectedValue, onSelect, isDark }: IconButtonProps) {
   const displayName = iconName.includes(':') ? iconName : `twemoji:${iconName}`;
+  const isSelected = selectedValue === displayName;
 
   return (
     <TouchableOpacity
       onPress={() => onSelect(displayName)}
-      className={`w-12 h-12 items-center justify-center rounded-lg ${
+      className={`w-12 m-1 h-12 items-center justify-center rounded-lg ${
         isSelected ? 'bg-primary/20 border-2 border-primary' : 'bg-secondary'
       }`}
     >
