@@ -76,20 +76,10 @@ export default function GroupsListScreen() {
     return (
       <View key={group.id}>
         <TouchableOpacity
-          className="bg-card rounded-xl p-4 mb-2 flex-row items-center gap-3"
+          className="bg-card rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
           style={{ marginLeft: level * 20 }}
           onPress={() => router.push(`/groups/${group.id}`)}
         >
-          {hasChildren && (
-            <TouchableOpacity onPress={() => toggleExpand(group.id)} className="p-1">
-              <IconifyIcon
-                name={isExpanded ? 'lucide:chevron-down' : 'lucide:chevron-right'}
-                size={18}
-                color={isDark ? '#94a3b8' : '#9CA3AF'}
-              />
-            </TouchableOpacity>
-          )}
-          {!hasChildren && <View style={{ width: 22 }} />}
           <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
             <IconifyIcon name={getGroupIcon(group.icon)} size={20} />
           </View>
@@ -101,6 +91,15 @@ export default function GroupsListScreen() {
               </Text>
             )}
           </View>
+          {hasChildren && (
+            <TouchableOpacity onPress={() => toggleExpand(group.id)} className="w-6 h-6 rounded-lg bg-secondary items-center justify-center">
+              <IconifyIcon
+                name={isExpanded ? 'lucide:folder-open' : 'lucide:folder'}
+                size={isExpanded ? 14 : 14}
+                color={isDark ? '#94a3b8' : '#9CA3AF'}
+              />
+            </TouchableOpacity>
+          )}
         </TouchableOpacity>
         {hasChildren && isExpanded && group.children!.map(child => renderGroup(child, level + 1))}
       </View>

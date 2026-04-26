@@ -1,0 +1,278 @@
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  ScrollView
+} from 'react-native';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { useTheme } from '@/theme/ThemeProvider';
+import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { Portal } from 'react-native-portalize';
+
+// Timer for debouncing search
+let searchTimer: ReturnType<typeof setTimeout>;
+
+interface Category {
+  name: string;
+  key: string;
+  icons: string[];
+}
+
+interface IconPickerProps {
+  value: string;
+  onChange: (value: string) => void;
+  label?: string;
+  error?: string;
+}
+
+export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
+  const { isDark } = useTheme();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState('');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [filteredIcons, setFilteredIcons] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch twemoji categories on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(
+          'https://api.iconify.design/collection?prefix=twemoji&chars=true&aliases=true'
+        ).then((r) => r.json());
+
+        const cats: Category[] = Object.keys(resp.categories).map((category) => ({
+          name: category,
+          key: category,
+          icons: resp.categories[category],
+        }));
+        setCategories(cats);
+        setActiveCategory(cats[0]?.key || '');
+      } catch {
+        // fallback
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleIconSelect = useCallback(
+    (iconName: string) => {
+      const formatted = iconName.includes(':') ? iconName : `twemoji:${iconName}`;
+      onChange(formatted);
+      setIsOpen(false);
+      setSearchTerm('');
+    },
+    [onChange]
+  );
+
+  const handleOpenChange = useCallback((newOpen: boolean) => {
+    setIsOpen(newOpen);
+    if (newOpen) {
+      bottomSheetRef.current?.expand();
+      setSearchTerm('');
+    } else {
+      bottomSheetRef.current?.close();
+      setSearchTerm('');
+    }
+  }, []);
+
+  const handleFilter = useCallback((text: string) => {
+    setSearchTerm(text);
+    clearTimeout(searchTimer);
+
+    searchTimer = setTimeout(async () => {
+      if (text.trim() === '') {
+        setFilteredIcons([]);
+        return;
+      }
+
+      try {
+        const resp = await fetch(
+          `https://api.iconify.design/search?query=${encodeURIComponent(text)}&limit=200`
+        ).then((r) => r.json());
+        setFilteredIcons(resp?.icons || []);
+      } catch {
+        setFilteredIcons([]);
+      }
+    }, 500);
+  }, []);
+
+  const activeIcons = activeCategory
+    ? categories.find((c) => c.key === activeCategory)?.icons || []
+    : [];
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+      />
+    ),
+    []
+  );
+
+  return (
+    <View>
+      {label && (
+        <Text className="text-sm font-medium text-foreground mb-1">{label}</Text>
+      )}
+
+      {/* Trigger button */}
+      <TouchableOpacity
+        onPress={() => handleOpenChange(true)}
+        className={`flex-row items-center justify-between bg-secondary border rounded-lg px-4 py-3 ${error ? 'border-destructive' : 'border-input'
+          }`}
+      >
+        <View className="flex-row items-center gap-3">
+          <IconifyIcon name={value || 'lucide:folder'} size={20} />
+          {value ? (
+            <Text className="text-foreground text-sm">{value}</Text>
+          ) : (
+            <Text className="text-muted-foreground text-sm">Select icon</Text>
+          )}
+        </View>
+        <Text className="text-muted-foreground text-sm">🔍</Text>
+      </TouchableOpacity>
+
+      {error && <Text className="text-xs text-destructive mt-1">{error}</Text>}
+
+      {/* Bottom Sheet — portaled to root so it covers the whole app */}
+      <Portal>
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={isOpen ? 0 : -1}
+          snapPoints={['85%']}
+          backdropComponent={renderBackdrop}
+          enableDynamicSizing={false}
+          handleIndicatorStyle={{
+            backgroundColor: isDark ? '#6B7280' : '#9CA3AF',
+          }}
+          backgroundStyle={{
+            backgroundColor: isDark ? '#111827' : '#FFFFFF',
+          }}
+        >
+          <BottomSheetScrollView contentContainerStyle={{ padding: 16 }}>
+            {/* Header */}
+            <Text className="text-lg font-bold text-foreground mb-3">Choose an Icon</Text>
+
+            {/* Search */}
+            <View className="flex-row items-center gap-2 mb-3 bg-secondary rounded-lg px-3 py-2">
+              <Text className="text-muted-foreground">🔍</Text>
+              <TextInput
+                value={searchTerm}
+                onChangeText={handleFilter}
+                placeholder="Search icons..."
+                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+                className="flex-1 text-foreground py-1"
+              />
+              {searchTerm !== '' && (
+                <TouchableOpacity onPress={() => handleFilter('')}>
+                  <Text className="text-muted-foreground text-lg">✕</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Content */}
+            {isLoading ? (
+              <View className="items-center py-10">
+                <Text className="text-muted-foreground">Loading icons...</Text>
+              </View>
+            ) : searchTerm ? (
+              <View>
+                <Text className="text-sm text-muted-foreground mb-2">
+                  Found {filteredIcons.length} icons matching "{searchTerm}"
+                </Text>
+                <View className="flex-row flex-wrap gap-1">
+                  {filteredIcons.map((iconName) => (
+                    <IconButton
+                      key={iconName}
+                      iconName={iconName}
+                      isSelected={value === iconName}
+                      onSelect={handleIconSelect}
+                    />
+                  ))}
+                </View>
+              </View>
+            ) : (
+              <View>
+                {/* Category tabs */}
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  className="flex-row gap-1 mb-3"
+                >
+                  {categories.map((cat) => (
+                    <TouchableOpacity
+                      key={cat.key}
+                      onPress={() => setActiveCategory(cat.key)}
+                      className={`px-3 py-1.5 rounded-full ${activeCategory === cat.key ? 'bg-primary' : 'bg-secondary'
+                        }`}
+                    >
+                      <Text
+                        className={`text-xs font-medium ${activeCategory === cat.key
+                          ? 'text-primary-foreground'
+                          : 'text-muted-foreground'
+                          }`}
+                      >
+                        {cat.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+
+                {/* Icons grid */}
+                <View className="flex-row flex-wrap gap-1">
+                  {activeIcons.map((iconName) => (
+                    <IconButton
+                      key={iconName}
+                      iconName={iconName}
+                      isSelected={value === `twemoji:${iconName}`}
+                      onSelect={handleIconSelect}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
+          </BottomSheetScrollView>
+        </BottomSheet>
+      </Portal>
+    </View>
+  );
+}
+
+interface IconButtonProps {
+  iconName: string;
+  isSelected: boolean;
+  onSelect: (iconName: string) => void;
+}
+
+function IconButton({ iconName, isSelected, onSelect }: IconButtonProps) {
+  const displayName = iconName.includes(':') ? iconName : `twemoji:${iconName}`;
+
+  return (
+    <TouchableOpacity
+      onPress={() => onSelect(displayName)}
+      className={`w-12 h-12 items-center justify-center rounded-lg ${isSelected ? 'bg-primary/20 border-2 border-primary' : 'bg-secondary'
+        }`}
+    >
+      <IconifyIcon name={displayName} size={24} />
+      {isSelected && (
+        <View className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full items-center justify-center">
+          <Text className="text-primary-foreground text-xs">✓</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+}

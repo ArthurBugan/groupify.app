@@ -69,7 +69,7 @@ export default function ChangeChannelGroupScreen() {
         {groupsData?.data.map((group) => (
           <TouchableOpacity
             key={group.id}
-            className={`flex-row items-center gap-3 bg-card rounded-xl p-4 mb-2 ${selectedGroupId === group.id ? 'border-2 border-blue-500' : ''}`}
+            className={`flex-row items-center gap-3 bg-card rounded-xl p-4 mb-2 ${selectedGroupId === group.id ? 'border-2 border-primary' : ''}`}
             onPress={() => setSelectedGroupId(group.id)}
           >
             <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
@@ -84,7 +84,7 @@ export default function ChangeChannelGroupScreen() {
               )}
             </View>
             {selectedGroupId === group.id && (
-              <IconifyIcon name="mdi:check-circle" size={24} color="#3b82f6" />
+              <IconifyIcon name="mdi:check-circle" size={24} color="color-primary" />
             )}
           </TouchableOpacity>
         ))}

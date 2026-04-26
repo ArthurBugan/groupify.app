@@ -1,13 +1,15 @@
 import '../../global.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Slot } from 'expo-router';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect, useRef } from 'react';
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { Uniwind } from 'uniwind';
 import { useHandleOAuthCallback } from '@/hooks';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Portal, Host } from 'react-native-portalize';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,7 +72,7 @@ function AppContent() {
 
 function AppContentWithTheme() {
   const { isDark } = useTheme();
-  
+
   useEffect(() => {
     Uniwind.setTheme(isDark ? 'dark' : 'light');
   }, [isDark]);
@@ -82,9 +84,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <QueryClientProvider client={queryClient}>
-          <AppContentWithTheme />
-        </QueryClientProvider>
+        <GestureHandlerRootView>
+          <Host>
+            <QueryClientProvider client={queryClient}>
+              <AppContentWithTheme />
+            </QueryClientProvider>
+          </Host>
+        </GestureHandlerRootView>
       </ThemeProvider>
     </SafeAreaProvider>
   );

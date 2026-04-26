@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, Linking } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useGroup, useGroupSubgroups } from '@/hooks';
 import { Card, CardContent, Badge, Button } from '@/components/ui';
@@ -18,14 +18,85 @@ export default function GroupOverviewScreen() {
     return 'lucide:folder';
   };
 
-  if (!group) {
-    return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-muted-foreground">Loading...</Text>
-      </View>
-    );
-  }
+    if (!group) {
+      return (
+        <View className="flex-1 bg-background items-center justify-center">
+          <Text className="text-muted-foreground">Loading...</Text>
+        </View>
+      );
+    }
 
+    const handleItemPress = (item: any) => {
+      // Check if it's a channel or website with a URL
+      if (item.url) {
+        const url = item.url;
+        // Check if it's a YouTube link or a plain YouTube channel ID
+        if (/^[UC][a-zA-Z0-9_-]{22,}$/.test(url)) {
+          let youtubeId = '';
+          try {
+            // Handle both full URLs and channel ID strings safely
+            if (url.startsWith('http')) {
+              const parsedUrl = new URL(url);
+              youtubeId = parsedUrl.searchParams.get('v');
+            } else {
+              youtubeId = `youtube://watch?v=${url}`;
+            }
+          } catch (e) {
+            console.error('Invalid YouTube URL:', url, e);
+          }
+          const isChannelId = !url.startsWith('http');
+          const youtubeScheme = youtubeId ? `youtube://watch?v=${youtubeId}` : url;
+          Linking.canOpenURL(youtubeScheme)
+            .then((supported) => {
+              if (supported) {
+                Linking.openURL(youtubeScheme).catch((e) => {
+                  console.error("YouTube deep link failed, opening in browser:", e);
+                  Linking.openURL(isChannelId ? `https://www.youtube.com/channel/${url}` : url);
+                });
+              } else {
+                console.log("YouTube app not installed, opening in browser");
+                Linking.openURL(url);
+              }
+            })
+            .catch(() => {
+              // If url is a channel ID, convert to YouTube homepage URL
+              const fallbackUrl = isChannelId ? `https://www.youtube.com/channel/${url}` : url;
+              Linking.openURL(fallbackUrl);
+            });
+        }
+        // Check if it's an anime-related link
+        else if (url.includes('anime') || item.contentType === 'anime') {
+          // Try crunchyroll:// scheme first
+          Linking.canOpenURL('crunchyroll://')
+            .then((supported) => {
+              if (supported) {
+                Linking.openURL('crunchyroll://').catch(() => {
+                  Linking.openURL(url);
+                });
+              } else {
+                Linking.openURL(url);
+              }
+            })
+            .catch((error) => {
+              console.error('Crunchyroll link check failed:', error);
+              console.log("Falling back to browser for:", url);
+              Linking.openURL(url);
+            });
+        }
+        // Default: open in browser
+        else {
+          Linking.openURL(url).catch((error) => {
+            console.error('Failed to open URL:', error);
+          });
+        }
+        return;
+      }
+
+      // Handle subgroup navigation
+      if (item.id) {
+        router.push(`/groups/${item.id}`);
+      }
+    };
 
   return (
     <ScrollView className="flex-1 bg-background p-4">
@@ -35,7 +106,7 @@ export default function GroupOverviewScreen() {
             <Text className="text-primary">← Back</Text>
           </TouchableOpacity>
         </View>
-        <View className="flex-row items-center gap-3 mb-4">
+        <View className="flex-row items-center gap-2">
           <View className="w-16 h-16 rounded-xl bg-card items-center justify-center">
             <IconifyIcon name={getGroupIcon(group.icon)} size={32} />
           </View>
@@ -45,6 +116,8 @@ export default function GroupOverviewScreen() {
               <Text className="text-muted-foreground">{group.category}</Text>
             )}
           </View>
+        </View>
+        <View className='my-2'>
           <Button
             onPress={() => router.push(`/groups/${id}/add-channel`)}
             variant="secondary"
@@ -66,17 +139,17 @@ export default function GroupOverviewScreen() {
           </CardContent>
         </Card>
 
-        {subgroupsData?.length > 0 && (
+        {subgroupsData && subgroupsData.length > 0 && (
           <View className="mt-4">
             <Text className="text-lg font-semibold text-foreground mb-2">
-              Subgroups ({subgroupsData?.length})
+              Subgroups ({subgroupsData.length})
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-              {subgroupsData?.map((childGroup) => (
+              {subgroupsData.map((childGroup) => (
                 <TouchableOpacity
                   key={childGroup.id}
                   className="w-20 items-center gap-2 bg-card p-1.5 rounded-lg mx-1"
-                  onPress={() => router.push(`/groups/${childGroup.id}`)}
+                  onPress={() => handleItemPress(childGroup)}
                 >
                   <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
                     <IconifyIcon name={getGroupIcon(childGroup.icon)} size={16} />
@@ -96,28 +169,28 @@ export default function GroupOverviewScreen() {
               Channels ({group.channels.length})
             </Text>
             <View className="gap-2">
-              {group.channels.slice(0, 5).map((channel) => (
+              {group.channels.map((channel) => (
                 <TouchableOpacity
                   key={channel.id}
-                  className="flex-row items-center gap-3 bg-card p-3 rounded-lg"
-                  onPress={() => router.push(`/channels/edit/${channel.id}`)}
+                  className="flex-row items-center gap-3 bg-card p-1.5 rounded-lg"
+                  onPress={() => handleItemPress(channel)}
                 >
                   {channel.thumbnail || channel.imageUrl ? (
                     <Image
                       source={{ uri: channel.thumbnail || channel.imageUrl }}
-                      className="w-12 h-12 rounded-lg"
+                      className="w-10 h-10 rounded-lg"
                     />
                   ) : (
-                    <View className="w-12 h-12 rounded-lg bg-secondary items-center justify-center">
+                    <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
                       <IconifyIcon name="mdi:television-play" size={20} />
                     </View>
                   )}
                   <View className="flex-1">
                     <Text className="text-foreground font-medium">{channel.name}</Text>
                   </View>
-                  <Badge variant={channel.isActive ? 'success' : 'error'}>
-                    {channel.isActive ? 'Active' : 'Inactive'}
-                  </Badge>
+                  <View className="w-6 h-6 rounded-lg bg-secondary items-center justify-center">
+                    <IconifyIcon name="mdi:open-in-new" size={14} color="white" />
+                  </View>
                 </TouchableOpacity>
               ))}
             </View>

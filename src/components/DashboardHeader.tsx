@@ -22,7 +22,7 @@ export function DashboardHeader({ title, description, action }: DashboardHeaderP
       {action && (
         <TouchableOpacity
           onPress={action.onPress}
-          className="bg-blue-500 px-4 py-2 rounded-lg"
+          className="bg-primary px-4 py-2 rounded-lg"
         >
           <Text className="text-white font-medium">{action.label}</Text>
         </TouchableOpacity>

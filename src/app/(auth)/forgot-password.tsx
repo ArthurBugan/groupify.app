@@ -44,7 +44,7 @@ export default function ForgotPasswordScreen() {
         />
 
         <TouchableOpacity
-          className="bg-blue-500 rounded-lg p-4 items-center"
+          className="bg-primary rounded-lg p-4 items-center"
           onPress={handleSubmit}
           disabled={forgotPassword.isPending}
         >

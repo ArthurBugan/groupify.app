@@ -28,15 +28,15 @@ export default function ChannelsListScreen() {
     return 'lucide:folder';
   };
 
-  const renderItem = ({ item }: { item: Channel }) => (
+  const renderChannel = ({ item }: { item: Channel }) => (
     <TouchableOpacity
-      className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
+      className="bg-card rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
       onPress={() => router.push(`/channels/change-group/${item.id}`)}
     >
       {item.thumbnail || item.imageUrl ? (
-        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-12 h-12 rounded-xl" />
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
       ) : (
-        <View className="w-12 h-12 rounded-xl bg-secondary items-center justify-center">
+        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
           <Icon name="tv" size={20} />
         </View>
       )}
@@ -91,9 +91,9 @@ export default function ChannelsListScreen() {
       <LegendList
         data={channels || []}
         onEndReached={loadMore}
-        renderItem={renderItem}
+        renderItem={renderChannel}
         className="p-4 pt-0"
-        keyExtractor={(item, index) => String(item.channelId ?? '' + item.createdAt + index)}
+        keyExtractor={(item, index) => String(item.channelId ?? '' + item.createdAt) + index}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={

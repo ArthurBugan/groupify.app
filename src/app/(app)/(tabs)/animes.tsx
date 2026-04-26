@@ -29,15 +29,15 @@ export default function AnimesListScreen() {
     return 'lucide:folder';
   };
 
-  const renderItem = ({ item }: { item: Anime }) => (
+  const renderAnime = ({ item }: { item: Anime }) => (
     <TouchableOpacity
-      className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
+      className="bg-card rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
       onPress={() => router.push(`/animes/change-group/${item.id}`)}
     >
       {item.thumbnail || item.imageUrl ? (
-        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-12 h-12 rounded-xl" />
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
       ) : (
-        <View className="w-12 h-12 rounded-xl bg-secondary items-center justify-center">
+        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
           <Icon name="film" size={20} />
         </View>
       )}
@@ -91,7 +91,7 @@ export default function AnimesListScreen() {
 
       <LegendList
         data={animes}
-        renderItem={renderItem}
+        renderItem={renderAnime}
         keyExtractor={(item) => item.id}
         className="p-4 pt-0"
         onEndReached={loadMore}

@@ -41,9 +41,10 @@ export default function WebsitesScreen() {
     ]);
   };
 
-  const renderItem = ({ item }: { item: Website }) => (
+  const renderWebsite = ({ item }: { item: Website }) => (
     <TouchableOpacity
       className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
+      onPress={() => router.push(`/websites/edit/${item.id}`)}
     >
       {item.thumbnail ? (
         <Image source={{ uri: item.thumbnail }} className="w-6 h-6 rounded-xl" />
@@ -101,7 +102,7 @@ export default function WebsitesScreen() {
         <LegendList
           data={websites || []}
           onEndReached={loadMore}
-          renderItem={renderItem}
+          renderItem={({ item }) => renderWebsite(item)}
           keyExtractor={(item, index) => String(item.id + index)}
           onEndReachedThreshold={0.1}
           ListFooterComponent={renderFooter}

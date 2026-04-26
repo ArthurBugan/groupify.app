@@ -39,7 +39,7 @@ export default function GroupSubgroupsScreen() {
                 className="flex-row items-center gap-3 bg-card p-3 rounded-lg"
                 onPress={() => router.push(`/groups/${childGroup.id}`)}
               >
-                <View className="w-12 h-12 rounded-lg bg-secondary items-center justify-center">
+                <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
                   <IconifyIcon name={getGroupIcon(childGroup.icon)} size={20} />
                 </View>
                 <View className="flex-1">
