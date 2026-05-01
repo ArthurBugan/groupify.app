@@ -129,7 +129,7 @@ export default function GroupsListScreen() {
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-3xl font-bold text-foreground pl-4">Groups</Text>
           <TouchableOpacity
-            className="bg-primary px-4 py-2 rounded-lg"
+            className="bg-primary px-4 py-2 mr-2 rounded-lg"
             onPress={() => router.push('/groups/new')}
           >
             <Text className="text-primary-foreground font-semibold">+ New</Text>

@@ -43,7 +43,7 @@ export default function DashboardHomeScreen() {
       className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
     >
-      <View className="px-4 pt-2 pb-6">
+      <View className="px-4 pb-6">
         <Text className="text-3xl font-bold text-foreground">Dashboard</Text>
         <Text className="text-sm text-muted-foreground mt-1">Your content at a glance</Text>
       </View>
