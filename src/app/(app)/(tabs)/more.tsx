@@ -36,8 +36,8 @@ export default function MoreScreen() {
               onPress={() => router.push(item.path)}
               className={`flex-row items-center p-4 ${index < menuItems.length - 1 ? 'border-b border-border' : ''}`}
             >
-              <IconifyIcon name={item.icon} size={24} className="mr-2" color="#9CA3AF" />
-              <Text className="flex-1 text-foreground">{item.label}</Text>
+              <IconifyIcon name={item.icon} size={24} color="#9CA3AF" />
+              <Text className="flex-1 text-foreground ml-2">{item.label}</Text>
               <IconifyIcon name="lucide:chevron-right" size={16} className="text-muted-foreground" />
             </TouchableOpacity>
           ))}

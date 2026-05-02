@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@babel/preset-react": "^7.28.5",
     "@gorhom/bottom-sheet": "^5.2.10",
     "@hookform/resolvers": "^5.2.2",
     "@huymobile/react-native-iconify": "^1.0.9",
@@ -20,10 +21,12 @@
     "react": "19.2.0",
     "react-hook-form": "^7.74.0",
     "react-native": "0.83.4",
+    "react-native-dom": "^0.5.0",
     "react-native-portalize": "^1.0.7",
     "react-native-reanimated": "4.3.0",
     "react-native-safe-area-context": "~5.6.2",
     "react-native-svg": "^15.15.4",
+    "react-native-web": "^0.21.2",
     "tailwindcss": "~4.2.2",
     "uniwind": "~1.6.2",
     "zod": "^4.3.6",
@@ -31,6 +34,10 @@
   },
   "devDependencies": {
     "@types/react": "19.2.10",
+    "appshots": "^1.2.1",
+    "canvas": "^3.2.3",
+    "playwright": "^1.59.1",
+    "remotion": "^4.0.455",
     "typescript": "~5.9.2"
   },
   "private": true,

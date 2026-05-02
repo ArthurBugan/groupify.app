@@ -45,7 +45,7 @@ PODS:
     - SDWebImageAVIFCoder (~> 0.11.0)
     - SDWebImageSVGCoder (~> 1.7.0)
     - SDWebImageWebPCoder (~> 0.14.6)
-  - ExpoKeepAwake (55.0.6):
+  - ExpoKeepAwake (55.0.7):
     - ExpoModulesCore
   - ExpoLinking (55.0.13):
     - ExpoModulesCore
@@ -2279,7 +2279,7 @@ DEPENDENCIES:
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - "ExpoDomWebView (from `../node_modules/@expo/dom-webview/ios`)"
   - ExpoFileSystem (from `../node_modules/expo/node_modules/expo-file-system/ios`)
-  - ExpoFont (from `../node_modules/expo/node_modules/expo-font/ios`)
+  - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoGlassEffect (from `../node_modules/expo-glass-effect/ios`)
   - ExpoImage (from `../node_modules/expo-image/ios`)
   - ExpoKeepAwake (from `../node_modules/expo/node_modules/expo-keep-awake/ios`)
@@ -2397,7 +2397,7 @@ EXTERNAL SOURCES:
   ExpoFileSystem:
     :path: "../node_modules/expo/node_modules/expo-file-system/ios"
   ExpoFont:
-    :path: "../node_modules/expo/node_modules/expo-font/ios"
+    :path: "../node_modules/expo-font/ios"
   ExpoGlassEffect:
     :path: "../node_modules/expo-glass-effect/ios"
   ExpoImage:
@@ -2592,7 +2592,7 @@ SPEC CHECKSUMS:
   ExpoFont: cdd7a1d574a376fa003c713eff49e0a4df8672c7
   ExpoGlassEffect: 72bcb9dc634262c59897ff7c53c16e2ff03990d0
   ExpoImage: ef931bba1fd3e907c2262216d17eb21095c9ac2b
-  ExpoKeepAwake: a1baf9810a2dee1905aa9bdd336852598f7220e9
+  ExpoKeepAwake: 861c66deb0f9f28f87882610195f26c4b88fba6f
   ExpoLinking: b3edfb991a148fecf22512bf2ca3bcfa1edc4610
   ExpoLogBox: a3de999775d423ac9cb85d24bd47628e5392761f
   ExpoModulesCore: df468e597146b519b08dbfa59b206e2c5ad932bd
