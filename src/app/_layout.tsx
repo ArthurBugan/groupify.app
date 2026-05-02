@@ -10,6 +10,7 @@ import { Uniwind } from 'uniwind';
 import { useHandleOAuthCallback } from '@/hooks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Portal, Host } from 'react-native-portalize';
+import AdMobManager from '@/components/ui/Admob';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,7 @@ export default function RootLayout() {
           <Host>
             <QueryClientProvider client={queryClient}>
               <AppContentWithTheme />
+               <AdMobManager style={{ marginTop: 10 }} />
             </QueryClientProvider>
           </Host>
         </GestureHandlerRootView>

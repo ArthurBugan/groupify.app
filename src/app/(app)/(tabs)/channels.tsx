@@ -5,9 +5,12 @@ import { useTheme } from '@/theme/ThemeProvider';
 import type { Channel } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui/Icons';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { LegendList } from '@legendapp/list';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { InlineAd } from '@/components/ui/Admob';
+
+type ListItem = Channel | { isAd: true; id: string };
 
 export default function ChannelsListScreen() {
   const router = useRouter();
@@ -22,6 +25,18 @@ export default function ChannelsListScreen() {
     isFetchingNextPage,
     isLoading
   } = useChannelsInfinite({ limit: 20, page: 1, search });
+
+  const channelsWithAds = useMemo(() => {
+    if (!channels) return [];
+    const result: ListItem[] = [];
+    channels.forEach((channel, index) => {
+      result.push(channel);
+      if ((index + 1) % 5 === 0) {
+        result.push({ isAd: true, id: `ad-${index}` });
+      }
+    });
+    return result;
+  }, [channels]);
 
   const getGroupIcon = (icon?: string) => {
     if (icon) return icon;
@@ -89,11 +104,16 @@ export default function ChannelsListScreen() {
       </View>
 
       <LegendList
-        data={channels || []}
+        data={channelsWithAds}
         onEndReached={loadMore}
-        renderItem={renderChannel}
+        renderItem={({ item }) => {
+          if ('isAd' in item) {
+            return <InlineAd />;
+          }
+          return renderChannel({ item });
+        }}
         className="p-4 pt-0"
-        keyExtractor={(item, index) => String(item.channelId ?? '' + item.createdAt) + index}
+        keyExtractor={(item, index) => item.id + index}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={

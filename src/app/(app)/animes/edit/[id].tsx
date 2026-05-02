@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Input, Button, Card, CardContent, Select } from '@/components/ui';
 import { useAnime, useGroups } from '../../../../hooks';
 import { useTheme } from '@/theme/ThemeProvider';
+import AdMobManager from '@/components/ui/Admob';
 
 export default function EditAnimeScreen() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function EditAnimeScreen() {
 
   const handleSubmit = async () => {
     Alert.alert('Success', 'Anime updated');
+    await AdMobManager.loadRewardedAd();
     router.back();
   };
 

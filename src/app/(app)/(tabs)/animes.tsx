@@ -7,6 +7,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui/Icons';
 import { LegendList } from '@legendapp/list';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { useMemo } from 'react';
+import { InlineAd } from '@/components/ui/Admob';
+
+type ListItem = Anime | { isAd: true; id: string };
 
 export default function AnimesListScreen() {
   const router = useRouter();
@@ -23,6 +27,18 @@ export default function AnimesListScreen() {
     setSearch,
     refetch,
   } = useAnimesInfinite();
+
+  const animesWithAds = useMemo(() => {
+    if (!animes) return [];
+    const result: ListItem[] = [];
+    animes.forEach((anime, index) => {
+      result.push(anime);
+      if ((index + 1) % 5 === 0) {
+        result.push({ isAd: true, id: `ad-${index}` });
+      }
+    });
+    return result;
+  }, [animes]);
 
   const getGroupIcon = (icon?: string) => {
     if (icon) return icon;
@@ -90,9 +106,14 @@ export default function AnimesListScreen() {
       </View>
 
       <LegendList
-        data={animes}
-        renderItem={renderAnime}
-        keyExtractor={(item) => item.id}
+        data={animesWithAds}
+        renderItem={({ item }) => {
+          if ('isAd' in item) {
+            return <InlineAd />;
+          }
+          return renderAnime({ item });
+        }}
+        keyExtractor={(item, index) => item.id + index}
         className="p-4 pt-0"
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
