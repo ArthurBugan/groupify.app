@@ -9,7 +9,7 @@ const shortcuts = [
   { label: 'Channels', count: 'channels', route: '/channels', icon: 'lucide:tv', gradient: 'from-violet-400/80 to-purple-500/80' },
   { label: 'Animes', count: 'animeChannels', route: '/animes', icon: 'lucide:film', gradient: 'from-amber-400/80 to-orange-500/80' },
   { label: 'Websites', count: 'websites', route: '/websites', icon: 'lucide:globe', gradient: 'from-emerald-400/80 to-teal-500/80' },
-  { label: 'Group Shelf', count: null, route: '/groupshelf', icon: 'lucide:shelf', gradient: 'from-sky-400/80 to-cyan-500/80' },
+  { label: 'Group Shelf', count: null, route: '/groupshelf', icon: 'lucide:library', gradient: 'from-sky-400/80 to-cyan-500/80' },
   { label: 'Share Links', count: null, route: '/share-links', icon: 'lucide:link-2', gradient: 'from-indigo-400/80 to-blue-500/80' },
 ];
 
@@ -43,7 +43,7 @@ export default function DashboardHomeScreen() {
       className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
     >
-      <View className="px-4 pt-2 pb-6">
+      <View className="px-4 pb-6">
         <Text className="text-3xl font-bold text-foreground">Dashboard</Text>
         <Text className="text-sm text-muted-foreground mt-1">Your content at a glance</Text>
       </View>

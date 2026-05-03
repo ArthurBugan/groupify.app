@@ -9,7 +9,15 @@ import { ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { Uniwind } from 'uniwind';
 import { useHandleOAuthCallback } from '@/hooks';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Portal, Host } from 'react-native-portalize';
+import { Host } from 'react-native-portalize';
+import AdMobManager from '@/components/ui/Admob';
+import * as Sentry from "@sentry/react-native";
+
+Sentry.init({
+  dsn: `${process.env.EXPO_PUBLIC_SENTRY_DSN}`,
+  sendDefaultPii: true,
+  tracesSampleRate: 0,
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,7 +88,7 @@ function AppContentWithTheme() {
   return <AppContent />;
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
@@ -88,6 +96,7 @@ export default function RootLayout() {
           <Host>
             <QueryClientProvider client={queryClient}>
               <AppContentWithTheme />
+               <AdMobManager style={{ marginTop: 10 }} />
             </QueryClientProvider>
           </Host>
         </GestureHandlerRootView>
@@ -95,3 +104,5 @@ export default function RootLayout() {
     </SafeAreaProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

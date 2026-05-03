@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Input, Button, Card, CardContent, Select } from '@/components/ui';
 import { useChannel, useUpdateChannel, useGroups } from '../../../../hooks';
 import { useTheme } from '@/theme/ThemeProvider';
+import AdMobManager from '@/components/ui/Admob';
 
 export default function EditChannelScreen() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function EditChannelScreen() {
         id,
         data: { id, name, url, groupId },
       });
+      await AdMobManager.loadRewardedAd();
       router.back();
     } catch {
       Alert.alert('Error', 'Failed to update channel');

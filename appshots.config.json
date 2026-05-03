@@ -1,0 +1,30 @@
+{
+  "capture": {
+    "baseUrl": "http://localhost:8081",
+    "screens": [
+      { "path": "/", "name": "home" },
+      { "path": "/login", "name": "login" },
+      { "path": "/groups", "name": "groups" },
+      { "path": "/channels", "name": "channels" },
+      { "path": "/animes", "name": "animes" },
+      { "path": "/more", "name": "more" },
+      { "path": "/settings", "name": "settings" }
+    ],
+    "devices": ["iphone-6.9", "iphone-6.3", "android-phone-tall"],
+    "outputDir": "./screenshots/raw"
+  },
+  "frame": {
+    "devices": ["iphone-6.9", "iphone-6.3", "android-phone-tall"],
+    "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "outputDir": "./screenshots/framed"
+  },
+  "titles": {
+    "login": "Login - Sign in to access your Groups, Channels, Animes and more",
+    "home": "Home - Dashboard showing your content at a glance",
+    "groups": "Groups - Browse and manage your groups with members",
+    "channels": "Channels - View all your channels organized by groups",
+    "animes": "Animes - Track and manage your anime collection",
+    "more": "More - Quick actions and links to Settings, Blog",
+    "settings": "Settings - Manage Account, Appearance, Billing"
+  }
+}

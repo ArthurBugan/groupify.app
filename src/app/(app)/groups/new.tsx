@@ -8,6 +8,7 @@ import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useCreateGroup, useGroups } from '@/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { CreateGroupRequest } from '@/api/endpoints/groups';
+import AdMobManager from '@/components/ui/Admob';
 
 const DEFAULT_CATEGORIES = [
   'Apps & Software',
@@ -86,6 +87,7 @@ export default function CreateGroupScreen() {
         enableGroupshelf: data.enableGroupshelf,
       };
       await createGroup.mutateAsync(payload);
+      await AdMobManager.loadRewardedAd();
       router.back();
     } catch {
       Alert.alert('Error', 'Failed to create group');
@@ -194,7 +196,7 @@ export default function CreateGroupScreen() {
                   (g) => g.id === field.value
                 );
                 return (
-                  <View>
+                  <View className='mt-4'>
                     <Text className="text-sm font-medium text-foreground mb-2">
                       Parent Group (Optional)
                     </Text>

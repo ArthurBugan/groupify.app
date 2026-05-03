@@ -6,6 +6,7 @@ import { Button } from '@/components/ui';
 import { useTheme } from '@/theme/ThemeProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
+import AdMobManager from '@/components/ui/Admob';
 
 export default function ChangeChannelGroupScreen() {
   const router = useRouter();
@@ -15,8 +16,9 @@ export default function ChangeChannelGroupScreen() {
   const [selectedGroupId, setSelectedGroupId] = useState(channel?.data?.groupId || '');
   const { isDark } = useTheme();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     Alert.alert('Success', 'Group updated');
+    await AdMobManager.loadRewardedAd();
     router.back();
   };
 

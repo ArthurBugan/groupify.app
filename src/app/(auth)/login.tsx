@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useLogin, useGoogleLogin, useDiscordLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -11,6 +11,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const login = useLogin();
   const googleLogin = useGoogleLogin();
   const discordLogin = useDiscordLogin();
@@ -65,14 +66,26 @@ export default function LoginScreen() {
               autoCapitalize="none"
               placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
             />
-            <TextInput
-              className="bg-secondary rounded-lg p-4 text-base text-foreground"
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
-            />
+            <View className="relative">
+              <TextInput
+                className="bg-secondary rounded-lg p-4 pr-12 text-base text-foreground"
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+              />
+              <TouchableOpacity
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-2"
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <IconifyIcon
+                  name={showPassword ? 'mdi:eye-off' : 'mdi:eye'}
+                  size={24}
+                  color={isDark ? '#94a3b8' : '#6B7280'}
+                />
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity
               className="bg-primary rounded-lg p-4 items-center"

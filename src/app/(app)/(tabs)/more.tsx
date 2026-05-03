@@ -1,15 +1,15 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores';
-import { useTheme } from '@/theme/ThemeProvider';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 const menuItems = [
-  { label: 'Websites', path: '/websites', icon: '🌐' },
-  { label: 'Share Links', path: '/share-links', icon: '🔗' },
-  { label: 'My Shelf', path: '/groupshelf', icon: '📚' },
-  { label: 'Blog', path: '/blog', icon: '📝' },
-  { label: 'Settings', path: '/settings', icon: '⚙️' },
+  { label: 'Websites', path: '/websites', icon: 'lucide:globe' },
+  { label: 'Share Links', path: '/share-links', icon: 'lucide:link-2' },
+  { label: 'My Shelf', path: '/groupshelf', icon: 'lucide:library' },
+  { label: 'Blog', path: '/blog', icon: 'lucide:newspaper' },
+  { label: 'Settings', path: '/settings', icon: 'lucide:settings' },
 ];
 
 export default function MoreScreen() {
@@ -23,7 +23,7 @@ export default function MoreScreen() {
 
   return (
     <View
-      className="flex-1 bg-background p-4"
+      className="flex-1 bg-background px-4"
     >
       <SafeAreaView edges={['top']}>
         <Text className="text-3xl font-bold text-foreground mb-6">More</Text>
@@ -35,9 +35,9 @@ export default function MoreScreen() {
               onPress={() => router.push(item.path)}
               className={`flex-row items-center p-4 ${index < menuItems.length - 1 ? 'border-b border-border' : ''}`}
             >
-              <Text className="text-xl mr-3">{item.icon}</Text>
-              <Text className="flex-1 text-foreground">{item.label}</Text>
-              <Text className="text-muted-foreground">›</Text>
+              <IconifyIcon name={item.icon} size={24} color="#9CA3AF" />
+              <Text className="flex-1 text-foreground ml-2">{item.label}</Text>
+              <IconifyIcon name="lucide:chevron-right" size={16} color="#9CA3AF" />
             </TouchableOpacity>
           ))}
         </View>

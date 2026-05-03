@@ -6,10 +6,13 @@ import type { Group } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useState, useMemo } from 'react';
+import { InlineAd } from '@/components/ui/Admob';
 
 interface GroupWithChildren extends Group {
   children?: GroupWithChildren[];
 }
+
+type ListItem = GroupWithChildren | { isAd: true; id: string };
 
 export default function GroupsListScreen() {
   const router = useRouter();
@@ -54,7 +57,16 @@ export default function GroupsListScreen() {
       }
     });
 
-    return rootGroups;
+    // Inject ads every 5 items
+    const result: ListItem[] = [];
+    rootGroups.forEach((group, index) => {
+      result.push(group);
+      if ((index + 1) % 5 === 0) {
+        result.push({ isAd: true, id: `ad-${index}` });
+      }
+    });
+
+    return result;
   }, [groups]);
 
   const toggleExpand = (groupId: string) => {
@@ -129,7 +141,7 @@ export default function GroupsListScreen() {
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-3xl font-bold text-foreground pl-4">Groups</Text>
           <TouchableOpacity
-            className="bg-primary px-4 py-2 rounded-lg"
+            className="bg-primary px-4 py-2 mr-2 rounded-lg"
             onPress={() => router.push('/groups/new')}
           >
             <Text className="text-primary-foreground font-semibold">+ New</Text>
@@ -148,8 +160,13 @@ export default function GroupsListScreen() {
       </View>
       <FlatList
         data={groupedGroups}
-        renderItem={({ item }) => renderGroup(item)}
-        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => {
+          if ('isAd' in item) {
+            return <InlineAd />;
+          }
+          return renderGroup(item);
+        }}
+        keyExtractor={(item, index) => item.id + index}
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
