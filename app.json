@@ -12,7 +12,8 @@
       "appleTeamId": "UM6SZWPURL",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "supportsTablet": true
     },
     "android": {
       "package": "com.groupifyapp",
