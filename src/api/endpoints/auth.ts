@@ -13,6 +13,7 @@ import type {
   UpdateProfileRequest,
   UpdateProfileResponse,
 } from '../../types';
+import * as Sentry from "@sentry/react-native";
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
@@ -40,7 +41,10 @@ export const authApi = {
   },
 
   getCurrentUser: async (): Promise<User> => {
-    return apiClient.get<User>('/api/v3/me');
+    const response = await apiClient.get<User>('/api/v3/me');
+    Sentry.setUser({ email: response.email });
+    Sentry.setExtra('user', response.id);
+    return response;
   },
 
   updateProfile: async (data: UpdateProfileRequest): Promise<UpdateProfileResponse> => {
