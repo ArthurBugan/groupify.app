@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useLogin, useGoogleLogin, useDiscordLogin, useIsOAuthLoading } from '@/hooks';
+import { useLogin, useGoogleLogin, useDiscordLogin, useAppleLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
+import * as AppleAuthentication from 'expo-apple-authentication';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function LoginScreen() {
   const login = useLogin();
   const googleLogin = useGoogleLogin();
   const discordLogin = useDiscordLogin();
+  const appleLogin = useAppleLogin();
   const isOAuthLoading = useIsOAuthLoading();
 
   const handleLogin = async () => {
@@ -43,6 +45,14 @@ export default function LoginScreen() {
       await discordLogin.signIn();
     } catch (error) {
       Alert.alert('Discord Login Failed', 'Unable to sign in with Discord');
+    }
+  };
+
+  const handleAppleLogin = async () => {
+    try {
+      await appleLogin.signIn();
+    } catch (error) {
+      Alert.alert('Apple Login Failed', 'Unable to sign in with Apple');
     }
   };
 
@@ -141,6 +151,19 @@ export default function LoginScreen() {
                 {discordLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Discord'}
               </Text>
             </TouchableOpacity>
+
+            <AppleAuthentication.AppleAuthenticationButton
+              className="bg-secondary flex-row justify-center gap-2 border border-input rounded-lg p-4 items-center"
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={5}
+              onPress={handleAppleLogin}
+            >
+              <IconifyIcon name="mdi:apple" size={24} />
+              <Text className="text-foreground font-medium">
+                {appleLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Apple'}
+              </Text>
+            </AppleAuthentication.AppleAuthenticationButton>
           </View>
         </View>
       </ScrollView>

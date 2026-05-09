@@ -1,6 +1,9 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { toast } from 'sonner-native';
+import storage from '@/services/storage';
 import type { ApiError } from '../types';
+import { router } from 'expo-router';
 
 const TOKEN_KEY = 'auth_token';
 const CORRELATION_ID_KEY = 'correlation_id';
@@ -17,6 +20,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true,
     });
 
     this.client.interceptors.request.use((config) => {
@@ -30,7 +34,13 @@ class ApiClient {
       (response) => response,
       async (error: AxiosError) => {
         if (error.response?.status === 401) {
+          // Clear all auth data
           await this.removeAuthToken();
+          await storage.removeToken();
+          router.replace('/login');
+          toast.error('Session expired', {
+            description: 'Please log in again',
+          });
         }
         return Promise.reject(error);
       }
@@ -45,6 +55,29 @@ class ApiClient {
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await this.client.post<{ data?: T }>(endpoint, data);
     const payload = response.data as { data?: T; success?: boolean; message?: string };
+    
+    // Extract auth-token from cookies if present
+    const cookies = response.headers['set-cookie'];
+    console.log('Response cookies:', cookies);
+    if (cookies) {
+      const cookieArray = Array.isArray(cookies) ? cookies : [cookies];
+      for (const cookie of cookieArray) {
+        if (cookie && cookie.includes('auth-token=')) {
+          const tokenMatch = cookie.match(/auth-token=([^;]+)/);
+          if (tokenMatch && tokenMatch[1]) {
+            this.authToken = tokenMatch[1];
+            // Save to SecureStore for persistence
+            try {
+              await SecureStore.setItemAsync(TOKEN_KEY, tokenMatch[1]);
+              console.log('Token extracted from cookie and saved');
+            } catch (error) {
+              console.error('Failed to save token from cookie:', error);
+            }
+          }
+        }
+      }
+    }
+    
     return payload.data as T;
   }
 

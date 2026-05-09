@@ -10,6 +10,7 @@
       ],
       "bundleIdentifier": "com.groupifyapp",
       "appleTeamId": "UM6SZWPURL",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
@@ -25,6 +26,7 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
+      ["expo-apple-authentication"],
       [
         "expo-build-properties",
         {
@@ -61,7 +63,9 @@
           "project": "groupify",
           "organization": "groupify"
         }
-      ]
+      ],
+      "expo-web-browser",
+      "@sentry/react-native"
     ],
     "icon": "./assets/images/icon.png",
     "splash": {

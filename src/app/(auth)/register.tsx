@@ -25,7 +25,8 @@ export default function RegisterScreen() {
         encryptedPassword: password,
       });
       router.replace('/(app)');
-    } catch {
+    } catch (error) {
+      console.log('Registration error:', error);
       Alert.alert('Registration Failed', 'Unable to create account');
     }
   };
