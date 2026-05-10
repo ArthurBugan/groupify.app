@@ -24,6 +24,10 @@ class ApiClient {
     });
 
     this.client.interceptors.request.use((config) => {
+      // Add auth token if available
+      if (this.authToken) {
+        config.headers['Authorization'] = `Bearer ${this.authToken}`;
+      }
       if (this.correlationId) {
         config.headers['x-correlation-id'] = this.correlationId;
       }
@@ -48,7 +52,7 @@ class ApiClient {
   }
 
   async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
-    const response = await this.client.get<T>(endpoint, { params });
+      const response = await this.client.get<T>(endpoint, { params });
     return response.data;
   }
 
@@ -58,7 +62,6 @@ class ApiClient {
     
     // Extract auth-token from cookies if present
     const cookies = response.headers['set-cookie'];
-    console.log('Response cookies:', cookies);
     if (cookies) {
       const cookieArray = Array.isArray(cookies) ? cookies : [cookies];
       for (const cookie of cookieArray) {

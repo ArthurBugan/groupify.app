@@ -1,64 +1,28 @@
-import { useState, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { animesApi } from '@/api/endpoints/animes';
 import type { PaginatedResponse, Anime } from '@/types';
 
-export function useAnimesInfinite() {
-  const [search, setSearch] = useState('');
+export function useAnimesInfinite(options: { page?: number; search?: string; limit?: number } = {}) {
+  const [search, setSearch] = useState(options.search ?? '');
 
   const query = useInfiniteQuery<PaginatedResponse<Anime>>({
     queryKey: ['animes', search],
-    queryFn: async ({ pageParam = 1 }) => { 
-      const result = await animesApi.list({ page: pageParam, limit: 20, search: search || undefined });
-      return result;
-    },
-    getNextPageParam: (lastPage) => {
-      if (!lastPage?.pagination) return undefined;
-      const { pagination } = lastPage;
-      return pagination.page < pagination.totalPages ? pagination.page + 1 : undefined;
-    },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    queryFn: ({ pageParam = 1 }) => animesApi.list({ page: options.page ?? pageParam, limit: options.limit ?? 20, search }),
+    getNextPageParam: (lastPage) => lastPage?.pagination && lastPage.pagination.page < lastPage.pagination.totalPages 
+      ? lastPage.pagination.page + 1 
+      : undefined,
     initialPageParam: 1,
   });
 
-  let animes: Anime[] = [];
-  let hasNextPage = false;
-  
-  if (query.data?.pages) {
-    const lastPage = query.data.pages[query.data.pages.length - 1];
-    if (lastPage?.pagination) {
-      hasNextPage = lastPage.pagination.page < lastPage.pagination.totalPages;
-    }
-    for (const page of query.data.pages) {
-      if (page?.data) {
-        animes = [...animes, ...page.data];
-      }
-    }
-  }
-
-  const loadMore = useCallback(async () => {
-    if (hasNextPage && !query.isFetching) {
-      await query.fetchNextPage();
-    }
-  }, [hasNextPage, query.fetchNextPage, query.isFetching]);
-
-  const handleSearch = useCallback((text: string) => {
-    setSearch(text);
-  }, []);
-
-  const handleRefetch = useCallback(() => {
-    query.refetch();
-  }, [query.refetch]);
-
   return {
-    animes,
+    animes: query.data?.pages.flatMap(page => page?.data ?? []) ?? [],
     isLoading: query.isLoading,
-    isFetchingNextPage: query.isFetching,
-    hasNextPage,
-    loadMore,
+    isFetchingNextPage: query.isFetchingNextPage,
+    hasNextPage: query.hasNextPage,
+    loadMore: query.fetchNextPage,
     search,
-    setSearch: handleSearch,
-    refetch: handleRefetch,
+    setSearch,
+    refetch: query.refetch,
   };
 }

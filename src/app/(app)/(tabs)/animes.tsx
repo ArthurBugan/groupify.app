@@ -9,6 +9,7 @@ import { LegendList } from '@legendapp/list';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useMemo } from 'react';
 import { InlineAd } from '@/components/ui/Admob';
+import { Skeleton } from '@/components/ui';
 
 type ListItem = Anime | { isAd: true; id: string };
 
@@ -119,9 +120,24 @@ export default function AnimesListScreen() {
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          <Text className="text-center text-muted-foreground mt-10">
-            {isLoading ? 'Loading...' : 'No animes found.'}
-          </Text>
+          isLoading ? (
+            <View className="p-4 gap-4">
+              {[1, 2, 3, 4, 5].map(i => (
+                <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
+                  <Skeleton width={40} height={40} className="rounded-lg" />
+                  <View className="flex-1 gap-2">
+                    <Skeleton height={16} className="w-3/4 rounded" />
+                    <Skeleton height={12} className="w-1/2 rounded" />
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View className="p-8 items-center">
+              <IconifyIcon name="lucide:film" size={48} className="text-muted-foreground mb-4" />
+              <Text className="text-muted-foreground text-center">No animes found.</Text>
+            </View>
+          )
         }
       />
     </View>
