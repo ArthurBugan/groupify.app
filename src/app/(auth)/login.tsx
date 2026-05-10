@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useLogin, useGoogleLogin, useDiscordLogin, useAppleLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -56,6 +56,8 @@ export default function LoginScreen() {
     }
   };
 
+  const isLoading = login.isPending || isOAuthLoading;
+
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-background"
@@ -100,7 +102,7 @@ export default function LoginScreen() {
             <TouchableOpacity
               className="bg-primary rounded-lg p-4 items-center"
               onPress={handleLogin}
-              disabled={login.isPending}
+              disabled={isLoading}
             >
               <Text className="text-primary-foreground text-base font-semibold">
                 {login.isPending ? 'Signing in...' : 'Sign In'}
@@ -131,39 +133,44 @@ export default function LoginScreen() {
 
           <View className="gap-3">
             <TouchableOpacity
-              className="bg-secondary flex-row justify-center gap-2 border border-input rounded-lg p-4 items-center"
+              className="bg-white flex-row items-center rounded-lg p-3 border border-gray-200"
               onPress={handleGoogleLogin}
               disabled={googleLogin.isLoading || isOAuthLoading}
+              activeOpacity={0.8}
             >
-              <IconifyIcon name="mdi:google" size={24} />
-              <Text className="text-foreground font-medium">
-                {googleLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Google'}
+              {googleLogin.isLoading || isOAuthLoading ? (
+                <ActivityIndicator size="small" color="#4285F4" />
+              ) : (
+                <IconifyIcon name="mdi:google" size={24} color="black" className="mr-3" />
+              )}
+              <Text className="text-gray-700 font-medium text-base flex-1 text-center pr-6">
+                Sign in with Google
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="bg-secondary flex-row justify-center gap-2 border border-input rounded-lg p-4 items-center"
+              className="bg-[#5865F2] flex-row rounded-lg p-3"
               onPress={handleDiscordLogin}
               disabled={discordLogin.isLoading || isOAuthLoading}
+              activeOpacity={0.8}
             >
-              <IconifyIcon name="mdi:discord" size={24} />
-              <Text className="text-foreground font-medium">
-                {discordLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Discord'}
+              {discordLogin.isLoading || isOAuthLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <IconifyIcon name="mdi:discord" size={24} color="white" className="mr-3" />
+              )}
+              <Text className="text-white font-medium text-base flex-1 text-center pr-6">
+                Sign in with Discord
               </Text>
             </TouchableOpacity>
 
             <AppleAuthentication.AppleAuthenticationButton
-              className="bg-secondary flex-row justify-center gap-2 border border-input rounded-lg p-4 items-center"
               buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
               buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-              cornerRadius={5}
+              cornerRadius={8}
+              style={{ height: 50 }}
               onPress={handleAppleLogin}
-            >
-              <IconifyIcon name="mdi:apple" size={24} />
-              <Text className="text-foreground font-medium">
-                {appleLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Apple'}
-              </Text>
-            </AppleAuthentication.AppleAuthenticationButton>
+            />
           </View>
         </View>
       </ScrollView>

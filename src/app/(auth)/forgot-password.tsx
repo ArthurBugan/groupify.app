@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useForgotPassword } from '../../hooks';
+import { useForgotPassword } from '@/hooks';
+import { useTheme } from '@/theme/ThemeProvider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconifyIcon } from '@huymobile/react-native-iconify';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+  const { isDark } = useTheme();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const forgotPassword = useForgotPassword();
 
@@ -28,37 +33,59 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white p-6 justify-center">
-      <Text className="text-3xl font-bold text-gray-900 mb-2">Reset Password</Text>
-      <Text className="text-base text-gray-500 mb-8">Enter your email to receive reset instructions</Text>
+    <KeyboardAvoidingView
+      className="flex-1 bg-background"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView 
+        contentContainerClassName="flex-grow p-6" 
+        keyboardShouldPersistTaps="handled"
+        style={{ paddingTop: insets.top + 16 }}
+      >
+        <View className="flex-row items-center mb-8">
+          <TouchableOpacity onPress={() => router.back()} className="mr-3 p-2 -ml-2">
+            <IconifyIcon name="lucide:arrow-left" size={24} className="text-foreground" />
+          </TouchableOpacity>
+          <Text className="text-2xl font-bold text-foreground">Reset Password</Text>
+        </View>
 
-      <View className="gap-4">
-        <TextInput
-          className="bg-gray-100 rounded-lg p-4 text-base text-gray-900"
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          placeholderTextColor="#9CA3AF"
-        />
-
-        <TouchableOpacity
-          className="bg-primary rounded-lg p-4 items-center"
-          onPress={handleSubmit}
-          disabled={forgotPassword.isPending}
-        >
-          <Text className="text-white text-base font-semibold">
-            {forgotPassword.isPending ? 'Sending...' : 'Send Reset Link'}
+        <View className="flex-1">
+          <Text className="text-base text-muted-foreground mb-8">
+            Enter your email to receive reset instructions
           </Text>
-        </TouchableOpacity>
-      </View>
 
-      <View className="flex-row justify-center mt-6">
-        <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-          <Text className="text-primary text-sm font-semibold">Back to Sign In</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <View className="gap-4">
+            <TextInput
+              className="bg-card rounded-xl p-4 text-base text-foreground border border-border"
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+            />
+
+            <TouchableOpacity
+              className="bg-primary rounded-xl p-4 items-center mt-2"
+              onPress={handleSubmit}
+              disabled={forgotPassword.isPending}
+            >
+              <Text className="text-primary-foreground text-base font-semibold">
+                {forgotPassword.isPending ? 'Sending...' : 'Send Reset Link'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View className="flex-row justify-center mt-8 pb-8">
+          <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+            <View className="flex-row items-center gap-2">
+              <IconifyIcon name="lucide:chevron-left" size={16} className="text-primary" />
+              <Text className="text-primary text-sm font-medium">Back to Sign In</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

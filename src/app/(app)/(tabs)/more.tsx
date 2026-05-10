@@ -7,7 +7,7 @@ import { IconifyIcon } from '@huymobile/react-native-iconify';
 const menuItems = [
   { label: 'Websites', path: '/websites', icon: 'lucide:globe' },
   { label: 'Share Links', path: '/share-links', icon: 'lucide:link-2' },
-  { label: 'My Shelf', path: '/groupshelf', icon: 'lucide:library' },
+  { label: 'Groupshelf', path: '/groupshelf', icon: 'lucide:library' },
   { label: 'Blog', path: '/blog', icon: 'lucide:newspaper' },
   { label: 'Settings', path: '/settings', icon: 'lucide:settings' },
 ];

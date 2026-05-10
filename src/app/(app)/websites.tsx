@@ -24,6 +24,8 @@ export default function WebsitesScreen() {
     isLoading
   } = useWebsitesInfinite({ limit: 20, page: 1, search });
 
+  console.log(websites)
+
   const handleDelete = (id: string) => {
     Alert.alert('Delete Website', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
@@ -102,13 +104,13 @@ export default function WebsitesScreen() {
         <LegendList
           data={websites || []}
           onEndReached={loadMore}
-          renderItem={({ item }) => renderWebsite(item)}
+          renderItem={(item) => renderWebsite(item)}
           keyExtractor={(item, index) => String(item.id + index)}
           onEndReachedThreshold={0.1}
           ListFooterComponent={renderFooter}
           ListEmptyComponent={
             isLoading ? (
-              <View className="p-4 gap-4">
+              <View className="gap-2">
                 {[1, 2, 3, 4, 5].map(i => (
                   <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
                     <Skeleton width={40} height={40} className="rounded-lg" />

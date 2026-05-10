@@ -1,24 +1,76 @@
-import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState } from 'react';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useGroupShelves, useCopyShelf } from '@/hooks/useGroupShelf';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Skeleton } from '@/components/ui';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { Icon } from '@/components/ui/Icons';
+import type { Channel, Group } from '@/types';
 
 export default function GroupShelfScreen() {
   const router = useRouter();
   const { isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const [search, setSearch] = useState('');
+  const [selectedShelf, setSelectedShelf] = useState<Group | null>(null);
   
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ['75%'], []);
+
   const { data, isLoading, error } = useGroupShelves({ search });
   const copyShelf = useCopyShelf();
 
   const handleCopy = (shelfId: string, shelfName: string) => {
     copyShelf.mutate(shelfId);
   };
+
+  const openShelfDetails = (shelf: Group) => {
+    setSelectedShelf(shelf);
+    bottomSheetRef.current?.expand();
+  };
+
+  const closeBottomSheet = () => {
+    bottomSheetRef.current?.close();
+    setSelectedShelf(null);
+  };
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={1}
+        disappearsOnIndex={-1}
+        opacity={0.5}
+      />
+    ),
+    []
+  );
+
+  const renderChannel = (item: Channel) => (
+    <TouchableOpacity
+      key={item.id}
+      className="bg-card rounded-xl p-3 mb-2 flex-row items-center gap-3"
+    >
+      {item.thumbnail || item.imageUrl ? (
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
+      ) : (
+        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
+          <Icon name="tv" size={20} />
+        </View>
+      )}
+      <View className="flex-1">
+        <Text className="text-base font-semibold text-foreground">{item.name}</Text>
+        {item.description && (
+          <Text className="text-sm text-muted-foreground" numberOfLines={2}>
+            {item.description}
+          </Text>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View
@@ -78,7 +130,11 @@ export default function GroupShelfScreen() {
           ) : (
             <View className="gap-4">
               {data?.data.map(shelf => (
-                <View key={shelf.id} className="bg-card rounded-xl p-4">
+                <TouchableOpacity 
+                  key={shelf.id} 
+                  className="bg-card rounded-xl p-4"
+                  onPress={() => openShelfDetails(shelf)}
+                >
                   <View className="flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
                       <IconifyIcon name={shelf.icon || 'lucide:folder'} size={20} className="text-muted-foreground" />
@@ -116,12 +172,65 @@ export default function GroupShelfScreen() {
                       )}
                     </TouchableOpacity>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           )}
         </ScrollView>
       </View>
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: '#1a1a1a' }}
+        handleIndicatorStyle={{ backgroundColor: '#666' }}
+        simultaneousHandlers={undefined}
+      >
+        <BottomSheetScrollView 
+          className="flex-1 px-4"
+          contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+          scrollEventThrottle={16}
+        >
+          {selectedShelf && (
+            <View className="pb-4">
+              <View className="flex-row items-center justify-between mb-4">
+                <View className="flex-row items-center gap-3">
+                  <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
+                    <IconifyIcon name={selectedShelf.icon || 'lucide:folder'} size={20} className="text-muted-foreground" />
+                  </View>
+                  <View>
+                    <Text className="text-xl font-bold text-foreground">{selectedShelf.name}</Text>
+                    <Text className="text-sm text-muted-foreground">
+                      {selectedShelf.channels?.length || 0} channels
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity onPress={closeBottomSheet} className="p-2">
+                  <IconifyIcon name="lucide:x" size={24} color="#9CA3AF" />
+                </TouchableOpacity>
+              </View>
+
+              {selectedShelf.description && (
+                <Text className="text-muted-foreground mb-4">{selectedShelf.description}</Text>
+              )}
+
+              {selectedShelf.channels && selectedShelf.channels.length > 0 ? (
+                <View className="gap-2">
+                  {selectedShelf.channels.map(channel => renderChannel(channel))}
+                </View>
+              ) : (
+                <View className="items-center py-8">
+                  <IconifyIcon name="lucide:tv-off" size={48} className="text-muted-foreground mb-4" />
+                  <Text className="text-muted-foreground">No channels in this group</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </BottomSheetScrollView>
+      </BottomSheet>
     </View>
   );
 }

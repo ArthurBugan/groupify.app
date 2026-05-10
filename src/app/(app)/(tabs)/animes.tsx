@@ -121,7 +121,7 @@ export default function AnimesListScreen() {
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
           isLoading ? (
-            <View className="p-4 gap-4">
+            <View className="gap-2">
               {[1, 2, 3, 4, 5].map(i => (
                 <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
                   <Skeleton width={40} height={40} className="rounded-lg" />
