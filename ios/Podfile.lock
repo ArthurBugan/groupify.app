@@ -2479,6 +2479,7 @@ DEPENDENCIES:
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
+  - SDWebImage (~> 5.0)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -2833,6 +2834,6 @@ SPEC CHECKSUMS:
   Sentry: d587a8fe91ca13503ecd69a1905f3e8a0fcf61be
   Yoga: e240fec777ff1f21ef42ccebbb44b6d262125855
 
-PODFILE CHECKSUM: a2699e478e15b14ebce767f3e5e2a3f874e792cd
+PODFILE CHECKSUM: 81153b5ebf6578afee0c79c6f68712b188719dc1
 
 COCOAPODS: 1.16.2
