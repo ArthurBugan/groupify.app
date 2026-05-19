@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useLogin, useGoogleLogin, useDiscordLogin, useAppleLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import AdMobManager from '@/components/ui/Admob';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -18,6 +19,13 @@ export default function LoginScreen() {
   const discordLogin = useDiscordLogin();
   const appleLogin = useAppleLogin();
   const isOAuthLoading = useIsOAuthLoading();
+
+  useEffect(() => {
+    async function loadAppOpenAd() {
+      await AdMobManager.openAppAd();
+    }
+    loadAppOpenAd();
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
