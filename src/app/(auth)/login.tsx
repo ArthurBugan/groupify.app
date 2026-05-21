@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useLogin, useGoogleLogin, useDiscordLogin, useIsOAuthLoading } from '@/hooks';
+import { useLogin, useGoogleLogin, useDiscordLogin, useAppleLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import AdMobManager from '@/components/ui/Admob';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -15,7 +17,15 @@ export default function LoginScreen() {
   const login = useLogin();
   const googleLogin = useGoogleLogin();
   const discordLogin = useDiscordLogin();
+  const appleLogin = useAppleLogin();
   const isOAuthLoading = useIsOAuthLoading();
+
+  useEffect(() => {
+    async function loadAppOpenAd() {
+      await AdMobManager.openAppAd();
+    }
+    loadAppOpenAd();
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -45,6 +55,16 @@ export default function LoginScreen() {
       Alert.alert('Discord Login Failed', 'Unable to sign in with Discord');
     }
   };
+
+  const handleAppleLogin = async () => {
+    try {
+      await appleLogin.signIn();
+    } catch (error) {
+      Alert.alert('Apple Login Failed', 'Unable to sign in with Apple');
+    }
+  };
+
+  const isLoading = login.isPending || isOAuthLoading;
 
   return (
     <KeyboardAvoidingView
@@ -90,7 +110,7 @@ export default function LoginScreen() {
             <TouchableOpacity
               className="bg-primary rounded-lg p-4 items-center"
               onPress={handleLogin}
-              disabled={login.isPending}
+              disabled={isLoading}
             >
               <Text className="text-primary-foreground text-base font-semibold">
                 {login.isPending ? 'Signing in...' : 'Sign In'}
@@ -121,26 +141,44 @@ export default function LoginScreen() {
 
           <View className="gap-3">
             <TouchableOpacity
-              className="bg-secondary flex-row justify-center gap-2 border border-input rounded-lg p-4 items-center"
+              className="bg-white flex-row items-center rounded-lg p-3 border border-gray-200"
               onPress={handleGoogleLogin}
               disabled={googleLogin.isLoading || isOAuthLoading}
+              activeOpacity={0.8}
             >
-              <IconifyIcon name="mdi:google" size={24} />
-              <Text className="text-foreground font-medium">
-                {googleLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Google'}
+              {googleLogin.isLoading || isOAuthLoading ? (
+                <ActivityIndicator size="small" color="#4285F4" />
+              ) : (
+                <IconifyIcon name="mdi:google" size={24} color="black" className="mr-3" />
+              )}
+              <Text className="text-gray-700 font-medium text-base flex-1 text-center pr-6">
+                Sign in with Google
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="bg-secondary flex-row justify-center gap-2 border border-input rounded-lg p-4 items-center"
+              className="bg-[#5865F2] flex-row rounded-lg p-3"
               onPress={handleDiscordLogin}
               disabled={discordLogin.isLoading || isOAuthLoading}
+              activeOpacity={0.8}
             >
-              <IconifyIcon name="mdi:discord" size={24} />
-              <Text className="text-foreground font-medium">
-                {discordLogin.isLoading || isOAuthLoading ? 'Connecting...' : 'Continue with Discord'}
+              {discordLogin.isLoading || isOAuthLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <IconifyIcon name="mdi:discord" size={24} color="white" className="mr-3" />
+              )}
+              <Text className="text-white font-medium text-base flex-1 text-center pr-6">
+                Sign in with Discord
               </Text>
             </TouchableOpacity>
+
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={8}
+              style={{ height: 50 }}
+              onPress={handleAppleLogin}
+            />
           </View>
         </View>
       </ScrollView>

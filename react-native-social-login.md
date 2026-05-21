@@ -122,7 +122,7 @@ This approach opens the OAuth in the device browser, then redirects back to your
 ```typescript
 // In your navigation setup
 const linking = {
-  prefixes: ['groupify://', 'https://groupify.dev'],
+  prefixes: ['groupify://', 'https://nestfeed.app'],
   config: {
     screens: {
       OAuthCallback: 'oauth/callback/:provider',

@@ -1,13 +1,17 @@
-import * as Linking from 'expo-linking';
 import { useCallback, useState } from 'react';
 import { useAuthStore } from '@/stores';
 import apiClient from '@/api/client';
 import storage from '@/services/storage';
+import * as WebBrowser from 'expo-web-browser';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { useMutation } from '@tanstack/react-query';
+import { authApi } from '@/api/endpoints';
+import { router } from 'expo-router';
 
 const API_URL = process.env.EXPO_PUBLIC_GROUPIFY_API_URL || '';
 const APP_SCHEME = 'groupify';
 
-export const oauthCallbackUrl = (provider: string) => 
+export const oauthCallbackUrl = (provider: string) =>
   `${APP_SCHEME}://oauth?provider=${provider}`;
 
 export const useOAuthLoading = () => useAuthStore((s) => s.setOAuthLoading);
@@ -23,7 +27,7 @@ export function useGoogleLogin() {
     try {
       const redirectUrl = oauthCallbackUrl('google');
       const authUrl = `${API_URL}/auth/google?redirect_uri=${encodeURIComponent(redirectUrl)}`;
-      await Linking.openURL(authUrl);
+      await WebBrowser.openBrowserAsync(authUrl);
     } catch (error) {
       console.error('Google login error:', error);
       setIsLoading(false);
@@ -44,7 +48,7 @@ export function useDiscordLogin() {
     try {
       const redirectUrl = oauthCallbackUrl('discord');
       const authUrl = `${API_URL}/auth/discord?redirect_uri=${encodeURIComponent(redirectUrl)}&origin=app`;
-      await Linking.openURL(authUrl);
+      await WebBrowser.openBrowserAsync(authUrl);
     } catch (error) {
       console.error('Discord login error:', error);
       setIsLoading(false);
@@ -55,6 +59,51 @@ export function useDiscordLogin() {
   return { signIn, isLoading };
 }
 
+export function useAppleLogin() {
+  const [isLoading, setIsLoading] = useState(false);
+  const setOAuthLoading = useAuthStore((s) => s.setOAuthLoading);
+  const appleMobileAuth = useAppleMobileAuth();
+
+  const signIn = useCallback(async () => {
+    setIsLoading(true);
+    setOAuthLoading(true);
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      // signed in
+      await appleMobileAuth.mutateAsync(credential);
+      setIsLoading(false);
+      setOAuthLoading(false);
+    } catch (e: unknown) {
+      console.error('Apple login error:', e); 
+      setIsLoading(false);
+      setOAuthLoading(false);
+    }
+  }, [appleMobileAuth]);
+
+  return { signIn, isLoading };
+}
+
+export const useAppleMobileAuth = () => {
+  const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
+
+  return useMutation({
+    mutationFn: (data: any) => authApi.appleMobileAuth(data),
+    onSuccess: async (token) => {
+      if (token) {
+        await apiClient.setAuthToken(token);
+        await storage.setToken(token);
+        setAuthenticated(true);
+        router.replace('/(app)');
+      }
+    },
+  });
+};
+
 export function useHandleOAuthCallback() {
   const setUser = useAuthStore((s) => s.setUser);
   const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
@@ -62,19 +111,14 @@ export function useHandleOAuthCallback() {
 
   const handleCallback = useCallback(async (url: string) => {
     try {
-      const parsedUrl = Linking.parse(url);
-      const token = parsedUrl.queryParams?.token as string | undefined;
-      const error = parsedUrl.queryParams?.error as string | undefined;
-      
+      const token = url;
+
       if (token) {
         await storage.setToken(token);
         await apiClient.setAuthToken(token);
         setAuthenticated(true);
         setOAuthLoading(false);
         return { success: true };
-      } else if (error) {
-        setOAuthLoading(false);
-        return { success: false, error };
       }
       setOAuthLoading(false);
       return { success: false, error: 'No token received' };

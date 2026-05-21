@@ -8,14 +8,15 @@ import {
   AdEventType,
   TestIds,
   RewardedAd,
-  RewardedAdEventType
+  RewardedAdEventType,
+  AppOpenAd
 } from 'react-native-google-mobile-ads';
 
 // Configure Ad Units
 const BANNER_AD_UNIT_ID = __DEV__ 
   ? TestIds.BANNER 
   : Platform.select({
-      ios: 'ca-app-pub-4077364511521347/3341690262',
+      ios: 'ca-app-pub-4077364511521347/5530767115',
       android: 'ca-app-pub-4077364511521347/5028289954'
     });
 
@@ -29,9 +30,41 @@ const INTERSTITIAL_AD_UNIT_ID = __DEV__
 const REWARDED_AD_UNIT_ID = __DEV__ 
   ? TestIds.REWARDED 
   : Platform.select({
+      ios: 'ca-app-pub-4077364511521347/4983972201',
+      android: 'ca-app-pub-4077364511521347/5028289954'
+    });
+
+const APP_OPEN_AD_UNIT_ID = __DEV__ 
+  ? TestIds.APP_OPEN 
+  : Platform.select({
       ios: 'ca-app-pub-4077364511521347/3341690262',
       android: 'ca-app-pub-4077364511521347/5028289954'
     });
+
+
+export const openAppAd = () => {
+  return new Promise((resolve, reject) => {
+    const appOpenAd = AppOpenAd.createForAdRequest(APP_OPEN_AD_UNIT_ID, {
+      requestNonPersonalizedAdsOnly: true,
+    });
+
+    appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
+      appOpenAd.show();
+    });
+
+    appOpenAd.addAdEventListener(AdEventType.CLOSED, () => {
+      resolve(true);
+    });
+
+    appOpenAd.addAdEventListener(AdEventType.ERROR, (error) => {
+      console.error('App open ad error', error);
+      resolve(false); // Resolve false so the app can continue
+    });
+
+    // Begin loading
+    appOpenAd.load();
+  });
+};
 
 // Rewarded Ad Management
 export const loadRewardedAd = () => {
@@ -138,5 +171,6 @@ export const InlineAd = ({ style }: { style?: any }) => (
 // Attach methods to AdMobManager for easier access
 AdMobManager.loadRewardedAd = loadRewardedAd;
 AdMobManager.loadInterstitial = loadInterstitial;
+AdMobManager.openAppAd = openAppAd;
 
 export default AdMobManager;

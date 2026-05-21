@@ -41,13 +41,13 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: (credentials: RegisterCredentials) => authApi.register(credentials),
     onSuccess: async (data) => {
-      if (data.token) {
-        await apiClient.setAuthToken(data.token);
-        await storage.setToken(data.token);
+      // Token is stored in cookie by the API client
+      // Just reload the token from storage
+      const storedToken = await apiClient.loadAuthToken();
+      console.log('Register success, reloading token from storage', storedToken);
+      if (storedToken) {
         setAuthenticated(true);
       }
-      setUser(data.user);
-      queryClient.setQueryData(['currentUser'], data.user);
     },
   });
 };

@@ -50,4 +50,9 @@ export const authApi = {
   updateProfile: async (data: UpdateProfileRequest): Promise<UpdateProfileResponse> => {
     return apiClient.post<UpdateProfileResponse>('/api/v3/me', data);
   },
+
+  appleMobileAuth: async (data: any): Promise<string> => {
+    const response = await apiClient.post<string>('/auth/apple/mobile', data);
+    return response;
+  },
 };

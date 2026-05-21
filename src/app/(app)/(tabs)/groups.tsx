@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { useState, useMemo } from 'react';
 import { InlineAd } from '@/components/ui/Admob';
+import { Skeleton } from '@/components/ui';
 
 interface GroupWithChildren extends Group {
   children?: GroupWithChildren[];
@@ -23,13 +24,11 @@ export default function GroupsListScreen() {
     groups,
     isLoading,
     isFetchingNextPage,
-    hasNextPage,
     loadMore,
     search,
     setSearch,
     refetch,
   } = useGroupsInfinite({
-    page: 1,
     limit: 30,
   });
 
@@ -155,7 +154,6 @@ export default function GroupsListScreen() {
           placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
           value={search}
           onChangeText={setSearch}
-          onSubmitEditing={refetch}
         />
       </View>
       <FlatList
@@ -172,9 +170,24 @@ export default function GroupsListScreen() {
         ListFooterComponent={renderFooter}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
         ListEmptyComponent={
-          <Text className="text-center text-muted-foreground mt-10">
-            {isLoading ? 'Loading...' : 'No groups yet. Create one to get started!'}
-          </Text>
+          isLoading ? (
+            <View className="gap-2">
+              {[1, 2, 3, 4, 5].map(i => (
+                <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
+                  <Skeleton width={40} height={40} className="rounded-lg" />
+                  <View className="flex-1 gap-2">
+                    <Skeleton height={16} className="w-3/4 rounded" />
+                    <Skeleton height={12} className="w-1/2 rounded" />
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View className="p-8 items-center">
+              <IconifyIcon name="lucide:folder-open" size={48} className="text-muted-foreground mb-4" />
+              <Text className="text-muted-foreground text-center">No groups yet. Create one to get started!</Text>
+            </View>
+          )
         }
       />
     </View>

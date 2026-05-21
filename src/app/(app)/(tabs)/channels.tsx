@@ -9,6 +9,7 @@ import { useState, useMemo } from 'react';
 import { LegendList } from '@legendapp/list';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import { InlineAd } from '@/components/ui/Admob';
+import { Skeleton } from '@/components/ui';
 
 type ListItem = Channel | { isAd: true; id: string };
 
@@ -117,9 +118,24 @@ export default function ChannelsListScreen() {
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          <Text className="text-center text-muted-foreground mt-10">
-            {isLoading ? 'Loading...' : 'No channels found.'}
-          </Text>
+          isLoading ? (
+            <View className="gap-2">
+              {[1, 2, 3, 4, 5].map(i => (
+                <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
+                  <Skeleton width={40} height={40} className="rounded-lg" />
+                  <View className="flex-1 gap-2">
+                    <Skeleton height={16} className="w-3/4 rounded" />
+                    <Skeleton height={12} className="w-1/2 rounded" />
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View className="p-8 items-center">
+              <IconifyIcon name="lucide:tv" size={48} className="text-muted-foreground mb-4" />
+              <Text className="text-muted-foreground text-center">No channels found.</Text>
+            </View>
+          )
         }
       />
     </View>

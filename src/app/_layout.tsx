@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Host } from 'react-native-portalize';
 import AdMobManager from '@/components/ui/Admob';
 import * as Sentry from "@sentry/react-native";
+import { Toaster } from 'sonner-native';
 
 Sentry.init({
   dsn: `${process.env.EXPO_PUBLIC_SENTRY_DSN}`,
@@ -96,7 +97,8 @@ function RootLayout() {
           <Host>
             <QueryClientProvider client={queryClient}>
               <AppContentWithTheme />
-               <AdMobManager style={{ marginTop: 10 }} />
+              <AdMobManager style={{ marginTop: 10 }} />
+              <Toaster />
             </QueryClientProvider>
           </Host>
         </GestureHandlerRootView>
