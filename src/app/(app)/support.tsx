@@ -20,7 +20,7 @@ export default function SupportScreen() {
         <Text className="text-2xl font-bold text-foreground mb-4">Support</Text>
 
         <Text className="text-foreground leading-6 mb-4">
-          Need help? Contact us at support@groupify.app
+          Need help? Contact us at support@nestfeed.app
         </Text>
 
         <Text className="text-foreground leading-6">

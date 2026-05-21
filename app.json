@@ -1,11 +1,11 @@
 {
   "expo": {
-    "scheme": "groupify",
+    "scheme": "nestfeed",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "ios": {
       "associatedDomains": [
-        "applinks:groupify.dev"
+        "applinks:nestfeed.app"
       ],
       "bundleIdentifier": "com.groupifyapp",
       "appleTeamId": "UM6SZWPURL",

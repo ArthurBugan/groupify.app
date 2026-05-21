@@ -17,7 +17,7 @@ export default function TermsScreen() {
       <Text className="text-2xl font-bold text-foreground mb-4">Terms of Service</Text>
 
       <Text className="text-foreground leading-6">
-        By using Groupify, you agree to these terms. Please read them carefully.
+        By using Nestfeed, you agree to these terms. Please read them carefully.
       </Text>
 
       <Text className="text-foreground leading-6 mt-4">
