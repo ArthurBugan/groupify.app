@@ -16,7 +16,7 @@ import {
 const BANNER_AD_UNIT_ID = __DEV__ 
   ? TestIds.BANNER 
   : Platform.select({
-      ios: 'ca-app-pub-4077364511521347/3341690262',
+      ios: 'ca-app-pub-4077364511521347/5530767115',
       android: 'ca-app-pub-4077364511521347/5028289954'
     });
 
@@ -30,7 +30,7 @@ const INTERSTITIAL_AD_UNIT_ID = __DEV__
 const REWARDED_AD_UNIT_ID = __DEV__ 
   ? TestIds.REWARDED 
   : Platform.select({
-      ios: 'ca-app-pub-4077364511521347/3341690262',
+      ios: 'ca-app-pub-4077364511521347/4983972201',
       android: 'ca-app-pub-4077364511521347/5028289954'
     });
 
