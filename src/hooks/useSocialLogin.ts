@@ -9,7 +9,7 @@ import { authApi } from '@/api/endpoints';
 import { router } from 'expo-router';
 
 const API_URL = process.env.EXPO_PUBLIC_GROUPIFY_API_URL || '';
-const APP_SCHEME = 'groupify';
+const APP_SCHEME = 'nestfeed';
 
 export const oauthCallbackUrl = (provider: string) =>
   `${APP_SCHEME}://oauth?provider=${provider}`;

@@ -1,6 +1,6 @@
 {
-  "name": "groupifyapp",
-  "version": "1.10.0",
+  "name": "nestfeed",
+  "version": "1.11.0",
   "main": "expo-router/entry",
   "dependencies": {
     "@babel/preset-react": "^7.28.5",
