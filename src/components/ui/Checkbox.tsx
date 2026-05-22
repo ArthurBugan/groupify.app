@@ -12,8 +12,8 @@ export function Checkbox({ checked, onChange, label }: CheckboxProps) {
       <View
         className="w-5 h-5 rounded border-2 flex items-center justify-center mr-2"
         style={{
-          backgroundColor: checked ? '#f43f5e' : 'transparent',
-          borderColor: checked ? '#f43f5e' : '#94a3b8',
+          backgroundColor: checked ? '#39d08a' : 'transparent',
+          borderColor: checked ? '#39d08a' : '#94a3b8',
         }}
       >
         {checked && <Text className="text-white text-xs">✓</Text>}

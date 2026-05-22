@@ -1,9 +1,8 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { useAnime, useGroups } from '../../../../hooks';
+import { useAnime, useGroups, useUpdateChannel } from '@/hooks';
 import { Button } from '@/components/ui';
-import { useTheme } from '@/theme/ThemeProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import AdMobManager from '@/components/ui/Admob';
@@ -12,12 +11,15 @@ export default function ChangeAnimeGroupScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: anime, isLoading } = useAnime(id);
-  const { data: groupsData } = useGroups();
-  console.log(anime, id)
+  const { data: groupsData } = useGroups({limit: 100});
   const [selectedGroupId, setSelectedGroupId] = useState(anime?.groupId || '');
-
+  const updateAnime = useUpdateChannel();
+  
   const handleSave = async () => {
-    Alert.alert('Success', 'Group updated');
+        await updateAnime.mutateAsync({
+      id,
+      data: { id, thumbnail: anime?.thumbnail || anime?.imageUrl, name: anime?.name || '', url: anime?.url || '', groupId: selectedGroupId, contentType: 'anime' },
+    });
     await AdMobManager.loadRewardedAd();
     router.back();
   };
@@ -36,7 +38,7 @@ export default function ChangeAnimeGroupScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text className="text-2xl font-bold text-foreground mb-4">Change Group</Text>
+        <Text className="text-2xl font-bold text-foreground mb-4">{anime?.groupName ? 'Change Group' : 'Add Group'}</Text>
 
         {anime?.groupName && (
           <View className="flex-row items-center gap-2 mb-4">

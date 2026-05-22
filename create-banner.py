@@ -17,7 +17,7 @@ def create_banner():
     
     # Simple text
     draw.text((512, 180), 'Groupify', fill='white', anchor='mm', font=font)
-    draw.ellipse([490, 260, 534, 304], fill='#f43f5e')
+    draw.ellipse([490, 260, 534, 304], fill='#39d08a')
     
     os.makedirs('./screenshots', exist_ok=True)
     img.save('./screenshots/banner-android.png')

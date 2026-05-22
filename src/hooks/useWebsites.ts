@@ -16,6 +16,7 @@ export const useDeleteWebsite = () => {
     mutationFn: (id: string) => websitesApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['websites'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };

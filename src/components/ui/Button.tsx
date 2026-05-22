@@ -50,7 +50,7 @@ export function Button({
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${fullWidth ? 'w-full' : ''} ${className}`}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={variant === 'primary' || variant === 'danger' ? '#fff' : isDark ? '#fb7185' : '#f43f5e'} />
+        <ActivityIndicator size="small" color={variant === 'primary' || variant === 'danger' ? '#fff' : isDark ? '#39d08a' : '#39d08a'} />
       ) : (
         <Text className={variant === 'outline' || variant === 'ghost' ? 'text-foreground' : 'text-primary-foreground'}>
           {children}

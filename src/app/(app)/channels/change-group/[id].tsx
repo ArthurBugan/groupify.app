@@ -1,9 +1,8 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { useChannel, useGroups } from '../../../../hooks';
+import { useChannel, useGroups, useUpdateChannel } from '@/hooks';
 import { Button } from '@/components/ui';
-import { useTheme } from '@/theme/ThemeProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@huymobile/react-native-iconify';
 import AdMobManager from '@/components/ui/Admob';
@@ -12,12 +11,16 @@ export default function ChangeChannelGroupScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: channel, isLoading } = useChannel(id);
-  const { data: groupsData } = useGroups();
+  const { data: groupsData } = useGroups({ limit: 100 });
   const [selectedGroupId, setSelectedGroupId] = useState(channel?.data?.groupId || '');
-  const { isDark } = useTheme();
+  const updateChannel = useUpdateChannel();
+
 
   const handleSave = async () => {
-    Alert.alert('Success', 'Group updated');
+    await updateChannel.mutateAsync({
+      id,
+      data: { id, name: channel?.data?.name || '', url: channel?.data?.url || '', groupId: selectedGroupId },
+    });
     await AdMobManager.loadRewardedAd();
     router.back();
   };

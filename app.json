@@ -18,8 +18,8 @@
     "android": {
       "package": "com.groupifyapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/android-icon-background.png",
+        "backgroundColor": "transparent"
       }
     },
     "plugins": [
@@ -117,7 +117,9 @@
           "url": "${process.env.EXPO_PUBLIC_SENTRY_DSN}",
           "note": "Use SENTRY_AUTH_TOKEN env to authenticate with Sentry.",
           "project": "groupify",
-          "organization": "groupify"
+          "organization": "groupify",
+          "allowFailure": true,
+          "disableAutoUpload": true
         }
       ],
       "expo-web-browser",
@@ -132,11 +134,11 @@
         }
       ]
     ],
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/ios-icon-default.png",
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
-    "name": "groupifyapp",
+    "name": "Nestfeed",
     "slug": "groupify",
     "extra": {
       "router": {},
@@ -145,6 +147,6 @@
       }
     },
     "owner": "arthurbugan",
-    "version": "1.9.0"
+    "version": "1.10.0"
   }
 }

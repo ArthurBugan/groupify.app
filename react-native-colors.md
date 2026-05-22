@@ -41,7 +41,7 @@ const primaryGradientHover = {
 | `--card-foreground` | `220 10% 15%` | `#1f2937` | Card text |
 | `--popover` | `0 0% 100%` | `#ffffff` | Popover/modal bg |
 | `--popover-foreground` | `220 10% 15%` | `#1f2937` | Popover text |
-| `--primary` | `350 85% 55%` | `#f43f5e` | Primary actions (red-500) |
+| `--primary` | `350 85% 55%` | `#39d08a` | Primary actions (red-500) |
 | `--primary-foreground` | `0 0% 100%` | `#ffffff` | Text on primary |
 | `--secondary` | `220 10% 96%` | `#f3f4f6` | Secondary surfaces |
 | `--secondary-foreground` | `220 10% 15%` | `#1f2937` | Text on secondary |
@@ -53,7 +53,7 @@ const primaryGradientHover = {
 | `--destructive-foreground` | `0 0% 100%` | `#ffffff` | Text on destructive |
 | `--border` | `220 10% 85%` | `#d1d5db` | Borders |
 | `--input` | `220 10% 85%` | `#d1d5db` | Input borders |
-| `--ring` | `350 85% 55%` | `#f43f5e` | Focus rings |
+| `--ring` | `350 85% 55%` | `#39d08a` | Focus rings |
 
 ### Dark Theme
 
@@ -65,7 +65,7 @@ const primaryGradientHover = {
 | `--card-foreground` | `220 10% 96%` | `#f1f5f9` | Card text |
 | `--popover` | `220 12% 14%` | `#1e293b` | Popover/modal bg |
 | `--popover-foreground` | `220 10% 96%` | `#f1f5f9` | Popover text |
-| `--primary` | `350 85% 60%` | `#fb7185` | Primary actions (lighter red) |
+| `--primary` | `350 85% 60%` | `#39d08a` | Primary actions (lighter red) |
 | `--primary-foreground` | `0 0% 100%` | `#ffffff` | Text on primary |
 | `--secondary` | `220 10% 20%` | `#334155` | Secondary surfaces |
 | `--secondary-foreground` | `220 10% 96%` | `#f1f5f9` | Text on secondary |
@@ -77,7 +77,7 @@ const primaryGradientHover = {
 | `--destructive-foreground` | `0 0% 100%` | `#ffffff` | Text on destructive |
 | `--border` | `220 10% 25%` | `#334155` | Borders |
 | `--input` | `220 10% 28%` | `#334155` | Input borders |
-| `--ring` | `350 85% 60%` | `#fb7185` | Focus rings |
+| `--ring` | `350 85% 60%` | `#39d08a` | Focus rings |
 
 ---
 
@@ -95,7 +95,7 @@ export const colors = {
     cardForeground: '#1f2937',
     popover: '#ffffff',
     popoverForeground: '#1f2937',
-    primary: '#f43f5e',        // Red-500
+    primary: '#39d08a',        // Red-500
     primaryForeground: '#ffffff',
     secondary: '#f3f4f6',
     secondaryForeground: '#1f2937',
@@ -107,17 +107,17 @@ export const colors = {
     destructiveForeground: '#ffffff',
     border: '#d1d5db',
     input: '#d1d5db',
-    ring: '#f43f5e',
+    ring: '#39d08a',
     
     // Sidebar
     sidebar: '#fafafa',
     sidebarForeground: '#1f2937',
-    sidebarPrimary: '#f43f5e',
+    sidebarPrimary: '#39d08a',
     sidebarPrimaryForeground: '#ffffff',
     sidebarAccent: '#f0f2f5',
     sidebarAccentForeground: '#1f2937',
     sidebarBorder: '#d1d5db',
-    sidebarRing: '#f43f5e',
+    sidebarRing: '#39d08a',
   },
 
   // Dark Theme
@@ -128,7 +128,7 @@ export const colors = {
     cardForeground: '#f1f5f9',
     popover: '#1e293b',
     popoverForeground: '#f1f5f9',
-    primary: '#fb7185',        // Lighter red for dark mode
+    primary: '#39d08a',        // Lighter red for dark mode
     primaryForeground: '#ffffff',
     secondary: '#334155',
     secondaryForeground: '#f1f5f9',
@@ -140,17 +140,17 @@ export const colors = {
     destructiveForeground: '#ffffff',
     border: '#334155',
     input: '#334155',
-    ring: '#fb7185',
+    ring: '#39d08a',
     
     // Sidebar
     sidebar: '#0f172a',
     sidebarForeground: '#f1f5f9',
-    sidebarPrimary: '#fb7185',
+    sidebarPrimary: '#39d08a',
     sidebarPrimaryForeground: '#ffffff',
     sidebarAccent: '#334155',
     sidebarAccentForeground: '#f1f5f9',
     sidebarBorder: '#1e293b',
-    sidebarRing: '#fb7185',
+    sidebarRing: '#39d08a',
   },
 
   // Brand Gradient Colors
@@ -279,7 +279,7 @@ export const textColors = {
   secondary: '#6b7280',   // muted-foreground
   tertiary: '#9ca3af',    // lighter muted
   inverse: '#f1f5f9',     // foreground dark
-  accent: '#f43f5e',      // primary (red)
+  accent: '#39d08a',      // primary (red)
   error: '#dc2626',       // destructive
 };
 ```

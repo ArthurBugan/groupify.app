@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -12,6 +12,22 @@ import { InlineAd } from '@/components/ui/Admob';
 import { Skeleton } from '@/components/ui';
 
 type ListItem = Anime | { isAd: true; id: string };
+
+const openCrunchyroll = (url: string) => {
+  Linking.canOpenURL('crunchyroll://')
+    .then((supported) => {
+      if (supported) {
+        Linking.openURL('crunchyroll://').catch(() => {
+          Linking.openURL(url);
+        });
+      } else {
+        Linking.openURL(url);
+      }
+    })
+    .catch(() => {
+      Linking.openURL(url);
+    });
+};
 
 export default function AnimesListScreen() {
   const router = useRouter();
@@ -72,6 +88,15 @@ export default function AnimesListScreen() {
           </View>
         )}
       </View>
+      {item.url && (
+        <TouchableOpacity
+          onPress={() => openCrunchyroll(item.url!)}
+          className="p-2"
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <IconifyIcon color={'hsl(152 62% 52%)'} name="lucide:external-link" size={18} />
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 

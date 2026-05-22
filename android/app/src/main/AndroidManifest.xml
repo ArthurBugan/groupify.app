@@ -29,6 +29,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="groupify"/>
+        <data android:scheme="nestfeed"/>
       </intent-filter>
     </activity>
   </application>

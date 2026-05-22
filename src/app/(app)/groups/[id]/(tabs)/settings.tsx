@@ -19,7 +19,7 @@ export default function GroupSettingsScreen() {
         onPress: async () => {
           try {
             await deleteGroup.mutateAsync(id);
-            router.back();
+            router.replace('/groups');
           } catch {
             Alert.alert('Error', 'Failed to delete group');
           }

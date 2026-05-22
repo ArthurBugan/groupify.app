@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { groupsApi, type CreateGroupRequest, type UpdateGroupRequest, type GroupDisplayOrder } from '@/api/endpoints/groups';
-import type { PaginatedResponse } from '@/types';
-import type { Group } from '@/types';
 
 export const useGroups = (params?: { page?: number; limit?: number; search?: string }) => {
   return useQuery({
@@ -25,6 +23,7 @@ export const useCreateGroup = () => {
     mutationFn: (data: CreateGroupRequest) => groupsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };
@@ -38,6 +37,7 @@ export const useUpdateGroup = () => {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
       queryClient.invalidateQueries({ queryKey: ['group', id] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };
@@ -49,6 +49,7 @@ export const useDeleteGroup = () => {
     mutationFn: (id: string) => groupsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };
@@ -66,6 +67,7 @@ export const useBulkUpdateGroupOrder = () => {
     mutationFn: (groups: GroupDisplayOrder[]) => groupsApi.bulkUpdateDisplayOrder(groups),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };

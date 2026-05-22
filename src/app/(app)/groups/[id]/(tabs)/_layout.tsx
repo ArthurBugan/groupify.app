@@ -5,7 +5,7 @@ import { IconifyIcon } from '@huymobile/react-native-iconify';
 export default function GroupDetailTabs() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const activeColor = isDark ? '#fb7185' : '#f43f5e';
+  const activeColor = isDark ? '#39d08a' : '#39d08a';
   const inactiveColor = isDark ? '#94a3b8' : '#9CA3AF';
 
   return (
