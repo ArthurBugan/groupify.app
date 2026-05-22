@@ -19,7 +19,7 @@
       "package": "com.groupifyapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-background.png",
-        "backgroundColor": "transparent"
+        "backgroundColor": "#ffffff"
       }
     },
     "plugins": [
@@ -147,6 +147,6 @@
       }
     },
     "owner": "arthurbugan",
-    "version": "1.10.0"
+    "version": "1.11.0"
   }
 }
