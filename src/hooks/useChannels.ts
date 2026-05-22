@@ -31,6 +31,7 @@ export const useCreateChannel = () => {
     mutationFn: (data: CreateChannelRequest) => channelsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['channels'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };
@@ -44,6 +45,7 @@ export const useUpdateChannel = () => {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['channels'] });
       queryClient.invalidateQueries({ queryKey: ['channel', id] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };
@@ -55,6 +57,7 @@ export const useDeleteChannel = () => {
     mutationFn: (id: string) => channelsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['channels'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 };

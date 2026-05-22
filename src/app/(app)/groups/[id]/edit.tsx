@@ -7,6 +7,7 @@ import { Input, Button, Switch as SwitchToggle, Select, Card, CardContent, IconP
 import { useGroup, useUpdateGroup, useGroups } from '@/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { UpdateGroupRequest } from '@/api/endpoints/groups';
+import AdMobManager from '@/components/ui/Admob';
 
 const DEFAULT_CATEGORIES = [
   'Apps & Software',
@@ -87,6 +88,7 @@ export default function EditGroupScreen() {
         enableGroupshelf: data.enableGroupshelf,
       };
       await updateGroup.mutateAsync({ id, data: payload });
+      await AdMobManager.loadRewardedAd();
       router.back();
     } catch {
       Alert.alert('Error', 'Failed to update group');

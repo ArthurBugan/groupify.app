@@ -158,7 +158,7 @@ export function OAuthCallbackScreen() {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator size="large" color="#f43f5e" />
+      <ActivityIndicator size="large" color="#39d08a" />
       <Text style={{ marginTop: 16 }}>Completing sign in...</Text>
     </View>
   );

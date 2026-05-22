@@ -9,7 +9,7 @@ interface SwitchProps {
 
 export function SwitchToggle({ value, onValueChange, label }: SwitchProps) {
   const { isDark } = useTheme();
-  const primaryColor = isDark ? '#fb7185' : '#f43f5e';
+  const primaryColor = isDark ? '#39d08a' : '#39d08a';
 
   return (
     <View className="flex-row items-center justify-between">
