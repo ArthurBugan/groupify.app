@@ -24,7 +24,7 @@ export default function BlogPostScreen() {
   if (!post) {
     return (
       <View className="flex-1 bg-background p-4 items-center justify-center">
-        <Text className="text-muted-foreground">Post not found</Text>
+        <Text className="text-muted">Post not found</Text>
       </View>
     );
   }
@@ -33,12 +33,12 @@ export default function BlogPostScreen() {
     <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-primary">← Back</Text>
+          <Text className="text-accent">← Back</Text>
         </TouchableOpacity>
       </View>
 
       <Text className="text-2xl font-bold text-foreground mb-2">{post.title}</Text>
-      <Text className="text-muted-foreground text-sm mb-4">
+      <Text className="text-muted text-sm mb-4">
         {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}
       </Text>
 

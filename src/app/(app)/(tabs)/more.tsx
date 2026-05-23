@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 
 const menuItems = [
   { label: 'Websites', path: '/websites', icon: 'lucide:globe' },
@@ -28,7 +28,7 @@ export default function MoreScreen() {
       <SafeAreaView edges={['top']}>
         <Text className="text-3xl font-bold text-foreground mb-6">More</Text>
 
-        <View className="bg-card rounded-xl overflow-hidden">
+        <View className="bg-surface rounded-xl overflow-hidden">
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={item.path}
@@ -42,8 +42,8 @@ export default function MoreScreen() {
           ))}
         </View>
 
-        <TouchableOpacity className="bg-destructive/10 mt-6 p-4 rounded-xl items-center" onPress={handleLogout}>
-          <Text className="text-destructive font-semibold">Sign Out</Text>
+        <TouchableOpacity className="bg-danger/10 mt-6 p-4 rounded-xl items-center" onPress={handleLogout}>
+          <Text className="text-danger font-semibold">Sign Out</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>

@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { useColorScheme, Platform } from 'react-native';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 
 export default function GroupDetailTabs() {
   const colorScheme = useColorScheme();

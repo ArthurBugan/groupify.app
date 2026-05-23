@@ -1,7 +1,8 @@
-import { TouchableOpacity, View, Text, TextInput } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useState, useCallback, useRef } from 'react';
 import BottomSheet, { BottomSheetFlatList, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
 import { Portal } from 'react-native-portalize';
@@ -85,16 +86,16 @@ export function Select({
       )}
       <TouchableOpacity
         onPress={() => handleOpenChange(true)}
-        className={`bg-secondary border rounded-lg px-4 py-3 ${
-          error ? 'border-destructive' : 'border-input'
+        className={`bg-default border rounded-lg px-4 py-3 ${
+          error ? 'border-danger' : 'border-border'
         }`}
       >
-        <Text className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>
+        <Text className={selectedOption ? 'text-foreground' : 'text-muted'}>
           {selectedOption?.label || placeholder}
         </Text>
       </TouchableOpacity>
 
-      {error && <Text className="text-xs text-destructive mt-1">{error}</Text>}
+      {error && <Text className="text-xs text-danger mt-1">{error}</Text>}
 
       {/* Bottom Sheet — portaled to root so it covers the whole app */}
       <Portal>
@@ -121,17 +122,16 @@ export function Select({
               className="flex-row items-center gap-2 mb-3 rounded-lg px-3 py-2"
               style={{ backgroundColor: getThemeColor('secondary', isDark) }}
             >
-              <Text className="text-muted-foreground">🔍</Text>
+              <Text className="text-muted">🔍</Text>
               <TextInput
                 value={searchTerm}
                 onChangeText={setSearchTerm}
                 placeholder="Search..."
                 placeholderTextColor={getThemeColor('muted-foreground', isDark)}
-                className="flex-1 text-foreground py-1"
               />
               {searchTerm !== '' && (
                 <TouchableOpacity onPress={() => setSearchTerm('')}>
-                  <Text className="text-muted-foreground text-lg">✕</Text>
+                  <Text className="text-muted text-lg">✕</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -159,7 +159,7 @@ export function Select({
                   <Text
                     className={`flex-1 text-base ${
                       item.value === value
-                        ? 'text-primary font-medium'
+                        ? 'text-accent font-medium'
                         : 'text-foreground'
                     }`}
                   >
@@ -176,7 +176,7 @@ export function Select({
               )}
               ListEmptyComponent={
                 <View className="py-8 items-center">
-                  <Text className="text-muted-foreground">No results found</Text>
+                  <Text className="text-muted">No results found</Text>
                 </View>
               }
             />

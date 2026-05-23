@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDashboard } from '@/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 
 const shortcuts = [
   { label: 'Groups', count: 'groups', route: '/groups', icon: 'lucide:folder', gradient: 'from-rose-400/80 to-pink-500/80' },
@@ -45,7 +45,7 @@ export default function DashboardHomeScreen() {
     >
       <View className="px-4 pb-6">
         <Text className="text-3xl font-bold text-foreground">Dashboard</Text>
-        <Text className="text-sm text-muted-foreground mt-1">Your content at a glance</Text>
+        <Text className="text-sm text-muted mt-1">Your content at a glance</Text>
       </View>
 
       {/* Shortcut cards */}
@@ -73,17 +73,17 @@ export default function DashboardHomeScreen() {
 
       {/* Quick actions */}
       <View className="px-4">
-        <Text className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+        <Text className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
           Quick Actions
         </Text>
         <View className="flex-row flex-wrap gap-2">
           {actions.map((a) => (
             <TouchableOpacity
               key={a.label}
-              className="flex-row items-center gap-2 bg-secondary border border-input rounded-xl px-4 py-3"
+              className="flex-row items-center gap-2 bg-surface border border-border rounded-xl px-4 py-3"
               onPress={() => router.push(a.route)}
             >
-              <IconifyIcon name={a.icon} size={18} className="text-primary" />
+              <IconifyIcon name={a.icon} size={18} color="rgba(255,255,255,0.85)" />
               <Text className="text-sm font-semibold text-foreground">{a.label}</Text>
             </TouchableOpacity>
           ))}

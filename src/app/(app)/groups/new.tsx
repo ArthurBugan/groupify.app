@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input, Button, Switch as SwitchToggle, Select, Card, CardContent, IconPicker } from '@/components/ui';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useCreateGroup, useGroups } from '@/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { CreateGroupRequest } from '@/api/endpoints/groups';
@@ -117,7 +117,7 @@ export default function CreateGroupScreen() {
                       <Text className="text-base font-semibold text-foreground">
                         Enable Group Shelf
                       </Text>
-                      <Text className="text-sm text-muted-foreground">
+                      <Text className="text-sm text-muted">
                         Allow this group to be added to groupshelf, so other users can copy it if they find it useful
                       </Text>
                     </View>
@@ -221,7 +221,7 @@ export default function CreateGroupScreen() {
                 );
               }}
             />
-            <Text className="text-xs text-muted-foreground mb-4">
+            <Text className="text-xs text-muted mb-4">
               Create subgroups to organize hierarchically
             </Text>
           </CardContent>

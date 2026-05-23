@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
 import { useTheme } from '@/theme/ThemeProvider';
@@ -6,10 +7,10 @@ import type { Channel } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@/components/ui/Icons';
 import { useState, useMemo } from 'react';
-import { LegendList } from '@legendapp/list';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { InlineAd } from '@/components/ui/Admob';
 import { Skeleton } from '@/components/ui';
+import { FlashList } from '@shopify/flash-list';
 
 type ListItem = Channel | { isAd: true; id: string };
 
@@ -46,27 +47,27 @@ export default function ChannelsListScreen() {
 
   const renderChannel = ({ item }: { item: Channel }) => (
     <TouchableOpacity
-      className="bg-card rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
+      className="bg-surface rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
       onPress={() => router.push(`/channels/change-group/${item.id}`)}
     >
       {item.thumbnail || item.imageUrl ? (
         <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
       ) : (
-        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
+        <View className="w-10 h-10 rounded-xl bg-default items-center justify-center">
           <Icon name="tv" size={20} />
         </View>
       )}
       <View className="flex-1">
         <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
         {item.description && (
-          <Text className="text-sm text-muted-foreground mt-1" numberOfLines={2}>
+          <Text className="text-sm text-muted mt-1" numberOfLines={2}>
             {item.description}
           </Text>
         )}
         {item.groupName && (
           <View className="flex-row items-center gap-1 mt-1">
             <IconifyIcon name={getGroupIcon(item.groupIcon)} size={12} />
-            <Text className="text-xs text-muted-foreground">{item.groupName}</Text>
+            <Text className="text-xs text-muted">{item.groupName}</Text>
           </View>
         )}
       </View>
@@ -95,7 +96,6 @@ export default function ChannelsListScreen() {
 
       <View className="mb-4 p-4">
         <TextInput
-          className="bg-card rounded-xl p-3 text-foreground"
           placeholder="Search channels..."
           placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
           value={search}
@@ -104,7 +104,7 @@ export default function ChannelsListScreen() {
         />
       </View>
 
-      <LegendList
+      <FlashList
         data={channelsWithAds}
         onEndReached={loadMore}
         renderItem={({ item }) => {
@@ -121,7 +121,7 @@ export default function ChannelsListScreen() {
           isLoading ? (
             <View className="gap-2">
               {[1, 2, 3, 4, 5].map(i => (
-                <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
+                <View key={i} className="bg-surface rounded-xl p-4 flex-row items-center gap-3">
                   <Skeleton width={40} height={40} className="rounded-lg" />
                   <View className="flex-1 gap-2">
                     <Skeleton height={16} className="w-3/4 rounded" />
@@ -132,8 +132,8 @@ export default function ChannelsListScreen() {
             </View>
           ) : (
             <View className="p-8 items-center">
-              <IconifyIcon name="lucide:tv" size={48} className="text-muted-foreground mb-4" />
-              <Text className="text-muted-foreground text-center">No channels found.</Text>
+              <IconifyIcon name="lucide:tv" size={48} className="text-muted mb-4" />
+              <Text className="text-muted text-center">No channels found.</Text>
             </View>
           )
         }

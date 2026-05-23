@@ -38,7 +38,7 @@ export default function OAuthCallback() {
 
   return (
     <View className="flex-1 bg-background items-center justify-center p-6">
-      <ActivityIndicator size="large" className="text-primary mb-4" />
+      <ActivityIndicator size="large" className="text-accent mb-4" />
       <Text className="text-foreground text-lg font-medium">
         Completing login...
       </Text>

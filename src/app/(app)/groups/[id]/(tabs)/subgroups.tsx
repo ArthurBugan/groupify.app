@@ -3,7 +3,7 @@ import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroupSubgroups } from '@/hooks';
 import { Button } from '@/components/ui';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { FlashList } from '@shopify/flash-list';
 
 export default function GroupSubgroupsScreen() {
@@ -20,16 +20,16 @@ export default function GroupSubgroupsScreen() {
 
   const renderItem = ({ item }: { item: typeof childGroups[0] }) => (
     <TouchableOpacity
-      className="flex-row items-center gap-3 bg-card rounded-2xl p-4 mx-2 mb-2"
+      className="flex-row items-center gap-3 bg-surface rounded-2xl p-4 mx-2 mb-2"
       onPress={() => router.push(`/groups/${item.id}`)}
     >
-      <View className="w-12 h-12 rounded-xl bg-secondary items-center justify-center">
+      <View className="w-12 h-12 rounded-xl bg-default items-center justify-center">
         <IconifyIcon name={getGroupIcon(item.icon)} size={22} />
       </View>
       <View className="flex-1">
         <Text className="text-base text-foreground font-semibold">{item.name}</Text>
       </View>
-      <IconifyIcon name="lucide:chevron-right" size={20} className="text-muted-foreground" />
+      <IconifyIcon name="lucide:chevron-right" size={20} className="text-muted" />
     </TouchableOpacity>
   );
 
@@ -38,7 +38,7 @@ export default function GroupSubgroupsScreen() {
 
       <SafeAreaView edges={['top']}>
         <Text className="text-2xl font-bold text-foreground mb-1">Subgroups</Text>
-        <Text className="text-sm text-muted-foreground mb-4">
+        <Text className="text-sm text-muted mb-4">
           {childGroups.length} subgroup{childGroups.length !== 1 ? 's' : ''}
         </Text>
 
@@ -53,9 +53,9 @@ export default function GroupSubgroupsScreen() {
 
         {childGroups.length === 0 ? (
           <View className="flex-1 items-center justify-center">
-            <IconifyIcon name="lucide:folder-open" size={48} className="text-muted-foreground" />
-            <Text className="text-muted-foreground mt-3">No subgroups yet</Text>
-            <Text className="text-xs text-muted-foreground mt-1">
+            <IconifyIcon name="lucide:folder-open" size={48} className="text-muted" />
+            <Text className="text-muted mt-3">No subgroups yet</Text>
+            <Text className="text-xs text-muted mt-1">
               Create one to organize your content
             </Text>
           </View>

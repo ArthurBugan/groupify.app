@@ -13,8 +13,8 @@ export default function SharedContentScreen() {
 
       <Card>
         <CardContent>
-          <Text className="text-muted-foreground capitalize">Type: {type}</Text>
-          <Text className="text-muted-foreground mt-2">ID: {id}</Text>
+          <Text className="text-muted capitalize">Type: {type}</Text>
+          <Text className="text-muted mt-2">ID: {id}</Text>
         </CardContent>
       </Card>
     </ScrollView>

@@ -28,11 +28,11 @@ export function Button({
   const baseStyles = 'flex-row items-center justify-center rounded-lg font-medium transition-colors';
   
   const variantStyles = {
-    primary: 'bg-primary text-primary-foreground',
-    secondary: 'bg-secondary text-secondary-foreground',
-    outline: 'border border-input bg-transparent text-foreground',
+    primary: 'bg-accent text-accent-foreground',
+    secondary: 'bg-default text-default-foreground',
+    outline: 'border border-border bg-transparent text-foreground',
     ghost: 'bg-transparent text-foreground',
-    danger: 'bg-destructive text-destructive-foreground',
+    danger: 'bg-danger text-danger-foreground',
   };
 
   const sizeStyles = {
@@ -52,7 +52,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator size="small" color={variant === 'primary' || variant === 'danger' ? '#fff' : isDark ? '#39d08a' : '#39d08a'} />
       ) : (
-        <Text className={variant === 'outline' || variant === 'ghost' ? 'text-foreground' : 'text-primary-foreground'}>
+        <Text className={variant === 'outline' || variant === 'ghost' ? 'text-foreground' : 'text-accent-foreground'}>
           {children}
         </Text>
       )}

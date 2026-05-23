@@ -12,7 +12,7 @@ export function Progress({ value, max = 100, className = '' }: ProgressProps) {
   return (
     <View className={`h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden ${className}`}>
       <View
-        className="h-full bg-primary rounded-full"
+        className="h-full bg-accent rounded-full"
         style={{ width: `${percentage}%` }}
       />
     </View>

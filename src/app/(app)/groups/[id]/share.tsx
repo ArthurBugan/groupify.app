@@ -26,7 +26,7 @@ export default function ShareGroupScreen() {
       <SafeAreaView edges={['top']}>
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-primary">← Back</Text>
+          <Text className="text-accent">← Back</Text>
         </TouchableOpacity>
       </View>
 
@@ -34,7 +34,7 @@ export default function ShareGroupScreen() {
 
       <Card>
         <CardContent>
-          <Text className="text-muted-foreground mb-4">
+          <Text className="text-muted mb-4">
             Share "{group?.name}" with others
           </Text>
           

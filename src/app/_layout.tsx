@@ -13,6 +13,7 @@ import { Host } from 'react-native-portalize';
 import AdMobManager from '@/components/ui/Admob';
 import * as Sentry from "@sentry/react-native";
 import { Toaster } from 'sonner-native';
+import { HeroUINativeProvider } from 'heroui-native';
 
 Sentry.init({
   dsn: `${process.env.EXPO_PUBLIC_SENTRY_DSN}`,
@@ -95,11 +96,13 @@ function RootLayout() {
       <ThemeProvider>
         <GestureHandlerRootView>
           <Host>
-            <QueryClientProvider client={queryClient}>
-              <AppContentWithTheme />
-              <AdMobManager style={{ marginTop: 10 }} />
-              <Toaster />
-            </QueryClientProvider>
+            <HeroUINativeProvider>
+              <QueryClientProvider client={queryClient}>
+                <AppContentWithTheme />
+                <AdMobManager style={{ marginTop: 10 }} />
+                <Toaster />
+              </QueryClientProvider>
+            </HeroUINativeProvider>
           </Host>
         </GestureHandlerRootView>
       </ThemeProvider>

@@ -19,7 +19,7 @@ export default function AppearanceSettingsScreen() {
       <SafeAreaView edges={['top']}>
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-primary">← Back</Text>
+            <Text className="text-accent">← Back</Text>
           </TouchableOpacity>
         </View>
 
@@ -33,17 +33,17 @@ export default function AppearanceSettingsScreen() {
               <TouchableOpacity
                 key={t.value}
                 onPress={() => setTheme(t.value)}
-                className={`flex-row items-center justify-between p-4 border-b border-border ${theme === t.value ? 'bg-secondary' : ''
+                className={`flex-row items-center justify-between p-4 border-b border-border ${theme === t.value ? 'bg-default' : ''
                   }`}
               >
                 <View>
                   <Text className="font-medium text-foreground">
                     {t.label}
                   </Text>
-                  <Text className="text-sm text-muted-foreground">{t.description}</Text>
+                  <Text className="text-sm text-muted">{t.description}</Text>
                 </View>
                 {theme === t.value && (
-                  <Text className="text-primary text-xl">✓</Text>
+                  <Text className="text-accent text-xl">✓</Text>
                 )}
               </TouchableOpacity>
             ))}

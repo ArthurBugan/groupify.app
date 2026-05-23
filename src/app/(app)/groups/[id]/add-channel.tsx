@@ -1,17 +1,18 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useCallback, useEffect } from 'react';
-import { useDeleteGroup, useGroup, useGroupItems, useBatchUpdateChannels } from '../../../../hooks';
-import { useChannelsInfinite } from '../../../../hooks/useChannelsInfinite';
-import { useAnimesInfinite } from '../../../../hooks/useAnimesInfinite';
-import { useWebsitesInfinite } from '../../../../hooks/useWebsitesInfinite';
+import { useDeleteGroup, useGroup, useBatchUpdateChannels } from '@/hooks';
+import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
+import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
+import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
 import { Card, CardContent, Checkbox, Button } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import { useTheme } from '@/theme/ThemeProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LegendList } from '@legendapp/list';
 import type { Channel, Anime, Website } from '@/types';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { FlashList } from '@shopify/flash-list';
 
 const TABS = [
   { key: 'youtube', label: 'YouTube' },
@@ -116,10 +117,8 @@ const batchUpdateChannels = useBatchUpdateChannels();
         groupId: id,
         data: { channels }
       });
-      Alert.alert('Success', 'Channels added to group');
       router.back();
     } catch (error) {
-      Alert.alert('Error', 'Failed to update channels');
     }
   };
 
@@ -136,13 +135,13 @@ const batchUpdateChannels = useBatchUpdateChannels();
             {item.thumbnail || item.imageUrl ? (
               <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-lg ml-3" />
             ) : (
-              <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center ml-3">
+              <View className="w-10 h-10 rounded-lg bg-default items-center justify-center ml-3">
                 <IconifyIcon name="mdi:television-play" size={20} />
               </View>
             )}
             <View className="ml-3 flex-1">
               <Text className="font-medium text-foreground">{item.name}</Text>
-              <Text className="text-muted-foreground text-sm" numberOfLines={1}>{item.url}</Text>
+              <Text className="text-muted text-sm" numberOfLines={1}>{item.url}</Text>
             </View>
           </CardContent>
         </Card>
@@ -163,14 +162,14 @@ const batchUpdateChannels = useBatchUpdateChannels();
             {item.thumbnail || item.imageUrl ? (
               <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-lg ml-3" />
             ) : (
-              <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center ml-3">
+              <View className="w-10 h-10 rounded-lg bg-default items-center justify-center ml-3">
                 <IconifyIcon name="mdi:television-play" size={20} />
               </View>
             )}
             <View className="ml-3 flex-1">
               <Text className="font-medium text-foreground">{item.name}</Text>
               {item.groupName && (
-                <Text className="text-muted-foreground text-sm">{item.groupName}</Text>
+                <Text className="text-muted text-sm">{item.groupName}</Text>
               )}
             </View>
           </CardContent>
@@ -216,13 +215,13 @@ const batchUpdateChannels = useBatchUpdateChannels();
             {item.thumbnail ? (
               <Image source={{ uri: item.thumbnail }} className="w-10 h-10 rounded-lg ml-3" />
             ) : (
-              <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center ml-3">
+              <View className="w-10 h-10 rounded-lg bg-default items-center justify-center ml-3">
                 <IconifyIcon name="lucide:globe" size={20} />
               </View>
             )}
             <View className="ml-3 flex-1">
               <Text className="font-medium text-foreground">{item.name}</Text>
-              <Text className="text-muted-foreground text-sm" numberOfLines={1}>{item.url}</Text>
+              <Text className="text-muted text-sm" numberOfLines={1}>{item.url}</Text>
             </View>
           </CardContent>
         </Card>
@@ -235,7 +234,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
       <SafeAreaView edges={['top']} className="flex-1">
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-primary">← Back</Text>
+            <Text className="text-accent">← Back</Text>
           </TouchableOpacity>
         </View>
 
@@ -253,7 +252,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
                 }`}
             >
               <Text
-                className={`font-medium ${activeTab === tab.key ? 'text-primary' : 'text-muted-foreground'
+                className={`font-medium ${activeTab === tab.key ? 'text-accent' : 'text-muted'
                   }`}
               >
                 {tab.label}
@@ -267,7 +266,6 @@ const batchUpdateChannels = useBatchUpdateChannels();
 
         {activeTab !== 'website' && (
           <TextInput
-            className="bg-card rounded-xl p-3 text-foreground mb-4"
             placeholder="Search channels..."
             placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
             value={search}
@@ -276,7 +274,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
         )}
 
         {activeTab === 'youtube' && (
-          <LegendList
+          <FlashList
             data={filteredChannels || []}
             onEndReached={loadMore}
             renderItem={renderChannelItem}
@@ -284,7 +282,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
             onEndReachedThreshold={0.1}
             ListFooterComponent={renderFooter}
             ListEmptyComponent={
-              <Text className="text-center text-muted-foreground mt-10">
+              <Text className="text-center text-muted mt-10">
                 {isLoading ? 'Loading...' : 'No channels found.'}
               </Text>
             }
@@ -292,7 +290,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
         )}
 
         {activeTab === 'anime' && (
-          <LegendList
+          <FlashList
             data={animes || []}
             onEndReached={loadMoreAnimes}
             renderItem={renderAnimeItem}
@@ -300,7 +298,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
             onEndReachedThreshold={0.1}
             ListFooterComponent={renderAnimesFooter}
             ListEmptyComponent={
-              <Text className="text-center text-muted-foreground mt-10">
+              <Text className="text-center text-muted mt-10">
                 {isLoadingAnimes ? 'Loading...' : 'No animes found.'}
               </Text>
             }
@@ -308,7 +306,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
         )}
 
         {activeTab === 'website' && (
-          <LegendList
+          <FlashList
             data={websites || []}
             onEndReached={loadMoreWebsites}
             renderItem={renderWebsiteItem}
@@ -316,7 +314,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
             onEndReachedThreshold={0.1}
             ListFooterComponent={renderWebsitesFooter}
             ListEmptyComponent={
-              <Text className="text-center text-muted-foreground mt-10">
+              <Text className="text-center text-muted mt-10">
                 {isLoadingWebsites ? 'Loading...' : 'No websites found.'}
               </Text>
             }
@@ -324,7 +322,7 @@ const batchUpdateChannels = useBatchUpdateChannels();
         )}
       </SafeAreaView>
 
-      <View className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-card">
+      <View className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t border-border">
         <Button onPress={handleSave} fullWidth>
           Add Selected ({selectedYoutube.length + selectedAnime.length + selectedWebsites.length})
         </Button>

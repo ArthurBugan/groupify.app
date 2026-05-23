@@ -16,14 +16,14 @@ export default function BlogListScreen() {
     <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-primary">← Back</Text>
+          <Text className="text-accent">← Back</Text>
         </TouchableOpacity>
       </View>
 
       <DashboardHeader title="Blog" />
 
       {posts.length === 0 ? (
-        <Text className="text-muted-foreground text-center mt-8">No posts yet</Text>
+        <Text className="text-muted text-center mt-8">No posts yet</Text>
       ) : (
         posts.map((post: BlogPost) => (
           <TouchableOpacity
@@ -34,11 +34,11 @@ export default function BlogListScreen() {
               <CardContent>
                 <Text className="text-lg font-semibold">{post.title}</Text>
                 {post.excerpt && (
-                  <Text className="text-muted-foreground mt-1" numberOfLines={2}>
+                  <Text className="text-muted mt-1" numberOfLines={2}>
                     {post.excerpt}
                   </Text>
                 )}
-                <Text className="text-muted-foreground text-sm mt-2">
+                <Text className="text-muted text-sm mt-2">
                   {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}
                 </Text>
               </CardContent>

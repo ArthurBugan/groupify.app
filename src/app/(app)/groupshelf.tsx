@@ -1,8 +1,9 @@
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useGroupShelves, useCopyShelf } from '@/hooks/useGroupShelf';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Skeleton } from '@/components/ui';
@@ -52,19 +53,19 @@ export default function GroupShelfScreen() {
   const renderChannel = (item: Channel) => (
     <TouchableOpacity
       key={item.id}
-      className="bg-card rounded-xl p-3 mb-2 flex-row items-center gap-3"
+      className="bg-surface rounded-xl p-3 mb-2 flex-row items-center gap-3"
     >
       {item.thumbnail || item.imageUrl ? (
         <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
       ) : (
-        <View className="w-10 h-10 rounded-xl bg-secondary items-center justify-center">
+        <View className="w-10 h-10 rounded-xl bg-default items-center justify-center">
           <Icon name="tv" size={20} />
         </View>
       )}
       <View className="flex-1">
         <Text className="text-base font-semibold text-foreground">{item.name}</Text>
         {item.description && (
-          <Text className="text-sm text-muted-foreground" numberOfLines={2}>
+          <Text className="text-sm text-muted" numberOfLines={2}>
             {item.description}
           </Text>
         )}
@@ -89,10 +90,9 @@ export default function GroupShelfScreen() {
           <Text className="text-3xl font-bold text-foreground">Groupshelf</Text>
         </View>
         
-        <Text className="text-muted-foreground mb-4">Copy groups from other users</Text>
+        <Text className="text-muted mb-4">Copy groups from other users</Text>
 
         <TextInput
-          className="bg-card rounded-xl p-3 text-foreground mb-4"
           placeholder="Search groupshelf..."
           placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
           value={search}
@@ -103,7 +103,7 @@ export default function GroupShelfScreen() {
           {isLoading ? (
             <View className="gap-4">
               {[1, 2, 3, 4, 5].map(i => (
-                <View key={i} className="bg-card rounded-xl p-4">
+                <View key={i} className="bg-surface rounded-xl p-4">
                   <View className="flex-row items-center gap-3">
                     <Skeleton width={40} height={40} className="rounded-lg" />
                     <View className="flex-1 gap-2">
@@ -115,15 +115,15 @@ export default function GroupShelfScreen() {
               ))}
             </View>
           ) : error ? (
-            <View className="bg-card rounded-xl p-6 items-center">
-              <IconifyIcon name="lucide:alert-circle" size={48} className="text-destructive mb-4" />
-              <Text className="text-destructive font-semibold">Error Loading Groupshelf</Text>
-              <Text className="text-muted-foreground text-sm mt-2">{error.message || 'Failed to load groupshelf. Please try again.'}</Text>
+            <View className="bg-surface rounded-xl p-6 items-center">
+              <IconifyIcon name="lucide:alert-circle" size={48} className="text-danger mb-4" />
+              <Text className="text-danger font-semibold">Error Loading Groupshelf</Text>
+              <Text className="text-muted text-sm mt-2">{error.message || 'Failed to load groupshelf. Please try again.'}</Text>
             </View>
           ) : data?.data.length === 0 ? (
-            <View className="bg-card rounded-xl p-6 items-center">
-              <IconifyIcon name="lucide:search-x" size={48} className="text-muted-foreground mb-4" />
-              <Text className="text-muted-foreground text-center">
+            <View className="bg-surface rounded-xl p-6 items-center">
+              <IconifyIcon name="lucide:search-x" size={48} className="text-muted mb-4" />
+              <Text className="text-muted text-center">
                 {search ? `No groupshelf match "${search}"` : 'No groupshelf found'}
               </Text>
             </View>
@@ -132,42 +132,42 @@ export default function GroupShelfScreen() {
               {data?.data.map(shelf => (
                 <TouchableOpacity 
                   key={shelf.id} 
-                  className="bg-card rounded-xl p-4"
+                  className="bg-surface rounded-xl p-4"
                   onPress={() => openShelfDetails(shelf)}
                 >
                   <View className="flex-row items-center gap-3">
-                    <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
-                      <IconifyIcon name={shelf.icon || 'lucide:folder'} size={20} className="text-muted-foreground" />
+                    <View className="w-10 h-10 rounded-lg bg-default items-center justify-center">
+                      <IconifyIcon name={shelf.icon || 'lucide:folder'} size={20} className="text-muted" />
                     </View>
                     <View className="flex-1">
                       <Text className="text-lg font-semibold text-foreground">{shelf.name}</Text>
                       {shelf.description && shelf.description !== '' && (
-                        <Text className="text-sm text-muted-foreground" numberOfLines={2}>
+                        <Text className="text-sm text-muted" numberOfLines={2}>
                           {shelf.description}
                         </Text>
                       )}
                       {shelf.category && (
                         <View className="flex-row items-center gap-2 mt-1">
-                          <View className="bg-primary/20 px-2 py-0.5 rounded">
-                            <Text className="text-xs text-primary">{shelf.category}</Text>
+                          <View className="bg-accent/20 px-2 py-0.5 rounded">
+                            <Text className="text-xs text-accent">{shelf.category}</Text>
                           </View>
                         </View>
                       )}
-                      <Text className="text-xs text-muted-foreground mt-1">
+                      <Text className="text-xs text-muted mt-1">
                         {shelf.channelCount || shelf.channels?.length || 0} channels • {shelf.createdAt ? new Date(shelf.createdAt).toLocaleDateString() : ''}
                       </Text>
                     </View>
                     <TouchableOpacity
                       onPress={() => handleCopy(shelf.id, shelf.name || 'Group')}
                       disabled={copyShelf.isPending}
-                      className="bg-primary px-4 py-2 rounded-lg"
+                      className="bg-accent px-4 py-2 rounded-lg"
                     >
                       {copyShelf.isPending ? (
-                        <ActivityIndicator size="small" className="text-primary-foreground" />
+                        <ActivityIndicator size="small" className="text-accent-foreground" />
                       ) : (
                         <View className="flex-row items-center gap-2">
-                          <IconifyIcon name="lucide:copy" size={16} className="text-primary-foreground" />
-                          <Text className="text-primary-foreground font-semibold">Copy</Text>
+                          <IconifyIcon name="lucide:copy" size={16} className="text-accent-foreground" />
+                          <Text className="text-accent-foreground font-semibold">Copy</Text>
                         </View>
                       )}
                     </TouchableOpacity>
@@ -198,12 +198,12 @@ export default function GroupShelfScreen() {
             <View className="pb-4">
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
-                    <IconifyIcon name={selectedShelf.icon || 'lucide:folder'} size={20} className="text-muted-foreground" />
+                  <View className="w-10 h-10 rounded-lg bg-default items-center justify-center">
+                    <IconifyIcon name={selectedShelf.icon || 'lucide:folder'} size={20} className="text-muted" />
                   </View>
                   <View>
                     <Text className="text-xl font-bold text-foreground">{selectedShelf.name}</Text>
-                    <Text className="text-sm text-muted-foreground">
+                    <Text className="text-sm text-muted">
                       {selectedShelf.channels?.length || 0} channels
                     </Text>
                   </View>
@@ -214,7 +214,7 @@ export default function GroupShelfScreen() {
               </View>
 
               {selectedShelf.description && (
-                <Text className="text-muted-foreground mb-4">{selectedShelf.description}</Text>
+                <Text className="text-muted mb-4">{selectedShelf.description}</Text>
               )}
 
               {selectedShelf.channels && selectedShelf.channels.length > 0 ? (
@@ -223,8 +223,8 @@ export default function GroupShelfScreen() {
                 </View>
               ) : (
                 <View className="items-center py-8">
-                  <IconifyIcon name="lucide:tv-off" size={48} className="text-muted-foreground mb-4" />
-                  <Text className="text-muted-foreground">No channels in this group</Text>
+                  <IconifyIcon name="lucide:tv-off" size={48} className="text-muted mb-4" />
+                  <Text className="text-muted">No channels in this group</Text>
                 </View>
               )}
             </View>

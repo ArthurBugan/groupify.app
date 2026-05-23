@@ -37,21 +37,21 @@ export default function GroupSettingsScreen() {
 
         <View className="gap-3">
           <TouchableOpacity
-            className="bg-card p-4 rounded-lg"
+            className="bg-surface p-4 rounded-lg"
             onPress={() => router.push(`/groups/${id}/edit`)}
           >
             <Text className="text-foreground font-medium">Edit Group</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-card p-4 rounded-lg"
+            className="bg-surface p-4 rounded-lg"
             onPress={() => router.push(`/groups/${id}/share`)}
           >
             <Text className="text-foreground font-medium">Share</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-destructive p-4 rounded-lg"
+            className="bg-danger p-4 rounded-lg"
             onPress={handleDelete}
           >
             <Text className="text-white font-medium">Delete Group</Text>

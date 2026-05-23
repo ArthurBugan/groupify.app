@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 
 export default function ForgotPasswordSuccessScreen() {
   const router = useRouter();
@@ -24,37 +24,37 @@ export default function ForgotPasswordSuccessScreen() {
         </View>
 
         <View className="flex-1 items-center justify-center">
-          <View className="w-20 h-20 rounded-full bg-primary/20 items-center justify-center mb-6">
-            <IconifyIcon name="lucide:mail-check" size={40} className="text-primary" />
+          <View className="w-20 h-20 rounded-full bg-accent/20 items-center justify-center mb-6">
+            <IconifyIcon name="lucide:mail-check" size={40} className="text-accent" />
           </View>
           
           <Text className="text-xl font-bold text-foreground mb-4 text-center">
             Check Your Email
           </Text>
           
-          <Text className="text-base text-muted-foreground mb-2 text-center">
+          <Text className="text-base text-muted mb-2 text-center">
             We've sent reset instructions to
           </Text>
-          <Text className="text-primary font-semibold mb-8">{email}</Text>
+          <Text className="text-accent font-semibold mb-8">{email}</Text>
           
-          <Text className="text-sm text-muted-foreground text-center mb-8">
+          <Text className="text-sm text-muted text-center mb-8">
             Check your inbox and follow the instructions to reset your password
           </Text>
         </View>
 
         <TouchableOpacity 
-          className="bg-primary rounded-xl p-4 items-center mb-4" 
+          className="bg-accent rounded-xl p-4 items-center mb-4" 
           onPress={() => router.replace('/(auth)/login')}
         >
-          <Text className="text-primary-foreground text-base font-semibold">
+          <Text className="text-accent-foreground text-base font-semibold">
             Back to Sign In
           </Text>
         </TouchableOpacity>
 
         <View className="flex-row justify-center mt-4">
-          <Text className="text-sm text-muted-foreground">Didn't receive the email? </Text>
+          <Text className="text-sm text-muted">Didn't receive the email? </Text>
           <TouchableOpacity onPress={() => router.back()}>
-            <Text className="text-sm text-primary font-medium">Try again</Text>
+            <Text className="text-sm text-accent font-medium">Try again</Text>
           </TouchableOpacity>
         </View>
       </View>
