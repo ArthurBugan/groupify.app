@@ -48,8 +48,6 @@ export default function EditGroupScreen() {
   const router = useRouter();
   const { id } = useGlobalSearchParams<{ id: string }>();
   const { data: group, isLoading } = useGroup(id);
-
-  console.log(group, id)
   const updateGroup = useUpdateGroup();
   const { data: groupsData } = useGroups({ limit: 100 });
   const {

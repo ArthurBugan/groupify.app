@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useChannel, useGroups, useUpdateChannel } from '@/hooks';
@@ -53,7 +54,7 @@ export default function ChangeChannelGroupScreen() {
 
         <View className="flex-row items-center gap-3 bg-surface rounded-xl p-4 mb-6">
           {channel?.data?.thumbnail || channel?.data?.imageUrl ? (
-            <Image source={{ uri: channel?.data?.thumbnail || channel?.data?.imageUrl }} className="w-16 h-16 rounded-xl" />
+            <Image source={{ uri: channel?.data?.thumbnail || channel?.data?.imageUrl }} style={{ width: 64, height: 64, borderRadius: 12 }} />
           ) : (
             <View className="w-16 h-16 rounded-xl bg-default items-center justify-center">
               <IconifyIcon name="lucide:tv" size={24} />

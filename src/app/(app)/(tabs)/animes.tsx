@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, Image, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Linking } from 'react-native';
 import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { InlineAd } from '@/components/ui/Admob';
 import { Skeleton } from '@/components/ui';
 import { FlashList } from '@shopify/flash-list';
+import { Image } from 'expo-image';
 
 type ListItem = Anime | { isAd: true; id: string };
 
@@ -69,7 +70,7 @@ export default function AnimesListScreen() {
       onPress={() => router.push(`/animes/change-group/${item.id}`)}
     >
       {item.thumbnail || item.imageUrl ? (
-        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} style={{ width: 40, height: 40, borderRadius: 12 }} />
       ) : (
         <View className="w-10 h-10 rounded-xl bg-default items-center justify-center">
           <Icon name="film" size={20} />

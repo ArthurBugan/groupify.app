@@ -68,8 +68,9 @@ export const useBatchUpdateChannels = () => {
   return useMutation({
     mutationFn: ({ groupId, data }: { groupId: string; data: { channels: UpdateChannelRequest[] } }) =>
       channelsApi.batchUpdate(groupId, data),
-    onSuccess: () => {
+    onSuccess: (_, { groupId }) => {
       queryClient.invalidateQueries({ queryKey: ['channels'] });
+      queryClient.invalidateQueries({ queryKey: ['group', groupId] });
     },
   });
 };

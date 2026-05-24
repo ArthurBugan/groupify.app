@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { useMemo, useState, useRef } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -7,7 +8,7 @@ import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useGroupShelves, useCopyShelf } from '@/hooks/useGroupShelf';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Skeleton } from '@/components/ui';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView } from '@expo/ui/community/bottom-sheet';
 import { Icon } from '@/components/ui/Icons';
 import type { Channel, Group } from '@/types';
 
@@ -38,17 +39,6 @@ export default function GroupShelfScreen() {
     setSelectedShelf(null);
   };
 
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        appearsOnIndex={1}
-        disappearsOnIndex={-1}
-        opacity={0.5}
-      />
-    ),
-    []
-  );
 
   const renderChannel = (item: Channel) => (
     <TouchableOpacity
@@ -56,7 +46,7 @@ export default function GroupShelfScreen() {
       className="bg-surface rounded-xl p-3 mb-2 flex-row items-center gap-3"
     >
       {item.thumbnail || item.imageUrl ? (
-        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
+        <Image source={{ uri: item.thumbnail || item.imageUrl }} style={{ width: 40, height: 40, borderRadius: 12 }} />
       ) : (
         <View className="w-10 h-10 rounded-xl bg-default items-center justify-center">
           <Icon name="tv" size={20} />
@@ -184,10 +174,8 @@ export default function GroupShelfScreen() {
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
-        backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: '#1a1a1a' }}
         handleIndicatorStyle={{ backgroundColor: '#666' }}
-        simultaneousHandlers={undefined}
       >
         <BottomSheetScrollView 
           className="flex-1 px-4"

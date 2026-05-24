@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
 import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
@@ -50,8 +51,8 @@ export default function ChannelsListScreen() {
       className="bg-surface rounded-xl p-1.5 mb-2 flex-row items-center gap-3"
       onPress={() => router.push(`/channels/change-group/${item.id}`)}
     >
-      {item.thumbnail || item.imageUrl ? (
-        <Image source={{ uri: item.thumbnail || item.imageUrl }} className="w-10 h-10 rounded-xl" />
+      {(item.thumbnail || (item as any).imageUrl) ? (
+        <Image source={{ uri: item.thumbnail || (item as any).imageUrl }} style={{ width: 40, height: 40, borderRadius: 12 }} />
       ) : (
         <View className="w-10 h-10 rounded-xl bg-default items-center justify-center">
           <Icon name="tv" size={20} />

@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import { useAuthStore } from '@/stores';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { getThemeColor } from '@/theme/themeColors';
+import { useTheme } from '@/theme/ThemeProvider';
 
 const menuItems = [
   { label: 'Websites', path: '/websites', icon: 'lucide:globe' },
@@ -15,6 +17,7 @@ const menuItems = [
 export default function MoreScreen() {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
+  const { isDark } = useTheme();
 
   const handleLogout = async () => {
     await logout();
@@ -35,9 +38,9 @@ export default function MoreScreen() {
               onPress={() => router.push(item.path)}
               className={`flex-row items-center p-4 ${index < menuItems.length - 1 ? 'border-b border-border' : ''}`}
             >
-              <IconifyIcon name={item.icon} size={24} color="#9CA3AF" />
+              <IconifyIcon name={item.icon} size={24} color={getThemeColor('muted-foreground', isDark)} />
               <Text className="flex-1 text-foreground ml-2">{item.label}</Text>
-              <IconifyIcon name="lucide:chevron-right" size={16} color="#9CA3AF" />
+              <IconifyIcon name="lucide:chevron-right" size={16} color={getThemeColor('muted', isDark)} />
             </TouchableOpacity>
           ))}
         </View>

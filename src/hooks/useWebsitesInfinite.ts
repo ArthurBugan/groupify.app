@@ -8,7 +8,7 @@ export function useWebsitesInfinite({ limit = 20, page, search }: { limit?: numb
 
   const query = useInfiniteQuery<PaginatedResponse<Website>>({
     queryKey: ['websites', searchText],
-    queryFn: ({ pageParam = 1 }) => websitesApi.list({ page: page ?? pageParam, limit, search: searchText }),
+    queryFn: ({ pageParam = 1 }) => websitesApi.list({ page: page ?? pageParam, limit, ...(searchText ? { search: searchText } : {}) }),
     getNextPageParam: (lastPage) => lastPage?.pagination && lastPage.pagination.page < lastPage.pagination.totalPages 
       ? lastPage.pagination.page + 1 
       : undefined,

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useGroupsInfinite } from '@/hooks/useGroupsInfinite';

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { Skeleton } from '@/components/ui';
 import { FlashList } from '@shopify/flash-list';
+import { Image } from 'expo-image';
 
 export default function WebsitesScreen() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function WebsitesScreen() {
       onPress={() => router.push(`/websites/edit/${item.id}`)}
     >
       {item.thumbnail ? (
-        <Image source={{ uri: item.thumbnail }} className="w-6 h-6 rounded-xl" />
+        <Image source={{ uri: item.thumbnail }} style={{ width: 24, height: 24, borderRadius: 12 }} />
       ) : (
         <View className="w-6 h-6 rounded-xl bg-default items-center justify-center">
           <IconifyIcon name="lucide:globe" size={20} />

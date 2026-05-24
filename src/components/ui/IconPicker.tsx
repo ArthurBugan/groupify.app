@@ -2,9 +2,9 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Pressable,
+  ScrollView,
 } from 'react-native';
-import { TextField, Input as TextInput } from 'heroui-native';
+import { Input as TextInput } from 'heroui-native';
 import {
   useCallback,
   useEffect,
@@ -14,9 +14,8 @@ import {
 import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
-import BottomSheet, { BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList, BottomSheetView } from '@expo/ui/community/bottom-sheet';
 import { Portal } from 'react-native-portalize';
-import { FlashList } from '@shopify/flash-list';
 
 // Timer for debouncing search
 let searchTimer: ReturnType<typeof setTimeout>;
@@ -70,6 +69,7 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
   const handleIconSelect = useCallback(
     (iconName: string) => {
       const formatted = iconName.includes(':') ? iconName : `twemoji:${iconName}`;
+      setIsOpen(false);
       onChange(formatted);
     },
     [onChange]
@@ -111,17 +111,6 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
     ? categories.find((c) => c.key === activeCategory)?.icons || []
     : [];
 
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.5}
-      />
-    ),
-    []
-  );
 
   return (
     <View>
@@ -132,18 +121,13 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
       {/* Trigger button */}
       <TouchableOpacity
         onPress={() => handleOpenChange(true)}
-        className={`flex-row items-center justify-between bg-default border rounded-lg px-4 py-3 ${error ? 'border-danger' : 'border-border'
+        className={`flex-row items-center bg-default border rounded-lg px-4 py-3 ${error ? 'border-danger' : 'border-border'
           }`}
       >
-        <View className="flex-row items-center gap-3">
-          <IconifyIcon name={value || 'lucide:folder'} size={20} />
-          {value ? (
-            <Text className="text-foreground text-sm">{value}</Text>
-          ) : (
-            <Text className="text-muted text-sm">Select icon</Text>
-          )}
-        </View>
-        <Text className="text-muted text-sm">🔍</Text>
+        <IconifyIcon name={value || 'lucide:folder'} size={20} />
+        <Text className={`ml-3 flex-1 ${value ? 'text-foreground' : 'text-muted'}`}>
+          {value || 'Select icon'}
+        </Text>
       </TouchableOpacity>
 
       {error && <Text className="text-xs text-danger mt-1">{error}</Text>}
@@ -153,8 +137,6 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
         <BottomSheet
           ref={bottomSheetRef}
           index={isOpen ? 0 : -1}
-          snapPoints={['85%']}
-          backdropComponent={renderBackdrop}
           enableDynamicSizing={false}
           handleIndicatorStyle={{
             backgroundColor: getThemeColor('muted-foreground', isDark),
@@ -163,20 +145,22 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
             backgroundColor: getThemeColor('popover', isDark),
           }}
         >
-          <BottomSheetScrollView contentContainerStyle={{ padding: 16 }}>
+          <BottomSheetView style={{ flex: 1, padding: 16 }}>
             {/* Header */}
-            <Text className="text-lg font-bold text-foreground mb-3">Choose an Icon</Text>
+            <View className="flex-row items-center justify-between mb-3">
+              <Text className="text-lg font-bold text-foreground">Choose an Icon</Text>
+              <TouchableOpacity onPress={() => handleOpenChange(false)}>
+                <IconifyIcon name="lucide:x" color={getThemeColor('muted-foreground', isDark)} size={20} />
+              </TouchableOpacity>
+            </View>
 
-            {/* Search */}
-            <View
-              className='mb-4 position-relative'
-            >
-                <TextInput
-                  value={searchTerm}
-                  onChangeText={handleFilter}
-                  placeholder="Search icons..."
-                  placeholderTextColor={getThemeColor('muted-foreground', isDark)}
-                />
+            <View className="mb-4">
+              <TextInput
+                value={searchTerm}
+                onChangeText={handleFilter}
+                placeholder="Search icons..."
+                placeholderTextColor={getThemeColor('muted-foreground', isDark)}
+              />
             </View>
 
             {/* Content */}
@@ -185,14 +169,16 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 <Text className="text-muted">Loading icons...</Text>
               </View>
             ) : searchTerm ? (
-              <View>
+              <View className="flex-1">
                 <Text className="text-sm text-muted mb-2">
                   Found {filteredIcons.length} icons matching "{searchTerm}"
                 </Text>
-                <FlashList
+                <BottomSheetFlatList
                   data={filteredIcons}
-                  numColumns={6}
+                  numColumns={7}
                   keyExtractor={(item) => item}
+                  className="flex-1"
+                  ListFooterComponent={<View style={{ height: 40 }} />}
                   renderItem={({ item: iconName }) => (
                     <IconButton
                       iconName={iconName}
@@ -204,18 +190,18 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 />
               </View>
             ) : (
-              <View>
+              <View className="flex-1">
                 {/* Category tabs */}
-                <FlashList
-                  data={categories}
+                <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  keyExtractor={(item) => item.key}
-                  contentContainerStyle={{ gap: 4, marginBottom: 12 }}
-                  renderItem={({ item: cat }) => (
+                  className="mb-3"
+                >
+                  {categories.map((cat) => (
                     <TouchableOpacity
+                      key={cat.key}
                       onPress={() => setActiveCategory(cat.key)}
-                      className={`px-3 m-1 py-1.5 rounded-full ${activeCategory === cat.key ? 'bg-accent' : 'bg-default'
+                      className={`px-3 py-1.5 rounded-full mr-2 ${activeCategory === cat.key ? 'bg-accent' : 'bg-default'
                         }`}
                     >
                       <Text
@@ -227,14 +213,16 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                         {cat.name}
                       </Text>
                     </TouchableOpacity>
-                  )}
-                />
+                  ))}
+                </ScrollView>
 
                 {/* Icons grid */}
-                <FlashList
+                <BottomSheetFlatList
                   data={activeIcons}
-                  numColumns={6}
+                  numColumns={7}
                   keyExtractor={(item) => item}
+                  className="flex-1"
+                  ListFooterComponent={<View style={{ height: 40 }} />}
                   renderItem={({ item: iconName }) => (
                     <IconButton
                       iconName={iconName}
@@ -246,12 +234,14 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 />
               </View>
             )}
-          </BottomSheetScrollView>
+          </BottomSheetView>
         </BottomSheet>
       </Portal>
     </View>
   );
 }
+
+export default IconPicker;
 
 interface IconButtonProps {
   iconName: string;
@@ -267,7 +257,7 @@ function IconButton({ iconName, selectedValue, onSelect, isDark }: IconButtonPro
   return (
     <TouchableOpacity
       onPress={() => onSelect(displayName)}
-      className={`w-12 m-1 h-12 items-center justify-center rounded-lg ${isSelected ? 'bg-accent/20 border-2 border-primary' : 'bg-default'
+      className={`w-11 m-1 h-11 items-center justify-center rounded-lg ${isSelected ? 'bg-accent/20 border-2 border-primary' : 'bg-default'
         }`}
     >
       <IconifyIcon name={displayName} size={24} />

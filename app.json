@@ -132,7 +132,9 @@
           "image": "./assets/images/splash.png",
           "imageWidth": 200
         }
-      ]
+      ],
+      "react-native-enriched-markdown",
+      "expo-image"
     ],
     "icon": "./assets/images/ios-icon-default.png",
     "web": {
@@ -147,6 +149,6 @@
       }
     },
     "owner": "arthurbugan",
-    "version": "1.11.0"
+    "version": "1.12.0"
   }
 }

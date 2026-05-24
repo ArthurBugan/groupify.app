@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useAnime, useGroups, useUpdateChannel } from '@/hooks';
@@ -52,7 +53,7 @@ export default function ChangeAnimeGroupScreen() {
 
         <View className="flex-row items-center gap-3 bg-surface rounded-xl p-4 mb-6">
           {anime?.thumbnail || anime?.imageUrl ? (
-            <Image source={{ uri: anime.thumbnail || anime.imageUrl }} className="w-16 h-16 rounded-xl" />
+            <Image source={{ uri: anime.thumbnail || anime.imageUrl }} style={{ width: 64, height: 64, borderRadius: 12 }} />
           ) : (
             <View className="w-16 h-16 rounded-xl bg-default items-center justify-center">
               <IconifyIcon name="lucide:film" size={24} />
