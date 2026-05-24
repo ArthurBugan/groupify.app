@@ -21,7 +21,7 @@ export default function SettingsScreen() {
 
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-primary">← Back</Text>
+            <Text className="text-accent">← Back</Text>
           </TouchableOpacity>
         </View>
 
@@ -36,7 +36,7 @@ export default function SettingsScreen() {
               <CardContent className="flex-row items-center">
                 <Text className="text-xl mr-3">{item.icon}</Text>
                 <Text className="flex-1 text-foreground">{item.label}</Text>
-                <Text className="text-muted-foreground">›</Text>
+                <Text className="text-muted">›</Text>
               </CardContent>
               {index < menuItems.length - 1 && (
                 <View className="h-px border-border mx-4" />

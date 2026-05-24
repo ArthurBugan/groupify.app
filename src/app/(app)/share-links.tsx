@@ -44,14 +44,14 @@ export default function ShareLinksScreen() {
       <SafeAreaView className='flex-1' edges={['top']}>
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-primary">← Back</Text>
+            <Text className="text-accent">← Back</Text>
           </TouchableOpacity>
         </View>
 
         <DashboardHeader title="Share Links" />
 
         {data?.length === 0 ? (
-          <Text className="text-muted-foreground text-center mt-8">No share links yet</Text>
+          <Text className="text-muted text-center mt-8">No share links yet</Text>
         ) : (
           data?.map((link: ShareLink) => (
             <Card key={link.id} className="mb-2">
@@ -59,7 +59,7 @@ export default function ShareLinksScreen() {
                 <View className="flex-row items-center justify-between mb-2">
                   <View>
                     <Text className="font-medium capitalize">{link.type}</Text>
-                    <Text className="text-muted-foreground text-sm">{link.shareUrl}</Text>
+                    <Text className="text-muted text-sm">{link.shareUrl}</Text>
                   </View>
                 </View>
                 <View className="flex-row gap-2">

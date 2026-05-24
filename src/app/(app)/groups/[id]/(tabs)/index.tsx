@@ -3,7 +3,7 @@ import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroup } from '@/hooks';
 import { Card, CardContent, Button } from '@/components/ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 
 export default function GroupOverviewScreen() {
   const router = useRouter();
@@ -19,7 +19,7 @@ export default function GroupOverviewScreen() {
   if (!group) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <Text className="text-muted-foreground">Loading...</Text>
+        <Text className="text-muted">Loading...</Text>
       </View>
     );
   }
@@ -101,17 +101,17 @@ export default function GroupOverviewScreen() {
       <SafeAreaView edges={['top']}>
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-primary">← Back</Text>
+            <Text className="text-accent">← Back</Text>
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center gap-2">
-          <View className="w-16 h-16 rounded-xl bg-card items-center justify-center">
+          <View className="w-16 h-16 rounded-xl bg-surface items-center justify-center">
             <IconifyIcon name={getGroupIcon(group.icon)} size={32} />
           </View>
           <View className="flex-1">
             <Text className="text-2xl font-bold text-foreground">{group.name}</Text>
             {group.category && (
-              <Text className="text-muted-foreground">{group.category}</Text>
+              <Text className="text-muted">{group.category}</Text>
             )}
           </View>
         </View>
@@ -128,11 +128,11 @@ export default function GroupOverviewScreen() {
         </View>
 
         <Card>
-          <CardContent className="bg-card rounded-xl">
+          <CardContent className="bg-surface rounded-xl">
             {group.description ? (
-              <Text className="text-muted-foreground">{group.description}</Text>
+              <Text className="text-muted">{group.description}</Text>
             ) : (
-              <Text className="text-muted-foreground">No description</Text>
+              <Text className="text-muted">No description</Text>
             )}
           </CardContent>
         </Card>
@@ -146,7 +146,7 @@ export default function GroupOverviewScreen() {
               {group.channels.map((channel) => (
                 <TouchableOpacity
                   key={channel.id}
-                  className="flex-row items-center gap-3 bg-card p-1.5 rounded-lg"
+                  className="flex-row items-center gap-3 bg-surface p-1.5 rounded-lg"
                   onPress={() => handleItemPress(channel)}
                 >
                   {channel.thumbnail || channel.imageUrl ? (
@@ -155,14 +155,14 @@ export default function GroupOverviewScreen() {
                       className="w-10 h-10 rounded-lg"
                     />
                   ) : (
-                    <View className="w-10 h-10 rounded-lg bg-secondary items-center justify-center">
+                    <View className="w-10 h-10 rounded-lg bg-default items-center justify-center">
                       <IconifyIcon name="mdi:television-play" size={20} />
                     </View>
                   )}
                   <View className="flex-1">
                     <Text className="text-foreground font-medium">{channel.name}</Text>
                   </View>
-                  <View className="w-6 h-6 rounded-lg bg-secondary items-center justify-center">
+                  <View className="w-6 h-6 rounded-lg bg-default items-center justify-center">
                     <IconifyIcon name="mdi:open-in-new" size={14} color="white" />
                   </View>
                 </TouchableOpacity>

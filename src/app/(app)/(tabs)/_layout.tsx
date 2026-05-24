@@ -1,102 +1,56 @@
-import { Tabs } from 'expo-router';
-import { useColorScheme, Platform } from 'react-native';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { useColorScheme } from 'react-native';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { getThemeColor } from '@/theme/themeColors';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const activeColor = isDark ? '#39d08a' : '#39d08a';
-  const inactiveColor = isDark ? '#94a3b8' : '#9CA3AF';
-  
-  const isIOS = Platform.OS === 'ios';
-  
-  const tabBarBg = isDark ? '#0a0a0a' : '#fafafa';
-  const borderColor = isDark ? '#1e1e1e' : '#e5e7eb';
-  
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: activeColor,
-        tabBarInactiveTintColor: inactiveColor,
-        tabBarStyle: {
-          backgroundColor: tabBarBg,
-          borderTopWidth: isIOS ? 0 : 1,
-          borderTopColor: borderColor,
-          paddingTop: isIOS ? 8 : 4,
-          height: isIOS ? 88 : 60,
-        },
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '500',
-        },
-        headerShown: false,
+    <NativeTabs
+      iconColor={{
+        default: getThemeColor('muted-foreground', isDark),
+        selected: getThemeColor('accent', isDark),
       }}
+      backgroundColor={getThemeColor('background', isDark)}
+      minimizeBehavior="automatic"
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ focused }) => (
-            <IconifyIcon 
-              name="lucide:layout" 
-              size={24} 
-              color={focused ? activeColor : inactiveColor} 
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="groups"
-        options={{
-          title: 'Groups',
-          tabBarIcon: ({ focused }) => (
-            <IconifyIcon 
-              name="lucide:folder" 
-              size={24} 
-              color={focused ? activeColor : inactiveColor} 
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="channels"
-        options={{
-          title: 'Channels',
-          tabBarIcon: ({ focused }) => (
-            <IconifyIcon 
-              name="lucide:tv" 
-              size={24} 
-              color={focused ? activeColor : inactiveColor} 
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="animes"
-        options={{
-          title: 'Animes',
-          tabBarIcon: ({ focused }) => (
-            <IconifyIcon 
-              name="lucide:video" 
-              size={24} 
-              color={focused ? activeColor : inactiveColor} 
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="more"
-        options={{
-          title: 'More',
-          tabBarIcon: ({ focused }) => (
-            <IconifyIcon 
-              name="tdesign:more" 
-              size={24} 
-              color={focused ? activeColor : inactiveColor} 
-            />
-          ),
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.Icon
+          sf="square.grid.2x2"
+          src={<IconifyIcon name="lucide:layout" />}
+        />
+        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="groups">
+        <NativeTabs.Trigger.Icon
+          sf="folder"
+          src={<IconifyIcon name="lucide:folder" />}
+        />
+        <NativeTabs.Trigger.Label>Groups</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="channels">
+        <NativeTabs.Trigger.Icon
+          sf="tv"
+          src={<IconifyIcon name="lucide:tv" />}
+        />
+        <NativeTabs.Trigger.Label>Channels</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="animes">
+        <NativeTabs.Trigger.Icon
+          sf="play.rectangle"
+          src={<IconifyIcon name="lucide:video" />}
+        />
+        <NativeTabs.Trigger.Label>Animes</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="more">
+        <NativeTabs.Trigger.Icon
+          sf="ellipsis"
+          src={<IconifyIcon name="tdesign:more" />}
+        />
+        <NativeTabs.Trigger.Label>More</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

@@ -1,4 +1,5 @@
-import { TextInput, View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useState } from 'react';
 import { useTheme } from '@/theme/ThemeProvider';
 
@@ -41,7 +42,7 @@ export function Input({
           {label}
         </Text>
       )}
-      <View className={`relative ${error ? 'border-destructive' : 'border-input'}`}>
+      <View className={`relative ${error ? 'border-danger' : 'border-border'}`}>
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -53,18 +54,18 @@ export function Input({
           multiline={multiline}
           numberOfLines={numberOfLines}
           editable={editable}
-          className={`w-full bg-secondary border rounded-lg px-4 py-3 text-foreground ${secureTextEntry ? 'pr-12' : ''} ${multiline ? 'h-24 text-start' : ''} ${!editable ? 'opacity-50' : ''} ${className}`}
+          className={`w-full bg-default border rounded-lg px-4 py-3 text-foreground ${secureTextEntry ? 'pr-12' : ''} ${multiline ? 'h-24 text-start' : ''} ${!editable ? 'opacity-50' : ''} ${className}`}
         />
         {secureTextEntry && (
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
           >
-            <Text className="text-muted-foreground">{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+            <Text className="text-muted">{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
           </TouchableOpacity>
         )}
       </View>
-      {error && <Text className="text-sm text-destructive mt-1">{error}</Text>}
+      {error && <Text className="text-sm text-danger mt-1">{error}</Text>}
     </View>
   );
 }

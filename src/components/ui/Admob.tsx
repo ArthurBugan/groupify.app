@@ -17,28 +17,28 @@ const BANNER_AD_UNIT_ID = __DEV__
   ? TestIds.BANNER 
   : Platform.select({
       ios: 'ca-app-pub-4077364511521347/5530767115',
-      android: 'ca-app-pub-4077364511521347/5028289954'
+      android: 'ca-app-pub-4077364511521347/9374409243'
     });
 
 const INTERSTITIAL_AD_UNIT_ID = __DEV__ 
   ? TestIds.INTERSTITIAL 
   : Platform.select({
-      ios: 'ca-app-pub-4077364511521347/3341690262',
-      android: 'ca-app-pub-4077364511521347/5028289954'
+      ios: 'ca-app-pub-4077364511521347/8898932374',
+      android: 'ca-app-pub-4077364511521347/4369494577'
     });
 
 const REWARDED_AD_UNIT_ID = __DEV__ 
   ? TestIds.REWARDED 
   : Platform.select({
       ios: 'ca-app-pub-4077364511521347/4983972201',
-      android: 'ca-app-pub-4077364511521347/5028289954'
+      android: 'ca-app-pub-4077364511521347/6748245906'
     });
 
 const APP_OPEN_AD_UNIT_ID = __DEV__ 
   ? TestIds.APP_OPEN 
   : Platform.select({
-      ios: 'ca-app-pub-4077364511521347/3341690262',
-      android: 'ca-app-pub-4077364511521347/5028289954'
+      ios: 'ca-app-pub-4077364511521347/7658002890',
+      android: 'ca-app-pub-4077364511521347/8980795642'
     });
 
 

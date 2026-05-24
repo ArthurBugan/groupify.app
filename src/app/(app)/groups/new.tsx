@@ -1,10 +1,10 @@
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Input, Button, Switch as SwitchToggle, Select, Card, CardContent, IconPicker } from '@/components/ui';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { Input, Select, IconPicker } from '@/components/ui';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useCreateGroup, useGroups } from '@/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { CreateGroupRequest } from '@/api/endpoints/groups';
@@ -44,11 +44,6 @@ const createGroupSchema = z.object({
 });
 
 type CreateGroupForm = z.infer<typeof createGroupSchema>;
-
-const getGroupIcon = (icon?: string) => {
-  if (icon) return icon;
-  return 'lucide:folder';
-};
 
 export default function CreateGroupScreen() {
   const router = useRouter();
@@ -95,41 +90,28 @@ export default function CreateGroupScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
-      <SafeAreaView edges={['top']}>
-        <View className="flex-row items-center mb-4">
-          <Button variant="ghost" onPress={() => router.back()}>
-            ← Back
-          </Button>
+    <View className="flex-1 bg-background px-4">
+      <SafeAreaView edges={['top', 'bottom']}>
+        <View className="bg-background flex-row items-center justify-between px-4 py-3 border-b border-border">
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text className="text-accent text-base">Cancel</Text>
+          </TouchableOpacity>
+          <Text className="text-lg font-semibold text-foreground">Create Group</Text>
+          <TouchableOpacity
+            onPress={handleSubmit(onSubmit)}
+            disabled={createGroup.isPending}
+          >
+            <Text className={`text-base font-semibold ${createGroup.isPending ? 'text-muted' : 'text-accent'}`}>
+              Create
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <Text className="text-2xl font-bold text-foreground mb-6">Create Group</Text>
-
-        <Card>
-          <CardContent>
-            <Controller
-              control={control}
-              name="enableGroupshelf"
-              render={({ field }) => (
-                <View className="rounded-xl border bg-gradient-to-r from-red-500/5 to-pink-500/5 p-4 md:p-6 my-4">
-                  <View className="flex-row items-center justify-between gap-4">
-                    <View className="flex-1 space-y-1">
-                      <Text className="text-base font-semibold text-foreground">
-                        Enable Group Shelf
-                      </Text>
-                      <Text className="text-sm text-muted-foreground">
-                        Allow this group to be added to groupshelf, so other users can copy it if they find it useful
-                      </Text>
-                    </View>
-                    <SwitchToggle
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    />
-                  </View>
-                </View>
-              )}
-            />
-
+        <ScrollView className="bg-background">
+          <Text className="text-xs font-medium text-muted uppercase tracking-widest px-4 pt-6 pb-2">
+            Info
+          </Text>
+          <View className="bg-surface p-4 rounded-xl">
             <Controller
               control={control}
               name="name"
@@ -143,7 +125,6 @@ export default function CreateGroupScreen() {
                 />
               )}
             />
-
             <Controller
               control={control}
               name="description"
@@ -154,18 +135,22 @@ export default function CreateGroupScreen() {
                   onChangeText={field.onChange}
                   placeholder="What's this group about?"
                   multiline
-                  numberOfLines={4}
+                  numberOfLines={3}
                   error={errors.description?.message}
                 />
               )}
             />
+          </View>
 
+          <Text className="text-xs font-medium text-muted uppercase tracking-widest px-4 pt-6 pb-2">
+            Classification
+          </Text>
+          <View className="bg-surface p-4 rounded-xl">
             <Controller
               control={control}
               name="category"
               render={({ field }) => (
                 <Select
-                  label="Category"
                   value={field.value}
                   onChange={field.onChange}
                   options={categoryOptions}
@@ -174,72 +159,77 @@ export default function CreateGroupScreen() {
                 />
               )}
             />
-
             <Controller
               control={control}
               name="icon"
               render={({ field }) => (
                 <IconPicker
-                  label="Icon"
                   value={field.value}
                   onChange={field.onChange}
-                  error={errors.icon?.message}
                 />
               )}
             />
+          </View>
 
+          <Text className="text-xs font-medium text-muted uppercase tracking-widest px-4 pt-6 pb-2">
+            Organization
+          </Text>
+          <View className="bg-surface rounded-xl">
             <Controller
               control={control}
               name="parentId"
               render={({ field }) => {
-                const selectedParent = groupsData?.data?.find(
-                  (g) => g.id === field.value
-                );
                 return (
-                  <View className='mt-4'>
-                    <Text className="text-sm font-medium text-foreground mb-2">
-                      Parent Group (Optional)
-                    </Text>
-                    <View className="flex-row items-center gap-3">
-                      {selectedParent ? (
-                        <View className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                          <IconifyIcon name={getGroupIcon(selectedParent.icon)} size={20} />
-                        </View>
-                      ) : (
-                        <View className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                          <IconifyIcon name="lucide:folder-open" size={20} />
-                        </View>
-                      )}
-                      <Select
-                        value={field.value ?? ''}
-                        onChange={field.onChange}
-                        options={parentOptions}
-                        placeholder="None (Top-level)"
-                      />
+                  <View className="px-4 py-3 justify-center">
+                    <Text className="text-xs text-muted mb-2">Parent Group</Text>
+                    <View className="flex-row items-center align-center gap-3">
+                      <View className="flex-1 justify-center">
+                        <Select
+                          value={field.value ?? ''}
+                          onChange={field.onChange}
+                          options={parentOptions}
+                          placeholder="None (Top-level)"
+                        />
+                      </View>
                     </View>
                   </View>
                 );
               }}
             />
-            <Text className="text-xs text-muted-foreground mb-4">
-              Create subgroups to organize hierarchically
-            </Text>
-          </CardContent>
-        </Card>
+          </View>
+          <Text className="text-xs text-muted px-4 pt-1 pb-2">
+            Create subgroups to organize hierarchically
+          </Text>
 
-        <View className="flex-row gap-3 mt-6">
-          <Button variant="outline" onPress={() => router.back()} className="flex-1">
-            Cancel
-          </Button>
-          <Button
-            onPress={handleSubmit(onSubmit)}
-            loading={createGroup.isPending}
-            className="flex-1"
-          >
-            Create
-          </Button>
-        </View>
+          <Text className="text-xs font-medium text-muted uppercase tracking-widest px-4 pt-6 pb-2">
+            Visibility
+          </Text>
+          <View className="bg-surface p-4 rounded-xl">
+            <Controller
+              control={control}
+              name="enableGroupshelf"
+              render={({ field }) => (
+                <View className="px-4 py-3 flex-row items-center justify-between">
+                  <View className="flex-1 mr-4">
+                    <Text className="text-foreground text-base">Group Shelf</Text>
+                    <Text className="text-xs text-muted mt-0.5">
+                      Allow others to discover and copy this group
+                    </Text>
+                  </View>
+                  <Switch
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    trackColor={{ false: '#E5E7EB', true: '#39d08a' }}
+                    thumbColor="#FFFFFF"
+                  />
+                </View>
+              )}
+            />
+          </View>
+
+          <View className="h-8" />
+        </ScrollView>
       </SafeAreaView>
-    </ScrollView>
+    </View>
   );
 }

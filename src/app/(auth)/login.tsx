@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useLogin, useGoogleLogin, useDiscordLogin, useAppleLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AdMobManager from '@/components/ui/Admob';
+import { Input } from 'heroui-native';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -74,26 +75,24 @@ export default function LoginScreen() {
       <ScrollView contentContainerClassName="flex-grow justify-between p-6 pt-20 pb-10" keyboardShouldPersistTaps="handled">
         <View>
           <Text className="text-3xl font-bold text-foreground mb-2">Welcome Back</Text>
-          <Text className="text-base text-muted-foreground mb-8">Sign in to continue</Text>
+          <Text className="text-base text-muted mb-8">Sign in to continue</Text>
 
           <View className="gap-4">
-            <TextInput
-              className="bg-secondary rounded-lg p-4 text-base text-foreground"
+            <Input
               placeholder="Email"
+              placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
-              placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
             />
             <View className="relative">
-              <TextInput
-                className="bg-secondary rounded-lg p-4 pr-12 text-base text-foreground"
+              <Input
                 placeholder="Password"
+                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
-                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
               />
               <TouchableOpacity
                 className="absolute right-4 top-1/2 -translate-y-1/2 p-2"
@@ -108,11 +107,11 @@ export default function LoginScreen() {
             </View>
 
             <TouchableOpacity
-              className="bg-primary rounded-lg p-4 items-center"
+              className="bg-accent rounded-lg p-4 items-center"
               onPress={handleLogin}
               disabled={isLoading}
             >
-              <Text className="text-primary-foreground text-base font-semibold">
+              <Text className="text-accent-foreground text-base font-semibold">
                 {login.isPending ? 'Signing in...' : 'Sign In'}
               </Text>
             </TouchableOpacity>
@@ -120,14 +119,14 @@ export default function LoginScreen() {
 
           <View className="flex-row justify-center mt-6">
             <TouchableOpacity onPress={() => router.push('/(auth)/forgot-password')}>
-              <Text className="text-primary text-sm font-semibold">Forgot Password?</Text>
+              <Text className="text-accent text-sm font-semibold">Forgot Password?</Text>
             </TouchableOpacity>
           </View>
 
           <View className="flex-row justify-center mt-6">
-            <Text className="text-muted-foreground text-sm">Don't have an account? </Text>
+            <Text className="text-muted text-sm">Don't have an account? </Text>
             <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-              <Text className="text-primary text-sm font-semibold">Sign Up</Text>
+              <Text className="text-accent text-sm font-semibold">Sign Up</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -135,7 +134,7 @@ export default function LoginScreen() {
         <View>
           <View className="flex-row items-center my-6">
             <View className="flex-1 h-px bg-border" />
-            <Text className="text-muted-foreground text-sm mx-3">or</Text>
+            <Text className="text-muted text-sm mx-3">or</Text>
             <View className="flex-1 h-px bg-border" />
           </View>
 

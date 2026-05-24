@@ -18,6 +18,6 @@ export const blogApi = {
   },
 
   getBySlug: async (slug: string) => {
-    return apiClient.get<{ data: BlogPost; total: number }>(`/api/v3/blog/${slug}`);
+    return apiClient.get<BlogPost>(`/api/v3/blog/${slug}`);
   },
 };

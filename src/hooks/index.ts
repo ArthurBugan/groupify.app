@@ -7,5 +7,6 @@ export * from './useWebsitesInfinite';
 export * from './useShareLinks';
 export * from './useDashboard';
 export * from './useBlog';
+export * from './useBlogInfinite';
 export * from './useGroupShelf';
 export * from './useSocialLogin';

@@ -11,7 +11,7 @@ export default function BillingScreen() {
     <ScrollView className="flex-1 bg-background p-4">
       <View className="flex-row items-center mb-4">
         <TouchableOpacity onPress={() => router.back()} className="mr-2">
-          <Text className="text-primary">← Back</Text>
+          <Text className="text-accent">← Back</Text>
         </TouchableOpacity>
       </View>
 
@@ -22,7 +22,7 @@ export default function BillingScreen() {
           <View className="flex-row items-center justify-between mb-4">
             <View>
               <Text className="text-lg font-semibold">Free Plan</Text>
-              <Text className="text-muted-foreground">Current plan</Text>
+              <Text className="text-muted">Current plan</Text>
             </View>
             <Badge variant="success">Active</Badge>
           </View>
@@ -34,13 +34,13 @@ export default function BillingScreen() {
       <Card>
         <CardContent>
           <Text className="font-semibold mb-1">Pro - $9.99/month</Text>
-          <Text className="text-muted-foreground text-sm mb-3">Unlimited groups & channels</Text>
+          <Text className="text-muted text-sm mb-3">Unlimited groups & channels</Text>
           <Button size="sm">Upgrade</Button>
         </CardContent>
       </Card>
 
       <Text className="text-lg font-semibold mt-6 mb-3">Billing History</Text>
-      <Text className="text-muted-foreground">No billing history</Text>
+      <Text className="text-muted">No billing history</Text>
     </ScrollView>
   );
 }

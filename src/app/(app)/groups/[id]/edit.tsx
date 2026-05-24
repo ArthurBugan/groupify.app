@@ -48,8 +48,6 @@ export default function EditGroupScreen() {
   const router = useRouter();
   const { id } = useGlobalSearchParams<{ id: string }>();
   const { data: group, isLoading } = useGroup(id);
-
-  console.log(group, id)
   const updateGroup = useUpdateGroup();
   const { data: groupsData } = useGroups({ limit: 100 });
   const {
@@ -122,7 +120,7 @@ export default function EditGroupScreen() {
                       <Text className="text-base font-semibold text-foreground">
                         Enable Group Shelf
                       </Text>
-                      <Text className="text-sm text-muted-foreground">
+                      <Text className="text-sm text-muted">
                         Allow this group to be added to groupshelf, so other users can copy it if they find it useful
                       </Text>
                     </View>
@@ -210,7 +208,7 @@ export default function EditGroupScreen() {
                 </View>
               )}
             />
-            <Text className="text-xs text-muted-foreground mb-4">
+            <Text className="text-xs text-muted mb-4">
               Create subgroups to organize hierarchically
             </Text>
           </CardContent>

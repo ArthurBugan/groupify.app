@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
 import { useDeleteWebsite } from '@/hooks';
@@ -6,9 +7,10 @@ import { useTheme } from '@/theme/ThemeProvider';
 import type { Website } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
-import { LegendList } from '@legendapp/list';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { Skeleton } from '@/components/ui';
+import { FlashList } from '@shopify/flash-list';
+import { Image } from 'expo-image';
 
 export default function WebsitesScreen() {
   const router = useRouter();
@@ -45,22 +47,22 @@ export default function WebsitesScreen() {
 
   const renderWebsite = ({ item }: { item: Website }) => (
     <TouchableOpacity
-      className="bg-card rounded-xl p-4 mb-3 flex-row items-center gap-3"
+      className="bg-surface rounded-xl p-4 mb-3 flex-row items-center gap-3"
       onPress={() => router.push(`/websites/edit/${item.id}`)}
     >
       {item.thumbnail ? (
-        <Image source={{ uri: item.thumbnail }} className="w-6 h-6 rounded-xl" />
+        <Image source={{ uri: item.thumbnail }} style={{ width: 24, height: 24, borderRadius: 12 }} />
       ) : (
-        <View className="w-6 h-6 rounded-xl bg-secondary items-center justify-center">
+        <View className="w-6 h-6 rounded-xl bg-default items-center justify-center">
           <IconifyIcon name="lucide:globe" size={20} />
         </View>
       )}
       <View className="flex-1">
         <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
-        <Text className="text-sm text-muted-foreground" numberOfLines={1}>{item.url}</Text>
+        <Text className="text-sm text-muted" numberOfLines={1}>{item.url}</Text>
       </View>
       <TouchableOpacity onPress={() => handleDelete(item.id)}>
-        <IconifyIcon name="lucide:trash-2" size={20} className="text-destructive" />
+        <IconifyIcon name="lucide:trash-2" size={20} className="text-danger" />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -87,21 +89,20 @@ export default function WebsitesScreen() {
       <View className="p-4">
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-primary">← Back</Text>
+            <Text className="text-accent">← Back</Text>
           </TouchableOpacity>
         </View>
 
         <Text className="text-3xl font-bold text-foreground mb-4">Websites</Text>
 
         <TextInput
-          className="bg-card rounded-xl p-3 text-foreground mb-4"
           placeholder="Search websites..."
           placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
           value={search}
           onChangeText={setSearch}
         />
 
-        <LegendList
+        <FlashList
           data={websites || []}
           onEndReached={loadMore}
           renderItem={(item) => renderWebsite(item)}
@@ -112,7 +113,7 @@ export default function WebsitesScreen() {
             isLoading ? (
               <View className="gap-2">
                 {[1, 2, 3, 4, 5].map(i => (
-                  <View key={i} className="bg-card rounded-xl p-4 flex-row items-center gap-3">
+                  <View key={i} className="bg-surface rounded-xl p-4 flex-row items-center gap-3">
                     <Skeleton width={40} height={40} className="rounded-lg" />
                     <View className="flex-1 gap-2">
                       <Skeleton height={16} className="w-3/4 rounded" />
@@ -123,8 +124,8 @@ export default function WebsitesScreen() {
               </View>
             ) : (
               <View className="p-8 items-center">
-                <IconifyIcon name="lucide:globe" size={48} className="text-muted-foreground mb-4" />
-                <Text className="text-muted-foreground text-center">No websites found.</Text>
+                <IconifyIcon name="lucide:globe" size={48} className="text-muted mb-4" />
+                <Text className="text-muted text-center">No websites found.</Text>
               </View>
             )
           }

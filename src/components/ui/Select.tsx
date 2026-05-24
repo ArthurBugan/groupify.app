@@ -1,7 +1,8 @@
-import { TouchableOpacity, View, Text, TextInput } from 'react-native';
+import { TouchableOpacity, View, Text } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useState, useCallback, useRef } from 'react';
-import BottomSheet, { BottomSheetFlatList, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import BottomSheet, { BottomSheetFlatList, BottomSheetView } from '@expo/ui/community/bottom-sheet';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
 import { Portal } from 'react-native-portalize';
@@ -66,17 +67,6 @@ export function Select({
     }
   }, []);
 
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        opacity={0.5}
-      />
-    ),
-    []
-  );
 
   return (
     <View className="mb-4">
@@ -85,24 +75,27 @@ export function Select({
       )}
       <TouchableOpacity
         onPress={() => handleOpenChange(true)}
-        className={`bg-secondary border rounded-lg px-4 py-3 ${
-          error ? 'border-destructive' : 'border-input'
+        className={`bg-default border rounded-lg px-4 py-3 flex-row items-center gap-3 ${
+          error ? 'border-danger' : 'border-border'
         }`}
       >
-        <Text className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>
+        {selectedOption?.icon && (
+          <View className="w-6 h-6 items-center justify-center">
+            <IconifyIcon name={getGroupIcon(selectedOption.icon)} size={18} />
+          </View>
+        )}
+        <Text className={`flex-1 ${selectedOption ? 'text-foreground' : 'text-muted'}`}>
           {selectedOption?.label || placeholder}
         </Text>
       </TouchableOpacity>
 
-      {error && <Text className="text-xs text-destructive mt-1">{error}</Text>}
+      {error && <Text className="text-xs text-danger mt-1">{error}</Text>}
 
       {/* Bottom Sheet — portaled to root so it covers the whole app */}
       <Portal>
         <BottomSheet
           ref={bottomSheetRef}
           index={isOpen ? 0 : -1}
-          snapPoints={['60%']}
-          backdropComponent={renderBackdrop}
           enableDynamicSizing={false}
           handleIndicatorStyle={{
             backgroundColor: getThemeColor('muted-foreground', isDark),
@@ -111,34 +104,32 @@ export function Select({
             backgroundColor: getThemeColor('popover', isDark),
           }}
         >
-          <View style={{ padding: 16 }}>
-            <Text className="text-lg font-bold text-foreground mb-3">
-              {label || 'Select'}
-            </Text>
+          <BottomSheetView style={{ flex: 1, padding: 16 }}>
+            <View className="flex-row items-center justify-between mb-3">
+              <Text className="text-lg font-bold text-foreground">
+                {label || 'Select'}
+              </Text>
+              <TouchableOpacity onPress={() => handleOpenChange(false)}>
+                <IconifyIcon name="lucide:x" color={getThemeColor('muted-foreground', isDark)} size={20} />
+              </TouchableOpacity>
+            </View>
 
-            {/* Search */}
             <View
-              className="flex-row items-center gap-2 mb-3 rounded-lg px-3 py-2"
-              style={{ backgroundColor: getThemeColor('secondary', isDark) }}
+              className='mb-4'
             >
-              <Text className="text-muted-foreground">🔍</Text>
               <TextInput
                 value={searchTerm}
                 onChangeText={setSearchTerm}
                 placeholder="Search..."
                 placeholderTextColor={getThemeColor('muted-foreground', isDark)}
-                className="flex-1 text-foreground py-1"
               />
-              {searchTerm !== '' && (
-                <TouchableOpacity onPress={() => setSearchTerm('')}>
-                  <Text className="text-muted-foreground text-lg">✕</Text>
-                </TouchableOpacity>
-              )}
             </View>
 
             <BottomSheetFlatList
               data={filteredOptions}
               keyExtractor={(item) => item.value}
+              className="flex-1"
+              ListFooterComponent={<View style={{ height: 140 }} />}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleSelect(item.value)}
@@ -149,7 +140,7 @@ export function Select({
                 >
                   <View
                     className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: getThemeColor('muted', isDark) }}
+                    style={{ backgroundColor: getThemeColor('surface-secondary', isDark) }}
                   >
                     <IconifyIcon
                       name={item.icon ? getGroupIcon(item.icon) : 'lucide:folder'}
@@ -159,7 +150,7 @@ export function Select({
                   <Text
                     className={`flex-1 text-base ${
                       item.value === value
-                        ? 'text-primary font-medium'
+                        ? 'text-accent font-medium'
                         : 'text-foreground'
                     }`}
                   >
@@ -176,11 +167,11 @@ export function Select({
               )}
               ListEmptyComponent={
                 <View className="py-8 items-center">
-                  <Text className="text-muted-foreground">No results found</Text>
+                  <Text className="text-muted">No results found</Text>
                 </View>
               }
             />
-          </View>
+          </BottomSheetView>
         </BottomSheet>
       </Portal>
     </View>

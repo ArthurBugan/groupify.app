@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useForgotPassword } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@huymobile/react-native-iconify';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
@@ -50,13 +51,12 @@ export default function ForgotPasswordScreen() {
         </View>
 
         <View className="flex-1">
-          <Text className="text-base text-muted-foreground mb-8">
+          <Text className="text-base text-muted mb-8">
             Enter your email to receive reset instructions
           </Text>
 
           <View className="gap-4">
             <TextInput
-              className="bg-card rounded-xl p-4 text-base text-foreground border border-border"
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
@@ -66,11 +66,11 @@ export default function ForgotPasswordScreen() {
             />
 
             <TouchableOpacity
-              className="bg-primary rounded-xl p-4 items-center mt-2"
+              className="bg-accent rounded-xl p-4 items-center mt-2"
               onPress={handleSubmit}
               disabled={forgotPassword.isPending}
             >
-              <Text className="text-primary-foreground text-base font-semibold">
+              <Text className="text-accent-foreground text-base font-semibold">
                 {forgotPassword.isPending ? 'Sending...' : 'Send Reset Link'}
               </Text>
             </TouchableOpacity>
@@ -80,8 +80,8 @@ export default function ForgotPasswordScreen() {
         <View className="flex-row justify-center mt-8 pb-8">
           <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
             <View className="flex-row items-center gap-2">
-              <IconifyIcon name="lucide:chevron-left" size={16} className="text-primary" />
-              <Text className="text-primary text-sm font-medium">Back to Sign In</Text>
+              <IconifyIcon name="lucide:chevron-left" size={16} className="text-accent" />
+              <Text className="text-accent text-sm font-medium">Back to Sign In</Text>
             </View>
           </TouchableOpacity>
         </View>
