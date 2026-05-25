@@ -1,0 +1,57 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: Channels Navigation & Listing
+# Tests navigating to channels and viewing the list
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Login first
+- tapOn:
+    text: "Email"
+- inputText: "demo@demo.com"
+- tapOn:
+    text: "Password"
+- inputText: "teste1234"
+- tapOn: "Sign In"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Channels from dashboard
+- tapOn:
+    text: "Channels"
+- assertVisible:
+    text: "Channels"
+    optional: true
+- assertVisible:
+    text: "Search channels..."
+    optional: true
+
+# Test search functionality
+- tapOn:
+    text: "Search channels..."
+    optional: true
+- inputText: "test channel"
+- assertVisible:
+    text: "test channel"
+    optional: true
+
+# Navigate to Animes
+- swipe:
+    direction: "up"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+- tapOn:
+    text: "Animes"
+- assertVisible:
+    text: "Animes"
+    optional: true
+- swipe:
+    direction: "up"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"

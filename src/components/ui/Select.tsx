@@ -71,25 +71,32 @@ export function Select({
   return (
     <View className="mb-4">
       {label && (
-        <Text className="text-sm font-medium text-foreground mb-1">{label}</Text>
+        <Text className="text-sm font-medium text-foreground mb-1.5">{label}</Text>
       )}
       <TouchableOpacity
         onPress={() => handleOpenChange(true)}
-        className={`bg-default border rounded-lg px-4 py-3 flex-row items-center gap-3 ${
+        className={`bg-field-background border rounded-xl px-4 py-3 flex-row items-center gap-3 ${
           error ? 'border-danger' : 'border-border'
         }`}
+        style={{ borderWidth: 1.5 }}
+        activeOpacity={0.7}
       >
         {selectedOption?.icon && (
           <View className="w-6 h-6 items-center justify-center">
             <IconifyIcon name={getGroupIcon(selectedOption.icon)} size={18} />
           </View>
         )}
-        <Text className={`flex-1 ${selectedOption ? 'text-foreground' : 'text-muted'}`}>
+        <Text className={`flex-1 ${selectedOption ? 'text-foreground' : 'text-muted'}`} numberOfLines={1}>
           {selectedOption?.label || placeholder}
         </Text>
+        <IconifyIcon 
+          name="lucide:chevron-down" 
+          size={18} 
+          color={getThemeColor('muted', isDark)} 
+        />
       </TouchableOpacity>
 
-      {error && <Text className="text-xs text-danger mt-1">{error}</Text>}
+      {error && <Text className="text-xs text-danger mt-1.5 ml-1">{error}</Text>}
 
       {/* Bottom Sheet — portaled to root so it covers the whole app */}
       <Portal>
@@ -101,7 +108,7 @@ export function Select({
             backgroundColor: getThemeColor('muted-foreground', isDark),
           }}
           backgroundStyle={{
-            backgroundColor: getThemeColor('popover', isDark),
+            backgroundColor: getThemeColor('background', isDark),
           }}
         >
           <BottomSheetView style={{ flex: 1, padding: 16 }}>
@@ -114,9 +121,7 @@ export function Select({
               </TouchableOpacity>
             </View>
 
-            <View
-              className='mb-4'
-            >
+            <View className='mb-4'>
               <TextInput
                 value={searchTerm}
                 onChangeText={setSearchTerm}
@@ -137,6 +142,7 @@ export function Select({
                   style={{
                     borderBottomColor: getThemeColor('border', isDark),
                   }}
+                  activeOpacity={0.7}
                 >
                   <View
                     className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -153,6 +159,7 @@ export function Select({
                         ? 'text-accent font-medium'
                         : 'text-foreground'
                     }`}
+                    numberOfLines={1}
                   >
                     {item.label}
                   </Text>
@@ -160,7 +167,7 @@ export function Select({
                     <IconifyIcon
                       name="lucide:check"
                       size={18}
-                      color={getThemeColor('primary', isDark)}
+                      color={getThemeColor('accent', isDark)}
                     />
                   )}
                 </TouchableOpacity>

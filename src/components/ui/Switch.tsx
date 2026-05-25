@@ -1,26 +1,31 @@
 import { Switch, View, Text } from 'react-native';
 import { useTheme } from '@/theme/ThemeProvider';
+import { getThemeColor } from '@/theme/themeColors';
 
 interface SwitchProps {
   value: boolean;
   onValueChange: (value: boolean) => void;
   label?: string;
+  disabled?: boolean;
 }
 
-export function SwitchToggle({ value, onValueChange, label }: SwitchProps) {
+export function SwitchToggle({ value, onValueChange, label, disabled = false }: SwitchProps) {
   const { isDark } = useTheme();
-  const primaryColor = isDark ? '#39d08a' : '#39d08a';
+  const primaryColor = getThemeColor('accent', isDark);
+  const trackOffColor = getThemeColor('default', isDark);
 
   return (
     <View className="flex-row items-center justify-between">
       {label && (
-        <Text className="text-gray-700 dark:text-gray-300">{label}</Text>
+        <Text className="text-base text-foreground">{label}</Text>
       )}
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#E5E7EB', true: primaryColor }}
+        disabled={disabled}
+        trackColor={{ false: trackOffColor, true: primaryColor }}
         thumbColor="#FFFFFF"
+        ios_backgroundColor={trackOffColor}
       />
     </View>
   );

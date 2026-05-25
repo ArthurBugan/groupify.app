@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
-import { useState } from 'react';
+import { View, Text, TouchableOpacity, TextInput as RNTextInput } from 'react-native';
+import { Input as NativeInput } from 'heroui-native';
+import { useState, useRef } from 'react';
 import { useTheme } from '@/theme/ThemeProvider';
+import { getThemeColor } from '@/theme/themeColors';
 
 interface InputProps {
   value: string;
@@ -16,6 +17,10 @@ interface InputProps {
   numberOfLines?: number;
   editable?: boolean;
   className?: string;
+  onSubmitEditing?: () => void;
+  returnKeyType?: 'done' | 'next' | 'go' | 'search' | 'send';
+  autoFocus?: boolean;
+  rightElement?: React.ReactNode;
 }
 
 export function Input({
@@ -31,41 +36,77 @@ export function Input({
   numberOfLines = 1,
   editable = true,
   className = '',
+  onSubmitEditing,
+  returnKeyType = 'done',
+  autoFocus = false,
+  rightElement,
 }: InputProps) {
   const { isDark } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const inputRef = useRef<RNTextInput>(null);
+
+  const borderColor = error 
+    ? getThemeColor('danger', isDark) 
+    : isFocused 
+      ? getThemeColor('accent', isDark) 
+      : getThemeColor('border', isDark);
+
+  const fieldBg = isFocused 
+    ? getThemeColor('field-background', isDark) 
+    : getThemeColor('field-background', isDark);
 
   return (
     <View className="mb-4">
       {label && (
-        <Text className="text-sm font-medium text-foreground mb-1">
+        <Text className="text-sm font-medium text-foreground mb-1.5">
           {label}
         </Text>
       )}
-      <View className={`relative ${error ? 'border-danger' : 'border-border'}`}>
-        <TextInput
+      <View 
+        className={`rounded-2xl ${error ? 'border-danger' : isFocused ? 'border-accent' : 'border-border'}`}
+        style={{ 
+          backgroundColor: fieldBg,
+        }}
+      >
+        <NativeInput
+          ref={inputRef}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+          placeholderTextColor={getThemeColor('field-placeholder', isDark)}
           secureTextEntry={secureTextEntry && !showPassword}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           multiline={multiline}
-          numberOfLines={numberOfLines}
+          numberOfLines={multiline ? numberOfLines : undefined}
           editable={editable}
-          className={`w-full bg-default border rounded-lg px-4 py-3 text-foreground ${secureTextEntry ? 'pr-12' : ''} ${multiline ? 'h-24 text-start' : ''} ${!editable ? 'opacity-50' : ''} ${className}`}
+          onSubmitEditing={onSubmitEditing}
+          returnKeyType={returnKeyType}
+          autoFocus={autoFocus}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className={`w-full px-4 py-3 text-foreground ${secureTextEntry ? 'pr-12' : ''} ${multiline ? 'min-h-[80px]' : 'min-h-[48px]'} ${!editable ? 'opacity-50' : ''} ${className}`}
+          style={{ fontSize: multiline ? 15 : 16 }}
         />
         {secureTextEntry && (
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text className="text-muted">{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+            <Text style={{ color: getThemeColor('muted', isDark) }}>
+              {showPassword ? '👁️' : '👁️‍🗨️'}
+            </Text>
           </TouchableOpacity>
         )}
+        {rightElement && (
+          <View className="absolute right-4 top-1/2 -translate-y-1/2">
+            {rightElement}
+          </View>
+        )}
       </View>
-      {error && <Text className="text-sm text-danger mt-1">{error}</Text>}
+      {error && <Text className="text-xs text-danger mt-1.5 ml-1">{error}</Text>}
     </View>
   );
 }

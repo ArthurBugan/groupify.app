@@ -1,16 +1,19 @@
 import { TouchableOpacity, Text, ActivityIndicator, View } from 'react-native';
 import { ReactNode } from 'react';
 import { useTheme } from '@/theme/ThemeProvider';
+import * as Haptics from 'expo-haptics';
+import { getThemeColor } from '@/theme/themeColors';
 
 interface ButtonProps {
   children: ReactNode;
   onPress?: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'flat' | 'light';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   loading?: boolean;
   className?: string;
   fullWidth?: boolean;
+  isIconOnly?: boolean;
 }
 
 export function Button({
@@ -22,37 +25,58 @@ export function Button({
   loading = false,
   className = '',
   fullWidth = false,
+  isIconOnly = false,
 }: ButtonProps) {
   const { isDark } = useTheme();
   
-  const baseStyles = 'flex-row items-center justify-center rounded-lg font-medium transition-colors';
+  const baseStyles = 'flex-row items-center justify-center rounded-lg transition-opacity';
   
-  const variantStyles = {
-    primary: 'bg-accent text-accent-foreground',
-    secondary: 'bg-default text-default-foreground',
-    outline: 'border border-border bg-transparent text-foreground',
-    ghost: 'bg-transparent text-foreground',
-    danger: 'bg-danger text-danger-foreground',
+  const variantStyles: Record<string, string> = {
+    primary: 'bg-accent',
+    secondary: 'bg-default',
+    outline: 'border border-border bg-transparent',
+    ghost: 'bg-transparent',
+    danger: 'bg-danger',
+    flat: 'bg-default',
+    light: 'bg-transparent',
+  };
+
+  const textVariantStyles: Record<string, string> = {
+    primary: 'text-accent-foreground',
+    secondary: 'text-default-foreground',
+    outline: 'text-foreground',
+    ghost: 'text-foreground',
+    danger: 'text-danger-foreground',
+    flat: 'text-foreground',
+    light: 'text-foreground',
   };
 
   const sizeStyles = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
+    sm: isIconOnly ? 'w-8 h-8 p-0' : 'px-3 py-1.5 text-sm',
+    md: isIconOnly ? 'w-10 h-10 p-0' : 'px-4 py-2.5 text-base',
+    lg: isIconOnly ? 'w-12 h-12 p-0' : 'px-6 py-3 text-lg',
   };
 
   const disabledStyles = disabled || loading ? 'opacity-50' : '';
 
+  const handlePress = () => {
+    if (onPress && !disabled && !loading) {
+      Haptics.selectionAsync();
+      onPress();
+    }
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled || loading}
+      activeOpacity={0.7}
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${disabledStyles} ${fullWidth ? 'w-full' : ''} ${className}`}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={variant === 'primary' || variant === 'danger' ? '#fff' : isDark ? '#39d08a' : '#39d08a'} />
+        <ActivityIndicator size="small" color={variant === 'primary' || variant === 'danger' ? '#fff' : getThemeColor('accent', isDark)} />
       ) : (
-        <Text className={variant === 'outline' || variant === 'ghost' ? 'text-foreground' : 'text-accent-foreground'}>
+        <Text className={`${textVariantStyles[variant]} ${variant === 'outline' || variant === 'ghost' || variant === 'flat' || variant === 'light' ? 'font-medium' : 'font-semibold'}`}>
           {children}
         </Text>
       )}

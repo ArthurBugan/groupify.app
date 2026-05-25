@@ -1,14 +1,21 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, TextInput, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { Input as TextInput } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useBlogInfinite } from '@/hooks';
 import { Card, CardContent, Skeleton } from '@/components/ui';
 import DashboardHeader from '@/components/DashboardHeader';
 import type { BlogPost } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { getThemeColor } from '@/theme/themeColors';
+import { useTheme } from '@/theme/ThemeProvider';
+import { useState, useCallback } from 'react';
+import * as Haptics from 'expo-haptics';
 
 export default function BlogListScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { isDark } = useTheme();
   const {
     posts,
     isLoading,
@@ -17,28 +24,35 @@ export default function BlogListScreen() {
     loadMore,
     search,
     setSearch,
-    filters,
-    setFilters,
   } = useBlogInfinite({ limit: 10 });
 
-  const activeCategory = filters.category ?? '';
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    Haptics.selectionAsync();
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 1000);
+  }, []);
 
   const renderPost = ({ item: post }: { item: BlogPost }) => (
     <TouchableOpacity
-      key={post.id}
-      onPress={() => router.push(`/blog/${post.slug}`)}
+      onPress={() => { Haptics.selectionAsync(); router.push(`/blog/${post.slug}`); }}
+      activeOpacity={0.7}
     >
       <Card className="mb-3">
         <CardContent>
-          <Text className="text-lg text-foreground font-semibold">{post.title}</Text>
+          <Text className="text-lg text-foreground font-semibold mb-1">{post.title}</Text>
           {post.excerpt && (
-            <Text className="text-muted mt-1" numberOfLines={2}>
+            <Text className="text-muted text-sm" numberOfLines={2}>
               {post.excerpt}
             </Text>
           )}
-          <Text className="text-muted text-sm mt-2">
-            {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}
-          </Text>
+          <View className="flex-row items-center gap-1 mt-3">
+            <IconifyIcon name="lucide:calendar" size={14} color={getThemeColor('muted', isDark)} />
+            <Text className="text-muted text-xs">
+              {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}
+            </Text>
+          </View>
         </CardContent>
       </Card>
     </TouchableOpacity>
@@ -48,7 +62,7 @@ export default function BlogListScreen() {
     if (isFetchingNextPage) {
       return (
         <View className="py-4 items-center">
-          <ActivityIndicator size="small" />
+          <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
         </View>
       );
     }
@@ -62,67 +76,72 @@ export default function BlogListScreen() {
     return null;
   };
 
+  const renderSkeleton = () => (
+    <View className="gap-3 p-1">
+      {[1, 2, 3].map(i => (
+        <Card key={i}>
+          <CardContent>
+            <Skeleton height={22} className="mb-2" />
+            <Skeleton height={16} className="mb-1" />
+            <Skeleton height={14} className="mt-2 w-1/3" />
+          </CardContent>
+        </Card>
+      ))}
+    </View>
+  );
+
   return (
-    <View
-      style={{
-        paddingTop: insets.top,
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
-      }}
-      className="flex-1 bg-background"
-    >
-      <View className="p-4">
-        <View className="flex-row items-center mb-2">
-          <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Text className="text-accent">← Back</Text>
-          </TouchableOpacity>
-        </View>
-        <DashboardHeader title="Blog" />
-
-        <View className="mt-3 mb-3">
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Search posts..."
-            placeholderTextColor="#9CA3AF"
-            className="bg-default border border-border rounded-lg px-4 py-2.5 text-foreground"
+    <View className="flex-1 bg-background">
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl 
+            refreshing={isRefreshing} 
+            onRefresh={handleRefresh}
+            tintColor={getThemeColor('accent', isDark)}
+            colors={[getThemeColor('accent', isDark)]}
           />
-        </View>
-      </View>
+        }
+      >
+        <View style={{ paddingTop: insets.top, paddingHorizontal: 16 }}>
+          <View className="pt-4 pb-2">
+            <DashboardHeader title="Blog" />
+          </View>
 
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={renderPost}
-        className="flex-1 px-4"
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
-            loadMore();
-          }
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={
-          isLoading ? (
-            <View className="gap-2 p-4">
-              {[1, 2, 3].map(i => (
-                <Card key={i}>
-                  <CardContent>
-                    <Skeleton height={22} className="mb-2" />
-                    <Skeleton height={16} className="mb-1" />
-                    <Skeleton height={14} className="mt-2 w-1/3" />
-                  </CardContent>
-                </Card>
-              ))}
+          <View className="mb-4">
+            <View className="flex-row items-center bg-default border border-border rounded-xl px-4 py-3" style={{ borderWidth: 1.5 }}>
+              <IconifyIcon name="lucide:search" size={18} color={getThemeColor('muted', isDark)} />
+              <View className="flex-1 ml-2">
+                <TextInput
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholder="Search posts..."
+                  placeholderTextColor={getThemeColor('field-placeholder', isDark)}
+                  className="text-base"
+                />
+              </View>
+            </View>
+          </View>
+
+          {isLoading ? (
+            renderSkeleton()
+          ) : posts.length === 0 ? (
+            <View className="py-16 items-center">
+              <View className="w-16 h-16 rounded-2xl items-center justify-center mb-4" style={{ backgroundColor: getThemeColor('default', isDark) }}>
+                <IconifyIcon name="lucide:newspaper" size={32} color={getThemeColor('muted', isDark)} />
+              </View>
+              <Text className="text-muted text-center font-medium">No posts yet</Text>
+              <Text className="text-muted text-xs text-center mt-1">Check back later for updates</Text>
             </View>
           ) : (
-            <View className="p-8 items-center">
-              <Text className="text-muted">No posts yet</Text>
+            <View className="px-1">
+              {posts.map(post => renderPost({ item: post }))}
             </View>
-          )
-        }
-        contentContainerStyle={{ paddingBottom: 32 }}
-      />
+          )}
+          {renderFooter()}
+        </View>
+      </ScrollView>
     </View>
   );
 }

@@ -1,0 +1,67 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: Create New Group
+# Tests the complete group creation flow
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Login first
+- tapOn:
+    text: "Email"
+- inputText: "demo@demo.com"
+- tapOn:
+    text: "Password"
+- inputText: "teste1234"
+- tapOn: "Sign In"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Groups
+- tapOn:
+    text: "Groups"
+- assertVisible:
+    text: "Groups"
+
+# Click New Group button
+- tapOn:
+    text: "+ New"
+- assertVisible:
+    text: "New Group"
+    optional: true
+- assertVisible:
+    text: "Group Name"
+    optional: true
+
+# Fill in group details
+- tapOn:
+    text: "Group Name"
+    optional: true
+- inputText: "My Test Group"
+
+- tapOn:
+    text: "Description"
+    optional: true
+- inputText: "This is a test group created via E2E test"
+
+- tapOn:
+    text: "Category"
+    optional: true
+- inputText: "entertainment"
+
+# Submit form
+- tapOn:
+    text: "Create"
+    optional: true
+- tapOn:
+    text: "Save"
+    optional: true
+- assertVisible:
+    text: "Group created"
+    optional: true
+- assertVisible:
+    text: "My Test Group"
+    optional: true

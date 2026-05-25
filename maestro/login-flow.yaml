@@ -1,0 +1,49 @@
+appId: com.groupifyapp
+env:
+  TEST_EMAIL: "demo@demo.com"
+  TEST_PASSWORD: "teste1234"
+
+---
+# E2E Test: User Login Flow
+# Tests the complete login process
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd
+- tapOn:
+    text: ".*Sign In.*"
+- assertVisible:
+    text: ".*Signing in.*"
+    optional: true
+- waitForAnimationToEnd
+
+# Fill in login credentials
+- tapOn:
+    text: ".*Email.*"
+- inputText: "${TEST_EMAIL}"
+- tapOn:
+    text: ".*Password.*"
+- inputText: "${TEST_PASSWORD}"
+
+# Submit login
+- tapOn:
+    text: ".*Sign In.*"
+- assertVisible:
+    text: ".*Signing in.*"
+    optional: true
+- waitForAnimationToEnd
+
+# After login, should see the dashboard
+- assertVisible:
+    text: ".*Dashboard.*"
+- assertVisible:
+    text: ".*Your content.*"
+
+# Verify dashboard shortcuts are visible
+- assertVisible:
+    text: ".*Groups.*"
+- assertVisible:
+    text: ".*Channels.*"
+
+# Verify quick actions are visible
+- assertVisible:
+    text: ".*Settings.*"

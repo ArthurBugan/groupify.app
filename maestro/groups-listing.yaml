@@ -1,0 +1,48 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: Groups Navigation & Listing
+# Tests navigating to groups and viewing the list
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Login first
+- tapOn:
+    text: "Email"
+- inputText: "demo@demo.com"
+- tapOn:
+    text: "Password"
+- inputText: "teste1234"
+- tapOn: "Sign In"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Groups from dashboard
+- tapOn:
+    text: "Groups"
+- assertVisible:
+    text: "Groups"
+- assertVisible:
+    text: "Search groups..."
+
+# Verify the + New button exists
+- assertVisible:
+    text: "+ New"
+
+# Test search functionality
+- tapOn:
+    text: "Search groups..."
+- inputText: "test search"
+- assertVisible:
+    text: "test search"
+    optional: true
+
+# Clear search
+- tapOn:
+    id: "clear-search"
+    optional: true
+- assertVisible:
+    text: "Groups"

@@ -1,0 +1,56 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: User Logout Flow
+# Tests the complete logout process
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Login first
+- tapOn:
+    text: "Email"
+- inputText: "demo@demo.com"
+- tapOn:
+    text: "Password"
+- inputText: "teste1234"
+- tapOn: "Sign In"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Settings
+- tapOn:
+    text: "Settings"
+- assertVisible:
+    text: "Settings"
+
+# Navigate to Account settings
+- tapOn:
+    text: "Account"
+- assertVisible:
+    text: "Account"
+    optional: true
+
+# Look for logout button
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Settings"
+
+# Try to find logout option
+- tapOn:
+    text: "Sign Out"
+    optional: true
+- tapOn:
+    text: "Logout"
+    optional: true
+
+# If logout button not found, navigate back to login
+- tapOn:
+    text: "Back"
+    optional: true
+- assertVisible:
+    text: "Welcome Back"

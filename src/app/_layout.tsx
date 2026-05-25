@@ -12,7 +12,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Host } from 'react-native-portalize';
 import AdMobManager from '@/components/ui/Admob';
 import * as Sentry from "@sentry/react-native";
-import { Toaster } from 'sonner-native';
 import { HeroUINativeProvider } from 'heroui-native';
 
 Sentry.init({
@@ -84,6 +83,7 @@ function AppContentWithTheme() {
   const { isDark } = useTheme();
 
   useEffect(() => {
+    console.log('[AppContentWithTheme] isDark:', isDark, '-> Uniwind.setTheme:', isDark ? 'dark' : 'light');
     Uniwind.setTheme(isDark ? 'dark' : 'light');
   }, [isDark]);
 
@@ -91,6 +91,7 @@ function AppContentWithTheme() {
 }
 
 function RootLayout() {
+  console.log('[RootLayout] Rendering');
   return (
     <SafeAreaProvider>
       <ThemeProvider>
@@ -100,7 +101,6 @@ function RootLayout() {
               <QueryClientProvider client={queryClient}>
                 <AppContentWithTheme />
                 <AdMobManager style={{ marginTop: 10 }} />
-                <Toaster />
               </QueryClientProvider>
             </HeroUINativeProvider>
           </Host>

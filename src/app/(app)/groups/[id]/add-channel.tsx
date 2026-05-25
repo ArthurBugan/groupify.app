@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { Image } from 'expo-image';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { Image } from 'react-native';
 import { Input as TextInput } from 'heroui-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
@@ -15,6 +15,8 @@ import type { Channel, Anime, Website } from '@/types';
 import { IconifyIcon } from '@/components/ui/IconifyIcon';
 import { channelsApi } from '@/api/endpoints/channels';
 import { FlashList } from '@shopify/flash-list';
+import { getThemeColor } from '@/theme/themeColors';
+import * as Haptics from 'expo-haptics';
 
 const TABS = [
   { key: 'youtube', label: 'YouTube' },
@@ -54,6 +56,7 @@ export default function AddChannelToGroupScreen() {
     isFetchingNextPage,
     isLoading,
     setSearch: setChannelsSearch,
+    setIsActive,
   } = useChannelsInfinite({ limit: 20 });
 
   const {
@@ -62,7 +65,13 @@ export default function AddChannelToGroupScreen() {
     isFetchingNextPage: isFetchingNextPageAnimes,
     isLoading: isLoadingAnimes,
     setSearch: setAnimesSearch,
+    setIsActive: setAnimesIsActive,
   } = useAnimesInfinite();
+
+  useEffect(() => {
+    setIsActive(true);
+    setAnimesIsActive(true);
+  }, [setIsActive, setAnimesIsActive]);
 
   const {
     websites,
@@ -79,6 +88,7 @@ export default function AddChannelToGroupScreen() {
   const filteredChannels = channels || [];
 
   const toggleYoutube = useCallback((channel: Channel) => {
+    Haptics.selectionAsync();
     setSelectedYoutube((prev) =>
       prev.some(c => c.id === channel.id)
         ? prev.filter((c) => c.id !== channel.id)
@@ -87,6 +97,7 @@ export default function AddChannelToGroupScreen() {
   }, [id]);
 
   const toggleAnime = useCallback((channel: Channel) => {
+    Haptics.selectionAsync();
     setSelectedAnime((prev) =>
       prev.some(c => c.id === channel.id)
         ? prev.filter((c) => c.id !== channel.id)
@@ -95,6 +106,7 @@ export default function AddChannelToGroupScreen() {
   }, [id]);
 
   const toggleWebsite = useCallback((channel: Channel) => {
+    Haptics.selectionAsync();
     setSelectedWebsites((prev) =>
       prev.some(c => c.id === channel.id)
         ? prev.filter((c) => c.id !== channel.id)
@@ -103,6 +115,7 @@ export default function AddChannelToGroupScreen() {
   }, []);
 
   const handleFetchUrl = async () => {
+    Haptics.selectionAsync();
     if (!urlInput.trim()) return;
     setIsFetchingUrl(true);
     try {
@@ -123,6 +136,7 @@ export default function AddChannelToGroupScreen() {
   };
 
   const handleSave = async () => {
+    Haptics.selectionAsync();
     try {
       const allChannels = [
         ...selectedYoutube.map(ch => ({ ...ch, contentType: ch.contentType || 'youtube' })),
@@ -146,13 +160,14 @@ export default function AddChannelToGroupScreen() {
       });
       router.back();
     } catch (error) {
+      Alert.alert('Error', 'Failed to save channels');
     }
   };
 
   const renderChannelItem = ({ item }: { item: Channel }) => {
     const isSelected = selectedYoutube.some(c => c.id === item.id);
     return (
-      <TouchableOpacity onPress={() => toggleYoutube(item)}>
+      <TouchableOpacity onPress={() => toggleYoutube(item)} activeOpacity={0.7}>
         <Card className="mb-2">
           <CardContent className="flex-row items-center">
             <Checkbox checked={isSelected} onChange={() => toggleYoutube(item)} />
@@ -160,16 +175,16 @@ export default function AddChannelToGroupScreen() {
               <Image
                 key={item.id + (item.thumbnail || item.imageUrl)}
                 source={{ uri: item.thumbnail || item.imageUrl }}
-                style={{ width: 40, height: 40, borderRadius: 8, marginLeft: 12 }}
+                style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
               />
             ) : (
-              <View style={{ width: 40, height: 40, borderRadius: 8, marginLeft: 12 }} className="bg-default items-center justify-center">
-                <IconifyIcon name="mdi:television-play" size={20} />
+              <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
+                <IconifyIcon name="lucide:tv" size={20} color={getThemeColor('foreground', isDark)} />
               </View>
             )}
-            <View className="ml-3 flex-1">
-              <Text className="font-medium text-foreground">{item.name}</Text>
-              <Text className="text-muted text-sm" numberOfLines={1}>{item.url}</Text>
+            <View className="ml-3 flex-1 min-w-0">
+              <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
+              <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
             </View>
           </CardContent>
         </Card>
@@ -180,7 +195,7 @@ export default function AddChannelToGroupScreen() {
   const renderAnimeItem = ({ item }: { item: Anime }) => {
     const isSelected = selectedAnime.some(c => c.id === item.id);
     return (
-      <TouchableOpacity onPress={() => toggleAnime(item)}>
+      <TouchableOpacity onPress={() => toggleAnime(item)} activeOpacity={0.7}>
         <Card className="mb-2">
           <CardContent className="flex-row items-center">
             <Checkbox checked={isSelected} onChange={() => toggleAnime(item)} />
@@ -188,17 +203,17 @@ export default function AddChannelToGroupScreen() {
               <Image
                 key={item.id + (item.thumbnail || item.imageUrl)}
                 source={{ uri: item.thumbnail || item.imageUrl }}
-                style={{ width: 40, height: 40, borderRadius: 8, marginLeft: 12 }}
+                style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
               />
             ) : (
-              <View style={{ width: 40, height: 40, borderRadius: 8, marginLeft: 12 }} className="bg-default items-center justify-center">
-                <IconifyIcon name="mdi:television-play" size={20} />
+              <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
+                <IconifyIcon name="lucide:film" size={20} color={getThemeColor('foreground', isDark)} />
               </View>
             )}
-            <View className="ml-3 flex-1">
-              <Text className="font-medium text-foreground">{item.name}</Text>
+            <View className="ml-3 flex-1 min-w-0">
+              <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
               {item.groupName && (
-                <Text className="text-muted text-sm">{item.groupName}</Text>
+                <Text className="text-muted text-xs">{item.groupName}</Text>
               )}
             </View>
           </CardContent>
@@ -210,7 +225,7 @@ export default function AddChannelToGroupScreen() {
   const renderWebsiteItem = ({ item }: { item: Website }) => {
     const isSelected = selectedWebsites.some(c => c.id === item.id);
     return (
-      <TouchableOpacity onPress={() => toggleWebsite(item)}>
+      <TouchableOpacity onPress={() => toggleWebsite(item)} activeOpacity={0.7}>
         <Card className="mb-2">
           <CardContent className="flex-row items-center">
             <Checkbox checked={isSelected} onChange={() => toggleWebsite(item)} />
@@ -218,16 +233,16 @@ export default function AddChannelToGroupScreen() {
               <Image
                 key={item.id + (item.thumbnail || (item as any).imageUrl || '')}
                 source={{ uri: item.thumbnail || (item as any).imageUrl }}
-                style={{ width: 40, height: 40, borderRadius: 8, marginLeft: 12 }}
+                style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
               />
             ) : (
-              <View style={{ width: 40, height: 40, borderRadius: 8, marginLeft: 12 }} className="bg-default items-center justify-center">
-                <IconifyIcon name="lucide:globe" size={20} />
+              <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
+                <IconifyIcon name="lucide:globe" size={20} color={getThemeColor('foreground', isDark)} />
               </View>
             )}
-            <View className="ml-3 flex-1">
-              <Text className="font-medium text-foreground">{item.name}</Text>
-              <Text className="text-muted text-sm" numberOfLines={1}>{item.url}</Text>
+            <View className="ml-3 flex-1 min-w-0">
+              <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
+              <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
             </View>
           </CardContent>
         </Card>
@@ -252,70 +267,88 @@ export default function AddChannelToGroupScreen() {
   const totalSelected = selectedYoutube.length + selectedAnime.length + selectedWebsites.length;
 
   return (
-    <View className="flex-1 bg-background">
+    <KeyboardAvoidingView
+      className="flex-1 bg-background"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
       <View style={{ paddingTop: insets.top }} className="flex-1">
-        <View className="px-4 pb-2">
-          <View className="flex-row items-center mb-2">
-            <TouchableOpacity onPress={() => router.back()} className="mr-2">
-              <Text className="text-accent">← Back</Text>
+        {/* Header */}
+        <View className="px-5 pt-4 pb-3 border-b" style={{ borderColor: getThemeColor('border', isDark) }}>
+          <View className="flex-row items-center mb-1">
+            <TouchableOpacity onPress={() => { Haptics.selectionAsync(); router.back(); }} className="mr-3 p-1.5 -ml-1 rounded-full" style={{ backgroundColor: getThemeColor('surface', isDark) }}>
+              <IconifyIcon name="lucide:arrow-left" size={20} color={getThemeColor('foreground', isDark)} />
             </TouchableOpacity>
+            <Text className="text-lg font-semibold text-foreground">Add Channels</Text>
           </View>
-          <DashboardHeader title="Add Channels" description={`Add channels to ${group?.name}`} />
+          <Text className="text-sm text-muted">{group?.name ? `Add channels to ${group.name}` : 'Select channels to add'}</Text>
         </View>
 
-        <View className="flex-row border-b border-border mx-4">
+        {/* Tabs */}
+        <View className="flex-row mx-5 mt-4 mb-3 bg-default rounded-xl p-1">
           {TABS.map((tab) => (
             <TouchableOpacity
               key={tab.key}
               onPress={() => setActiveTab(tab.key)}
-              className={`flex-1 py-3 items-center relative ${activeTab === tab.key ? 'border-b-2 border-primary' : ''}`}
+              className={`flex-1 py-2.5 items-center rounded-lg ${activeTab === tab.key ? '' : ''}`}
             >
-              <Text className={`font-medium ${activeTab === tab.key ? 'text-accent' : 'text-muted'}`}>
+              <Text className={`font-medium text-sm ${activeTab === tab.key ? 'text-accent' : 'text-muted'}`}>
                 {tab.label}
-                {tab.key === 'youtube' && selectedYoutube.length > 0 && ` (${selectedYoutube.length})`}
-                {tab.key === 'anime' && selectedAnime.length > 0 && ` (${selectedAnime.length})`}
-                {tab.key === 'website' && selectedWebsites.length > 0 && ` (${selectedWebsites.length})`}
               </Text>
+              {((tab.key === 'youtube' && selectedYoutube.length > 0) ||
+                (tab.key === 'anime' && selectedAnime.length > 0) ||
+                (tab.key === 'website' && selectedWebsites.length > 0)) && (
+                <View className="bg-accent/20 px-1.5 py-0.5 rounded-md mt-0.5">
+                  <Text className="text-xs text-accent font-semibold">
+                    {tab.key === 'youtube' && selectedYoutube.length}
+                    {tab.key === 'anime' && selectedAnime.length}
+                    {tab.key === 'website' && selectedWebsites.length}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           ))}
         </View>
 
-        <View className="px-4 pt-3 pb-1">
-          {activeTab !== 'website' && (
+        {/* Search / URL Input */}
+        <View className="px-5 pb-3">
+          {activeTab !== 'website' ? (
             <TextInput
-              className='mb-2'
               placeholder="Search channels..."
-              placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
+              placeholderTextColor={getThemeColor('field-placeholder', isDark)}
               value={search}
               onChangeText={setSearch}
+              className="rounded-xl"
             />
-          )}
-        </View>
-
-        <View className="flex-1 px-4">
-          {activeTab === 'website' && (
-            <View className="flex-row items-center gap-2 mb-3">
-              <TextInput
-                placeholder="Paste website URL..."
-                className='mb-2 flex-1'
-                placeholderTextColor={isDark ? '#94a3b8' : '#9CA3AF'}
-                value={urlInput}
-                onChangeText={setUrlInput}
-                onSubmitEditing={handleFetchUrl}
-              />
+          ) : (
+            <View className="flex-row items-center gap-2">
+              <View className="flex-1">
+                <TextInput
+                  placeholder="Paste website URL..."
+                  placeholderTextColor={getThemeColor('field-placeholder', isDark)}
+                  value={urlInput}
+                  onChangeText={setUrlInput}
+                  onSubmitEditing={handleFetchUrl}
+                  className="rounded-xl"
+                />
+              </View>
               <TouchableOpacity
                 onPress={handleFetchUrl}
                 disabled={isFetchingUrl || !urlInput.trim()}
-                className="bg-accent px-4 py-2.5 rounded-lg"
+                className="bg-accent px-4 py-3 rounded-xl"
+                activeOpacity={0.7}
               >
                 {isFetchingUrl ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text className="text-primary font-medium">Fetch</Text>
+                  <Text className="text-accent-foreground font-semibold text-sm">Fetch</Text>
                 )}
               </TouchableOpacity>
             </View>
           )}
+        </View>
+
+        {/* List */}
+        <View className="flex-1 px-5">
           <FlashList
             key={activeTab}
             data={currentData?.data ?? []}
@@ -331,32 +364,38 @@ export default function AddChannelToGroupScreen() {
             }}
             onEndReachedThreshold={0.5}
             className="flex-1"
-            contentContainerStyle={{ paddingBottom: 80 }}
+            contentContainerStyle={{ paddingBottom: 160 }}
             ListFooterComponent={
               currentData?.fetchingNext ? (
                 <View className="py-4 items-center">
-                  <ActivityIndicator size="small" />
+                  <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
                 </View>
               ) : null
             }
             ListEmptyComponent={
               currentData?.loading ? (
-                <Text className="text-center text-muted mt-10">Loading...</Text>
+                <View className="py-8 items-center">
+                  <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
+                </View>
               ) : (
-                <Text className="text-center text-muted mt-10">
-                  No {activeTab === 'youtube' ? 'channels' : activeTab === 'anime' ? 'animes' : 'websites'} found.
-                </Text>
+                <View className="py-12 items-center">
+                  <IconifyIcon name="lucide:search-x" size={40} className="text-muted mb-3" />
+                  <Text className="text-muted text-center font-medium">
+                    No {activeTab === 'youtube' ? 'channels' : activeTab === 'anime' ? 'animes' : 'websites'} found
+                  </Text>
+                </View>
               )
             }
           />
         </View>
       </View>
 
-      <View style={{ paddingBottom: insets.bottom }} className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-background border-t border-border">
+      {/* Bottom Bar */}
+      <View style={{ paddingBottom: insets.bottom }} className="absolute bottom-0 left-0 right-0 px-5 py-3 bg-background border-t" style={{ borderColor: getThemeColor('border', isDark) }}>
         <Button onPress={handleSave} fullWidth loading={batchUpdateChannels.isPending}>
           {batchUpdateChannels.isPending ? 'Saving...' : `Add Selected (${totalSelected})`}
         </Button>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

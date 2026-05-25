@@ -1,4 +1,6 @@
 import { Text, View } from 'react-native';
+import { useTheme } from '@/theme/ThemeProvider';
+import { getThemeColor } from '@/theme/themeColors';
 
 interface BadgeProps {
   children: React.ReactNode;
@@ -7,17 +9,21 @@ interface BadgeProps {
 }
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
-  const variantStyles = {
-    default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
-    success: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    error: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    outline: 'border border-gray-300 text-gray-700 dark:text-gray-300',
+  const { isDark } = useTheme();
+  
+  const variantStyles: Record<string, { bg: string; text: string }> = {
+    default: { bg: getThemeColor('default', isDark), text: getThemeColor('default-foreground', isDark) },
+    success: { bg: `${getThemeColor('success', isDark)}15`, text: getThemeColor('success', isDark) },
+    warning: { bg: `${getThemeColor('warning', isDark)}15`, text: getThemeColor('warning', isDark) },
+    error: { bg: `${getThemeColor('danger', isDark)}15`, text: getThemeColor('danger', isDark) },
+    outline: { bg: 'transparent', text: getThemeColor('muted', isDark) },
   };
 
+  const style = variantStyles[variant];
+
   return (
-    <View className={`inline-flex items-center px-2.5 py-0.5 rounded-full ${variantStyles[variant]} ${className}`}>
-      <Text className="text-xs font-medium">{children}</Text>
+    <View className={`inline-flex items-center px-2.5 py-0.5 rounded-full ${className}`} style={{ backgroundColor: style.bg }}>
+      <Text className="text-xs font-medium" style={{ color: style.text }}>{children}</Text>
     </View>
   );
 }

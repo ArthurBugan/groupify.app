@@ -1,0 +1,151 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: Complete App Navigation Flow
+# Tests the complete navigation flow through all main sections
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Login
+- tapOn:
+    text: "Email"
+- inputText: "demo@demo.com"
+- tapOn:
+    text: "Password"
+- inputText: "teste1234"
+- tapOn: "Sign In"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Groups
+- tapOn:
+    text: "Groups"
+- assertVisible:
+    text: "Groups"
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Channels
+- tapOn:
+    text: "Channels"
+- assertVisible:
+    text: "Channels"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Animes
+- tapOn:
+    text: "Animes"
+- assertVisible:
+    text: "Animes"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Websites
+- tapOn:
+    text: "Websites"
+- assertVisible:
+    text: "Websites"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Group Shelf
+- tapOn:
+    text: "Group Shelf"
+- assertVisible:
+    text: "Group Shelf"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Share Links
+- tapOn:
+    text: "Share Links"
+- assertVisible:
+    text: "Share Links"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Blog
+- tapOn:
+    text: "Blog"
+- assertVisible:
+    text: "Blog"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Settings
+- tapOn:
+    text: "Settings"
+- assertVisible:
+    text: "Settings"
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to New Group
+- tapOn:
+    text: "New Group"
+- assertVisible:
+    text: "New Group"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Add Channel
+- tapOn:
+    text: "Add Channel"
+- assertVisible:
+    text: "Channels"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Add Anime
+- tapOn:
+    text: "Add Anime"
+- assertVisible:
+    text: "Animes"
+    optional: true
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"

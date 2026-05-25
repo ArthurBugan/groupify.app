@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Image } from 'expo-image';
+import { Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useAnime, useGroups, useUpdateChannel } from '@/hooks';
@@ -31,7 +31,7 @@ export default function ChangeAnimeGroupScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="bg-background p-4">
       <SafeAreaView edges={['top']}>
         <View className="flex-row items-center mb-4">
           <TouchableOpacity onPress={() => router.back()} className="mr-2">

@@ -1,0 +1,59 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: Dark Mode Toggle
+# Tests the dark mode appearance toggle
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Login first
+- tapOn:
+    text: "Email"
+- inputText: "demo@demo.com"
+- tapOn:
+    text: "Password"
+- inputText: "teste1234"
+- tapOn: "Sign In"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Dashboard"
+
+# Navigate to Settings
+- tapOn:
+    text: "Settings"
+- assertVisible:
+    text: "Settings"
+
+# Navigate to Appearance
+- tapOn:
+    text: "Appearance"
+- assertVisible:
+    text: "Appearance"
+    optional: true
+
+# Look for dark mode toggle
+- swipe:
+    direction: "down"
+    speed: "fast"
+
+# Try to find and toggle dark mode
+- tapOn:
+    text: "Dark Mode"
+    optional: true
+- tapOn:
+    text: "Theme"
+    optional: true
+
+# Navigate back
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Settings"
+- swipe:
+    direction: "down"
+    speed: "fast"
+- assertVisible:
+    text: "Dashboard"

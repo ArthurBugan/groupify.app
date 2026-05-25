@@ -1,0 +1,46 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: Registration Error Handling
+# Tests error handling during registration
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Create Account"
+
+# Try to register with empty fields
+- tapOn: "Sign Up"
+- assertVisible:
+    text: "Please fill in all fields"
+    optional: true
+
+# Dismiss error
+- tapOn:
+    text: "OK"
+    optional: true
+- assertVisible:
+    text: "Create Account"
+
+# Fill in partial data
+- tapOn:
+    text: "Name"
+- inputText: "Test User"
+
+# Try to register with only name
+- tapOn: "Sign Up"
+- assertVisible:
+    text: "Please fill in all fields"
+    optional: true
+
+# Dismiss error
+- tapOn:
+    text: "OK"
+    optional: true
+- assertVisible:
+    text: "Create Account"
+
+# Navigate to login
+- tapOn:
+    text: "Already have an account?"
+- assertVisible:
+    text: "Welcome Back"

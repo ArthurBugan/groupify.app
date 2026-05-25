@@ -12,6 +12,9 @@ import {
   AppOpenAd
 } from 'react-native-google-mobile-ads';
 
+// Disable ads flag for testing
+const ADS_DISABLED = process.env.EXPO_PUBLIC_DISABLE_ADS === 'true';
+
 // Configure Ad Units
 const BANNER_AD_UNIT_ID = __DEV__ 
   ? TestIds.BANNER 
@@ -43,7 +46,12 @@ const APP_OPEN_AD_UNIT_ID = __DEV__
 
 
 export const openAppAd = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+    if (ADS_DISABLED) {
+      console.log('[AdMob] Ads disabled, skipping app open ad');
+      resolve(false);
+      return;
+    }
     const appOpenAd = AppOpenAd.createForAdRequest(APP_OPEN_AD_UNIT_ID, {
       requestNonPersonalizedAdsOnly: true,
     });
@@ -68,7 +76,12 @@ export const openAppAd = () => {
 
 // Rewarded Ad Management
 export const loadRewardedAd = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
+    if (ADS_DISABLED) {
+      console.log('[AdMob] Ads disabled, skipping rewarded ad');
+      resolve(false);
+      return;
+    }
     const rewarded = RewardedAd.createForAdRequest(REWARDED_AD_UNIT_ID, {
       requestNonPersonalizedAdsOnly: true,
     });
@@ -99,6 +112,11 @@ export const loadRewardedAd = () => {
 // Interstitial Ad Management
 export const loadInterstitial = () => {
   return new Promise((resolve) => {
+    if (ADS_DISABLED) {
+      console.log('[AdMob] Ads disabled, skipping interstitial ad');
+      resolve(false);
+      return;
+    }
     const interstitial = InterstitialAd.createForAdRequest(INTERSTITIAL_AD_UNIT_ID, {
       requestNonPersonalizedAdsOnly: true,
     });
@@ -149,6 +167,10 @@ const AdMobManager = ({ style }) => {
     />
   );
 
+  if (ADS_DISABLED) {
+    return null;
+  }
+
   return (
     <View style={[{ alignItems: 'center' }, style]}>
       <BannerAdComponent />
@@ -156,17 +178,22 @@ const AdMobManager = ({ style }) => {
   );
 };
 
-export const InlineAd = ({ style }: { style?: any }) => (
-  <View style={[{ alignItems: 'center', marginVertical: 10 }, style]}>
-    <BannerAd
-      unitId={BANNER_AD_UNIT_ID}
-      size={BannerAdSize.INLINE_ADAPTIVE_BANNER}
-      requestOptions={{
-        requestNonPersonalizedAdsOnly: true,
-      }}
-    />
-  </View>
-);
+export const InlineAd = ({ style }: { style?: any }) => {
+  if (ADS_DISABLED) {
+    return null;
+  }
+  return (
+    <View style={[{ alignItems: 'center', marginVertical: 10 }, style]}>
+      <BannerAd
+        unitId={BANNER_AD_UNIT_ID}
+        size={BannerAdSize.INLINE_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
+    </View>
+  );
+};
 
 // Attach methods to AdMobManager for easier access
 AdMobManager.loadRewardedAd = loadRewardedAd;

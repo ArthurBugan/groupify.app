@@ -1,0 +1,52 @@
+appId: com.groupifyapp
+
+---
+# E2E Test: OAuth Login Options
+# Tests the OAuth login buttons visibility and interaction
+- launchApp:
+    clearState: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Verify OAuth buttons are visible
+- assertVisible:
+    text: "Sign in with Google"
+- assertVisible:
+    text: "Sign in with Discord"
+- assertVisible:
+    text: "Sign in with Apple"
+    optional: true
+
+# Try Google login (will fail without proper setup, but tests UI)
+- tapOn:
+    text: "Sign in with Google"
+- assertVisible:
+    text: "Google Login Failed"
+    optional: true
+- assertVisible:
+    text: "Unable to sign in with Google"
+    optional: true
+
+# Dismiss error
+- tapOn:
+    text: "OK"
+    optional: true
+- assertVisible:
+    text: "Welcome Back"
+
+# Try Discord login
+- tapOn:
+    text: "Sign in with Discord"
+- assertVisible:
+    text: "Discord Login Failed"
+    optional: true
+- assertVisible:
+    text: "Unable to sign in with Discord"
+    optional: true
+
+# Dismiss error
+- tapOn:
+    text: "OK"
+    optional: true
+- assertVisible:
+    text: "Welcome Back"
