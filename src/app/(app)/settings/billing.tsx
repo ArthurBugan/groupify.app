@@ -2,7 +2,7 @@ import { View, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ListGroup, Button, Text, Separator } from 'heroui-native';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ScrollView, RefreshControl } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
 import { useDeleteWebsite } from '@/hooks';
@@ -7,8 +7,8 @@ import { useTheme } from '@/theme/ThemeProvider';
 import type { Website } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback } from 'react';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
-import { Skeleton } from '@/components/ui';
+import { IconifyIcon } from '@/components/IconifyIcon';
+import { Skeleton } from 'heroui-native';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'react-native';
 import { getThemeColor } from '@/theme/themeColors';
@@ -128,7 +128,7 @@ export default function WebsitesScreen() {
           </View>
 
           <View className="mb-4">
-            <TextInput
+            <Input
               placeholder="Search websites..."
               placeholderTextColor={getThemeColor('field-placeholder', isDark)}
               value={search}

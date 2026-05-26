@@ -1,5 +1,5 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useTheme } from '@/theme/ThemeProvider';
 

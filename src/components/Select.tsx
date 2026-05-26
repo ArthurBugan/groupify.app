@@ -1,8 +1,8 @@
 import { TouchableOpacity, View, Text } from 'react-native';
 import { Input as TextInput } from 'heroui-native';
 import { useState, useCallback, useRef } from 'react';
-import BottomSheet, { BottomSheetFlatList, BottomSheetView } from '@expo/ui/community/bottom-sheet';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import BottomSheet, { BottomSheetFlatList } from '@expo/ui/community/bottom-sheet';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
 import { Portal } from 'react-native-portalize';
@@ -103,7 +103,6 @@ export function Select({
         <BottomSheet
           ref={bottomSheetRef}
           index={isOpen ? 0 : -1}
-          enableDynamicSizing={false}
           handleIndicatorStyle={{
             backgroundColor: getThemeColor('muted-foreground', isDark),
           }}
@@ -111,17 +110,19 @@ export function Select({
             backgroundColor: getThemeColor('background', isDark),
           }}
         >
-          <BottomSheetView style={{ flex: 1, padding: 16 }}>
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-lg font-bold text-foreground">
-                {label || 'Select'}
-              </Text>
-              <TouchableOpacity onPress={() => handleOpenChange(false)}>
-                <IconifyIcon name="lucide:x" color={getThemeColor('muted-foreground', isDark)} size={20} />
-              </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <View style={{ marginBottom: 12 }}>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-lg font-bold text-foreground">
+                  {label || 'Select'}
+                </Text>
+                <TouchableOpacity onPress={() => handleOpenChange(false)}>
+                  <IconifyIcon name="lucide:x" color={getThemeColor('muted-foreground', isDark)} size={20} />
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <View className='mb-4'>
+            <View style={{ marginBottom: 16 }}>
               <TextInput
                 value={searchTerm}
                 onChangeText={setSearchTerm}
@@ -133,8 +134,9 @@ export function Select({
             <BottomSheetFlatList
               data={filteredOptions}
               keyExtractor={(item) => item.value}
-              className="flex-1"
-              ListFooterComponent={<View style={{ height: 140 }} />}
+              style={{ flex: 1 }}
+              contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+              ListFooterComponent={<View style={{ height: 20 }} />}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleSelect(item.value)}
@@ -178,7 +180,7 @@ export function Select({
                 </View>
               }
             />
-          </BottomSheetView>
+          </View>
         </BottomSheet>
       </Portal>
     </View>

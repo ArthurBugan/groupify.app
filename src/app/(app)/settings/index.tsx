@@ -1,10 +1,10 @@
 import { TouchableOpacity, View, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ListGroup, Button, Avatar, Separator, Text, Switch, Chip } from 'heroui-native';
+import { ListGroup, Button, Avatar, Separator, Text, Switch } from 'heroui-native';
 import { useCurrentUser } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
@@ -119,7 +119,7 @@ export default function SettingsScreen() {
                   <Text className="text-base font-medium text-foreground">Notifications</Text>
                   <Text className="text-xs text-muted">Push, email, SMS</Text>
                 </View>
-                <Switch defaultSelected />
+                <Switch isSelected={true} onSelectedChange={() => {}} />
               </View>
               <Separator className="mx-4" />
               <TouchableOpacity className="flex-row items-center px-4 py-3.5" onPress={() => { Haptics.selectionAsync(); router.push('/privacy'); }} activeOpacity={0.7}>

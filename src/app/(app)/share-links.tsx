@@ -1,12 +1,13 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, Share } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useShareLinks, useDeleteShareLink } from '@/hooks';
-import { Card, CardContent, Button } from '@/components/ui';
+import { Card, Button } from 'heroui-native';
+
 import DashboardHeader from '@/components/DashboardHeader';
 import type { ShareLink } from '@/types';
 import { useTheme } from '@/theme/ThemeProvider';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import * as Haptics from 'expo-haptics';
 
@@ -73,7 +74,7 @@ export default function ShareLinksScreen() {
             <View className="gap-3">
               {data?.map((link: ShareLink) => (
                 <Card key={link.id}>
-                  <CardContent className="flex-row items-center gap-3">
+                  <View className="flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: getThemeColor('default', isDark) }}>
                       <IconifyIcon name="lucide:link" size={20} color={getThemeColor('foreground', isDark)} />
                     </View>
@@ -99,7 +100,7 @@ export default function ShareLinksScreen() {
                     >
                       <IconifyIcon name="lucide:trash-2" size={16} color={getThemeColor('danger', isDark)} />
                     </TouchableOpacity>
-                  </CardContent>
+                  </View>
                 </Card>
               ))}
             </View>

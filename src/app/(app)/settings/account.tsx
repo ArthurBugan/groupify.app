@@ -5,11 +5,11 @@ import { Avatar, Separator, Text } from 'heroui-native';
 import { useCurrentUser } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Input } from '@/components/ui/Input';
-import { SwitchToggle } from '@/components/ui/Switch';
+import { Input } from '@/components/Input';
+import { Switch } from 'heroui-native';
 import * as Haptics from 'expo-haptics';
 
 export default function AccountSettingsScreen() {
@@ -104,7 +104,7 @@ export default function AccountSettingsScreen() {
                   </View>
                   <Text className="text-xs text-muted">Receive push notifications</Text>
                 </View>
-                <SwitchToggle value={notifications} onValueChange={setNotifications} />
+                <Switch isSelected={notifications} onSelectedChange={setNotifications} />
               </View>
               <Separator className="mx-0" />
               <View className="flex-row items-center justify-between mt-4 mb-4">
@@ -115,7 +115,7 @@ export default function AccountSettingsScreen() {
                   </View>
                   <Text className="text-xs text-muted">Add an extra layer of security</Text>
                 </View>
-                <SwitchToggle value={twoFactor} onValueChange={setTwoFactor} />
+                <Switch isSelected={twoFactor} onSelectedChange={setTwoFactor} />
               </View>
               <Separator className="mx-0" />
               <TouchableOpacity className="flex-row items-center justify-between py-3" onPress={() => { Haptics.selectionAsync(); router.push('/settings/account/change-password'); }} activeOpacity={0.7}>

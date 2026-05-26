@@ -5,7 +5,7 @@ import { useHandleOAuthCallback } from '@/hooks';
 import * as WebBrowser from 'expo-web-browser';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 
 export default function OAuthCallback() {
   const { token } = useGlobalSearchParams();

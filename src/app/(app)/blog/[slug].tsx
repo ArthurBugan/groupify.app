@@ -1,14 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Share, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useBlogPost } from '@/hooks';
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from 'heroui-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { EnrichedMarkdownText } from 'react-native-enriched-markdown';
 import { Linking } from 'react-native';
-import { InlineAd } from '@/components/ui/Admob';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { InlineAd } from '@/components/Admob';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import * as Haptics from 'expo-haptics';
 
 const AD_RE = /<ins\s+class=["']adsbygoogle["']\s*>\s*<\/ins>\s*/gi;

@@ -2,11 +2,11 @@ import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button, Text, RadioGroup, Radio, Separator } from 'heroui-native';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
-import { SwitchToggle } from '@/components/ui/Switch';
+import { Switch } from 'heroui-native';
 import * as Haptics from 'expo-haptics';
 
 const themes = [
@@ -115,7 +115,7 @@ export default function AppearanceSettingsScreen() {
                   </View>
                   <Text className="text-xs text-muted">Enable motion and animations</Text>
                 </View>
-                <SwitchToggle value={animations} onValueChange={setAnimations} />
+                <Switch isSelected={animations} onSelectedChange={setAnimations} />
               </View>
               <Separator className="mx-0" />
               <View className="flex-row items-center justify-between mt-4">
@@ -126,7 +126,7 @@ export default function AppearanceSettingsScreen() {
                   </View>
                   <Text className="text-xs text-muted">Minimize animations</Text>
                 </View>
-                <SwitchToggle value={reduceMotion} onValueChange={setReduceMotion} />
+                <Switch isSelected={reduceMotion} onSelectedChange={setReduceMotion} />
               </View>
             </View>
           </View>

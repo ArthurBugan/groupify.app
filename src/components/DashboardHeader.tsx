@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { ReactNode } from 'react';
 import { getThemeColor } from '@/theme/themeColors';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 
 interface DashboardHeaderProps {
   title: string;

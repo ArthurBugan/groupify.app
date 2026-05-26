@@ -3,14 +3,16 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Input, Select, IconPicker } from '@/components/ui';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { Input } from '@/components/Input';
+import { Select } from '@/components/Select';
+import { IconPicker } from '@/components/IconPicker';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useCreateGroup, useGroups } from '@/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { CreateGroupRequest } from '@/api/endpoints/groups';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
-import { SwitchToggle } from '@/components/ui/Switch';
+import { Switch } from 'heroui-native';
 import * as Haptics from 'expo-haptics';
 
 const DEFAULT_CATEGORIES = [
@@ -123,7 +125,7 @@ export default function CreateGroupScreen() {
                   <Text className="text-foreground text-base font-medium">Group Shelf</Text>
                   <Text className="text-xs text-muted mt-0.5">Allow others to discover and copy this group</Text>
                 </View>
-                <SwitchToggle value={field.value} onValueChange={field.onChange} />
+                <Switch value={field.value} onValueChange={field.onChange} />
               </View>
             )} />
           </View>

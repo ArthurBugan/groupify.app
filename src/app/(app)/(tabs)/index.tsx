@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView, RefreshControl } from 'react-
 import { useRouter } from 'expo-router';
 import { useDashboard } from '@/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useState, useCallback } from 'react';
 import { getThemeColor } from '@/theme/themeColors';
 import * as Haptics from 'expo-haptics';

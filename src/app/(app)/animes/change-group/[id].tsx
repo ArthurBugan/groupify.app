@@ -3,10 +3,10 @@ import { Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useAnime, useGroups, useUpdateChannel } from '@/hooks';
-import { Button } from '@/components/ui';
+import { Button } from 'heroui-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
-import AdMobManager from '@/components/ui/Admob';
+import { IconifyIcon } from '@/components/IconifyIcon';
+import AdMobManager from '@/components/Admob';
 
 export default function ChangeAnimeGroupScreen() {
   const router = useRouter();

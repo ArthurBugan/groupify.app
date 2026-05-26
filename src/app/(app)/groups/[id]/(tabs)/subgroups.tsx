@@ -1,9 +1,9 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroupSubgroups } from '@/hooks';
-import { Button } from '@/components/ui';
+import { Button } from 'heroui-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { FlashList } from '@shopify/flash-list';
 import { getThemeColor } from '@/theme/themeColors';
 import { useTheme } from '@/theme/ThemeProvider';

@@ -1,12 +1,14 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
+
 import { useRouter } from 'expo-router';
 import { useBlogInfinite } from '@/hooks';
-import { Card, CardContent, Skeleton } from '@/components/ui';
+import { Card, Skeleton } from 'heroui-native';
+
 import DashboardHeader from '@/components/DashboardHeader';
 import type { BlogPost } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useState, useCallback } from 'react';
@@ -40,7 +42,7 @@ export default function BlogListScreen() {
       activeOpacity={0.7}
     >
       <Card className="mb-3">
-        <CardContent>
+        <View>
           <Text className="text-lg text-foreground font-semibold mb-1">{post.title}</Text>
           {post.excerpt && (
             <Text className="text-muted text-sm" numberOfLines={2}>
@@ -53,7 +55,7 @@ export default function BlogListScreen() {
               {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'N/A'}
             </Text>
           </View>
-        </CardContent>
+        </View>
       </Card>
     </TouchableOpacity>
   );
@@ -80,11 +82,11 @@ export default function BlogListScreen() {
     <View className="gap-3 p-1">
       {[1, 2, 3].map(i => (
         <Card key={i}>
-          <CardContent>
+          <View>
             <Skeleton height={22} className="mb-2" />
             <Skeleton height={16} className="mb-1" />
             <Skeleton height={14} className="mt-2 w-1/3" />
-          </CardContent>
+          </View>
         </Card>
       ))}
     </View>
@@ -113,7 +115,7 @@ export default function BlogListScreen() {
             <View className="flex-row items-center bg-default border border-border rounded-xl px-4 py-3" style={{ borderWidth: 1.5 }}>
               <IconifyIcon name="lucide:search" size={18} color={getThemeColor('muted', isDark)} />
               <View className="flex-1 ml-2">
-                <TextInput
+                <Input
                   value={search}
                   onChangeText={setSearch}
                   placeholder="Search posts..."

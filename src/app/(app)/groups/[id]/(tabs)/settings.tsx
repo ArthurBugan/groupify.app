@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroup, useDeleteGroup } from '@/hooks';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useTheme } from '@/theme/ThemeProvider';
 import * as Haptics from 'expo-haptics';

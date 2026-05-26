@@ -1,14 +1,14 @@
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useGroupsInfinite } from '@/hooks/useGroupsInfinite';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Group } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useState, useMemo, useCallback } from 'react';
-import { InlineAd } from '@/components/ui/Admob';
-import { Skeleton } from '@/components/ui';
+import { InlineAd } from '@/components/Admob';
+import { Skeleton } from 'heroui-native';
 import { getThemeColor } from '@/theme/themeColors';
 import * as Haptics from 'expo-haptics';
 import DashboardHeader from '@/components/DashboardHeader';
@@ -189,7 +189,7 @@ export default function GroupsListScreen() {
           </View>
           
           <View className="mb-4">
-            <TextInput
+            <Input
               placeholder="Search groups..."
               placeholderTextColor={getThemeColor('field-placeholder', isDark)}
               value={search}

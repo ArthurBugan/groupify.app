@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Sc
 import { useRouter } from 'expo-router';
 import { useRegister, useGoogleLogin, useDiscordLogin, useAppleLogin } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { Input } from '@/components/ui/Input';
+import { Input } from 'heroui-native';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';

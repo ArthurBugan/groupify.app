@@ -1,18 +1,17 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { Image } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useGroup, useBatchUpdateChannels } from '@/hooks';
 import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
 import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
 import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
-import { Card, CardContent, Checkbox, Button } from '@/components/ui';
-import DashboardHeader from '@/components/DashboardHeader';
+import { Card, Checkbox, Button } from 'heroui-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { Channel, Anime, Website } from '@/types';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { channelsApi } from '@/api/endpoints/channels';
 import { FlashList } from '@shopify/flash-list';
 import { getThemeColor } from '@/theme/themeColors';
@@ -89,29 +88,35 @@ export default function AddChannelToGroupScreen() {
 
   const toggleYoutube = useCallback((channel: Channel) => {
     Haptics.selectionAsync();
-    setSelectedYoutube((prev) =>
-      prev.some(c => c.id === channel.id)
-        ? prev.filter((c) => c.id !== channel.id)
-        : [...prev, { ...channel, contentType: 'youtube', groupId: id }]
-    );
+    setSelectedYoutube((prev) => {
+      const exists = prev.some(c => c.id === channel.id);
+      if (exists) {
+        return prev.filter((c) => c.id !== channel.id);
+      }
+      return [...prev, { ...channel, contentType: 'youtube', groupId: id }];
+    });
   }, [id]);
 
   const toggleAnime = useCallback((channel: Channel) => {
     Haptics.selectionAsync();
-    setSelectedAnime((prev) =>
-      prev.some(c => c.id === channel.id)
-        ? prev.filter((c) => c.id !== channel.id)
-        : [...prev, { ...channel, contentType: 'anime', groupId: id }]
-    );
+    setSelectedAnime((prev) => {
+      const exists = prev.some(c => c.id === channel.id);
+      if (exists) {
+        return prev.filter((c) => c.id !== channel.id);
+      }
+      return [...prev, { ...channel, contentType: 'anime', groupId: id }];
+    });
   }, [id]);
 
   const toggleWebsite = useCallback((channel: Channel) => {
     Haptics.selectionAsync();
-    setSelectedWebsites((prev) =>
-      prev.some(c => c.id === channel.id)
-        ? prev.filter((c) => c.id !== channel.id)
-        : [...prev, { ...channel, contentType: 'website', groupId: id }]
-    );
+    setSelectedWebsites((prev) => {
+      const exists = prev.some(c => c.id === channel.id);
+      if (exists) {
+        return prev.filter((c) => c.id !== channel.id);
+      }
+      return [...prev, { ...channel, contentType: 'website', groupId: id }];
+    });
   }, []);
 
   const handleFetchUrl = async () => {
@@ -164,13 +169,16 @@ export default function AddChannelToGroupScreen() {
     }
   };
 
-  const renderChannelItem = ({ item }: { item: Channel }) => {
+  const renderChannelItem = useCallback(({ item }: { item: Channel }) => {
     const isSelected = selectedYoutube.some(c => c.id === item.id);
     return (
       <TouchableOpacity onPress={() => toggleYoutube(item)} activeOpacity={0.7}>
-        <Card className="mb-2">
-          <CardContent className="flex-row items-center">
-            <Checkbox checked={isSelected} onChange={() => toggleYoutube(item)} />
+        <Card className="shadow-sm mb-2 rounded-xl">
+          <View className="flex-row items-center px-3">
+            <Checkbox
+              isSelected={isSelected}
+              onSelectedChange={() => toggleYoutube(item)}
+            />
             {item.thumbnail || item.imageUrl ? (
               <Image
                 key={item.id + (item.thumbnail || item.imageUrl)}
@@ -186,19 +194,22 @@ export default function AddChannelToGroupScreen() {
               <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
               <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
             </View>
-          </CardContent>
+          </View>
         </Card>
       </TouchableOpacity>
     );
-  };
+  }, [selectedYoutube, toggleYoutube, isDark]);
 
-  const renderAnimeItem = ({ item }: { item: Anime }) => {
+  const renderAnimeItem = useCallback(({ item }: { item: Anime }) => {
     const isSelected = selectedAnime.some(c => c.id === item.id);
     return (
       <TouchableOpacity onPress={() => toggleAnime(item)} activeOpacity={0.7}>
-        <Card className="mb-2">
-          <CardContent className="flex-row items-center">
-            <Checkbox checked={isSelected} onChange={() => toggleAnime(item)} />
+        <Card className="shadow-sm mb-2 rounded-xl">
+          <View className="flex-row items-center px-3">
+            <Checkbox
+              isSelected={isSelected}
+              onSelectedChange={() => toggleAnime(item)}
+            />
             {item.thumbnail || item.imageUrl ? (
               <Image
                 key={item.id + (item.thumbnail || item.imageUrl)}
@@ -216,19 +227,22 @@ export default function AddChannelToGroupScreen() {
                 <Text className="text-muted text-xs">{item.groupName}</Text>
               )}
             </View>
-          </CardContent>
+          </View>
         </Card>
       </TouchableOpacity>
     );
-  };
+  }, [selectedAnime, toggleAnime, isDark]);
 
-  const renderWebsiteItem = ({ item }: { item: Website }) => {
+  const renderWebsiteItem = useCallback(({ item }: { item: Website }) => {
     const isSelected = selectedWebsites.some(c => c.id === item.id);
     return (
       <TouchableOpacity onPress={() => toggleWebsite(item)} activeOpacity={0.7}>
-        <Card className="mb-2">
-          <CardContent className="flex-row items-center">
-            <Checkbox checked={isSelected} onChange={() => toggleWebsite(item)} />
+        <Card className="shadow-sm mb-2 rounded-xl">
+          <View className="flex-row items-center px-3">
+            <Checkbox
+              isSelected={isSelected}
+              onSelectedChange={() => toggleWebsite(item)}
+            />
             {(item.thumbnail || (item as any).imageUrl) ? (
               <Image
                 key={item.id + (item.thumbnail || (item as any).imageUrl || '')}
@@ -244,11 +258,11 @@ export default function AddChannelToGroupScreen() {
               <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
               <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
             </View>
-          </CardContent>
+          </View>
         </Card>
       </TouchableOpacity>
     );
-  };
+  }, [selectedWebsites, toggleWebsite, isDark]);
 
   const currentData = useMemo(() => {
     switch (activeTab) {
@@ -284,35 +298,35 @@ export default function AddChannelToGroupScreen() {
         </View>
 
         {/* Tabs */}
-        <View className="flex-row mx-5 mt-4 mb-3 bg-default rounded-xl p-1">
-          {TABS.map((tab) => (
-            <TouchableOpacity
-              key={tab.key}
-              onPress={() => setActiveTab(tab.key)}
-              className={`flex-1 py-2.5 items-center rounded-lg ${activeTab === tab.key ? '' : ''}`}
-            >
-              <Text className={`font-medium text-sm ${activeTab === tab.key ? 'text-accent' : 'text-muted'}`}>
-                {tab.label}
-              </Text>
-              {((tab.key === 'youtube' && selectedYoutube.length > 0) ||
-                (tab.key === 'anime' && selectedAnime.length > 0) ||
-                (tab.key === 'website' && selectedWebsites.length > 0)) && (
-                <View className="bg-accent/20 px-1.5 py-0.5 rounded-md mt-0.5">
-                  <Text className="text-xs text-accent font-semibold">
-                    {tab.key === 'youtube' && selectedYoutube.length}
-                    {tab.key === 'anime' && selectedAnime.length}
-                    {tab.key === 'website' && selectedWebsites.length}
-                  </Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
+        <View className="flex-row mx-5 mt-4 mb-3">
+          {TABS.map((tab) => {
+            const count = tab.key === 'youtube' ? selectedYoutube.length : tab.key === 'anime' ? selectedAnime.length : selectedWebsites.length;
+            return (
+              <TouchableOpacity
+                key={tab.key}
+                onPress={() => setActiveTab(tab.key)}
+                className="flex-1 py-1.5 items-center relative"
+              >
+                <Text className={`text-sm ${activeTab === tab.key ? 'text-foreground font-semibold' : 'text-muted font-normal'}`}>
+                  {tab.label}
+                </Text>
+                {count > 0 && (
+                  <View className="absolute -top-0.5 right-1.5 min-w-[16px] h-4 px-1 bg-accent/20 rounded-full items-center justify-center">
+                    <Text className="text-[10px] text-accent font-bold">{count}</Text>
+                  </View>
+                )}
+                {(activeTab === tab.key) && (
+                  <View className="absolute bottom-0 w-8 h-0.5 bg-accent rounded-full" />
+                )}
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Search / URL Input */}
         <View className="px-5 pb-3">
           {activeTab !== 'website' ? (
-            <TextInput
+            <Input
               placeholder="Search channels..."
               placeholderTextColor={getThemeColor('field-placeholder', isDark)}
               value={search}
@@ -322,7 +336,7 @@ export default function AddChannelToGroupScreen() {
           ) : (
             <View className="flex-row items-center gap-2">
               <View className="flex-1">
-                <TextInput
+                <Input
                   placeholder="Paste website URL..."
                   placeholderTextColor={getThemeColor('field-placeholder', isDark)}
                   value={urlInput}
@@ -348,7 +362,7 @@ export default function AddChannelToGroupScreen() {
         </View>
 
         {/* List */}
-        <View className="flex-1 px-5">
+        <View className="flex-1 px-5 pb-40 py-2">
           <FlashList
             key={activeTab}
             data={currentData?.data ?? []}
@@ -364,7 +378,7 @@ export default function AddChannelToGroupScreen() {
             }}
             onEndReachedThreshold={0.5}
             className="flex-1"
-            contentContainerStyle={{ paddingBottom: 160 }}
+            estimatedItemSize={72}
             ListFooterComponent={
               currentData?.fetchingNext ? (
                 <View className="py-4 items-center">

@@ -3,14 +3,17 @@ import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Input, Button, Switch as SwitchToggle, Select, Card, CardContent, IconPicker } from '@/components/ui';
+import { Button, Switch as SwitchNative } from 'heroui-native';
+import { Input } from '@/components/Input';
+import { Select } from '@/components/Select';
+import { IconPicker } from '@/components/IconPicker';
 import { useGroup, useUpdateGroup, useGroups } from '@/hooks';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { UpdateGroupRequest } from '@/api/endpoints/groups';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
-import { SwitchToggle as SwitchToggleComponent } from '@/components/ui/Switch';
+import { IconifyIcon } from '@/components/IconifyIcon';
+
 import * as Haptics from 'expo-haptics';
 
 const DEFAULT_CATEGORIES = [
@@ -100,7 +103,7 @@ export default function EditGroupScreen() {
                     <Text className="text-base font-semibold text-foreground">Enable Group Shelf</Text>
                     <Text className="text-xs text-muted mt-1">Allow this group to be added to groupshelf, so other users can copy it</Text>
                   </View>
-                  <SwitchToggleComponent value={field.value} onValueChange={field.onChange} />
+                  <SwitchNative isSelected={field.value} onSelectedChange={field.onChange} />
                 </View>
               </View>
             )} />

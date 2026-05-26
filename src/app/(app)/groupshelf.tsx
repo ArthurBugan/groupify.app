@@ -1,13 +1,13 @@
 import { useMemo, useState, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { Image } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useGroupShelves, useCopyShelf } from '@/hooks/useGroupShelf';
 import { useTheme } from '@/theme/ThemeProvider';
-import { Skeleton } from '@/components/ui';
+import { Skeleton } from 'heroui-native';
 import BottomSheet, { BottomSheetScrollView } from '@expo/ui/community/bottom-sheet';
 import { getThemeColor } from '@/theme/themeColors';
 import type { Channel, Group } from '@/types';
@@ -102,7 +102,7 @@ export default function GroupShelfScreen() {
           </View>
 
           <View className="mb-4">
-            <TextInput
+            <Input
               placeholder="Search groupshelf..."
               placeholderTextColor={getThemeColor('field-placeholder', isDark)}
               value={search}

@@ -1,15 +1,15 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
 import { Image } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Channel } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useMemo, useCallback } from 'react';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
-import { InlineAd } from '@/components/ui/Admob';
-import { Skeleton } from '@/components/ui';
+import { IconifyIcon } from '@/components/IconifyIcon';
+import { InlineAd } from '@/components/Admob';
+import { Skeleton } from 'heroui-native';
 import { FlashList } from '@shopify/flash-list';
 import { getThemeColor } from '@/theme/themeColors';
 import * as Haptics from 'expo-haptics';
@@ -67,7 +67,7 @@ export default function ChannelsListScreen() {
 
   const renderChannel = ({ item }: { item: Channel }) => (
     <TouchableOpacity
-      className="bg-surface rounded-xl p-3.5 mb-2 flex-row items-center gap-3"
+      className="mx-4 bg-surface rounded-xl p-3.5 mb-2 flex-row items-center gap-3"
       onPress={() => { Haptics.selectionAsync(); router.push(`/channels/change-group/${item.id}`); }}
       activeOpacity={0.7}
     >
@@ -121,7 +121,7 @@ export default function ChannelsListScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <FlashList
+        <FlashList
         ListHeaderComponent={
           <>
             <ScrollView>
@@ -138,7 +138,7 @@ export default function ChannelsListScreen() {
               </View>
               
               <View className="mb-4">
-                <TextInput
+                <Input
                   placeholder="Search channels..."
                   placeholderTextColor={getThemeColor('field-placeholder', isDark)}
                   value={search}

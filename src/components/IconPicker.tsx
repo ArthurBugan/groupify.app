@@ -4,17 +4,17 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import {
   useCallback,
   useEffect,
   useRef,
   useState,
 } from 'react';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
-import BottomSheet, { BottomSheetFlatList, BottomSheetView } from '@expo/ui/community/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList } from '@expo/ui/community/bottom-sheet';
 import { Portal } from 'react-native-portalize';
 
 // Timer for debouncing search
@@ -137,7 +137,6 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
         <BottomSheet
           ref={bottomSheetRef}
           index={isOpen ? 0 : -1}
-          enableDynamicSizing={false}
           handleIndicatorStyle={{
             backgroundColor: getThemeColor('muted-foreground', isDark),
           }}
@@ -145,17 +144,19 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
             backgroundColor: getThemeColor('popover', isDark),
           }}
         >
-          <BottomSheetView style={{ flex: 1, padding: 16 }}>
+          <View style={{ flex: 1 }}>
             {/* Header */}
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-lg font-bold text-foreground">Choose an Icon</Text>
-              <TouchableOpacity onPress={() => handleOpenChange(false)}>
-                <IconifyIcon name="lucide:x" color={getThemeColor('muted-foreground', isDark)} size={20} />
-              </TouchableOpacity>
+            <View style={{ marginBottom: 12 }}>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-lg font-bold text-foreground">Choose an Icon</Text>
+                <TouchableOpacity onPress={() => handleOpenChange(false)}>
+                  <IconifyIcon name="lucide:x" color={getThemeColor('muted-foreground', isDark)} size={20} />
+                </TouchableOpacity>
+              </View>
             </View>
 
-            <View className="mb-4">
-              <TextInput
+            <View style={{ marginBottom: 16 }}>
+              <Input
                 value={searchTerm}
                 onChangeText={handleFilter}
                 placeholder="Search icons..."
@@ -169,7 +170,7 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 <Text className="text-muted">Loading icons...</Text>
               </View>
             ) : searchTerm ? (
-              <View className="flex-1">
+              <View style={{ flex: 1 }}>
                 <Text className="text-sm text-muted mb-2">
                   Found {filteredIcons.length} icons matching "{searchTerm}"
                 </Text>
@@ -177,8 +178,9 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                   data={filteredIcons}
                   numColumns={7}
                   keyExtractor={(item) => item}
-                  className="flex-1"
-                  ListFooterComponent={<View style={{ height: 40 }} />}
+                  style={{ flex: 1 }}
+                  contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+                  ListFooterComponent={<View style={{ height: 20 }} />}
                   renderItem={({ item: iconName }) => (
                     <IconButton
                       iconName={iconName}
@@ -190,12 +192,12 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 />
               </View>
             ) : (
-              <View className="flex-1">
+              <View style={{ flex: 1 }}>
                 {/* Category tabs */}
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  className="mb-3"
+                  style={{ marginBottom: 8 }}
                 >
                   {categories.map((cat) => (
                     <TouchableOpacity
@@ -221,8 +223,9 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                   data={activeIcons}
                   numColumns={7}
                   keyExtractor={(item) => item}
-                  className="flex-1"
-                  ListFooterComponent={<View style={{ height: 40 }} />}
+                  style={{ flex: 1 }}
+                  contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+                  ListFooterComponent={<View style={{ height: 20 }} />}
                   renderItem={({ item: iconName }) => (
                     <IconButton
                       iconName={iconName}
@@ -234,7 +237,7 @@ export function IconPicker({ value, onChange, label, error }: IconPickerProps) {
                 />
               </View>
             )}
-          </BottomSheetView>
+          </View>
         </BottomSheet>
       </Portal>
     </View>

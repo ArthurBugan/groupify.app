@@ -1,11 +1,12 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Input, Button, Card, CardContent, Select } from '@/components/ui';
-import { useChannel, useUpdateChannel, useGroups } from '../../../../hooks';
+import { Input } from '@/components/Input';
+import { Select } from '@/components/Select';
+import { useChannel, useUpdateChannel, useGroups } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import { getThemeColor } from '@/theme/themeColors';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 

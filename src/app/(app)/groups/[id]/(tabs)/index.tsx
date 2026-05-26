@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, Linking, Alert } from 'react-native';
 import { useRouter, useGlobalSearchParams } from 'expo-router';
 import { useGroup } from '@/hooks';
-import { Card, CardContent, Button } from '@/components/ui';
+import { Card, Button } from 'heroui-native';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useTheme } from '@/theme/ThemeProvider';
 import * as Haptics from 'expo-haptics';
@@ -111,10 +112,8 @@ export default function GroupOverviewScreen() {
 
           {/* Description */}
           {group.description && (
-            <Card className="mb-5">
-              <CardContent className="bg-surface rounded-xl">
+            <Card className="mb-5 rounded-xl">
                 <Text className="text-muted text-sm leading-relaxed">{group.description}</Text>
-              </CardContent>
             </Card>
           )}
 
@@ -123,10 +122,11 @@ export default function GroupOverviewScreen() {
             <Button
               onPress={() => { Haptics.selectionAsync(); router.push(`/groups/${id}/add-channel`); }}
               className="flex-1"
+              variant='outline'
             >
               <View className='flex-row justify-center items-center gap-2'>
                 <IconifyIcon name="lucide:plus" size={18} />
-                <Text className="text-sm font-semibold">Add Channel</Text>
+                <Text className="text-sm text-foreground font-semibold">Add Channel</Text>
               </View>
             </Button>
             <Button
@@ -136,7 +136,7 @@ export default function GroupOverviewScreen() {
             >
               <View className='flex-row justify-center items-center gap-2'>
                 <IconifyIcon name="lucide:pencil" size={18} />
-                <Text className="text-sm font-semibold">Edit</Text>
+                <Text className="text-sm text-foreground font-semibold">Edit</Text>
               </View>
             </Button>
           </View>

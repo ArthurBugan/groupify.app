@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, Sc
 import { useRouter } from 'expo-router';
 import { useLogin, useGoogleLogin, useDiscordLogin, useAppleLogin, useIsOAuthLoading } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import AdMobManager from '@/components/ui/Admob';
-import { Input } from '@/components/ui/Input';
+import AdMobManager from '@/components/Admob';
+import { Input } from 'heroui-native';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';

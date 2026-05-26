@@ -4,8 +4,8 @@ import { useRouter } from 'expo-router';
 import { useForgotPassword } from '@/hooks';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
-import { Input } from '@/components/ui/Input';
+import { IconifyIcon } from '@/components/IconifyIcon';
+import { Input } from 'heroui-native';
 import { getThemeColor } from '@/theme/themeColors';
 import * as Haptics from 'expo-haptics';
 

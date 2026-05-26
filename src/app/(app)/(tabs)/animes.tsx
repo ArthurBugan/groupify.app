@@ -1,14 +1,14 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView, Linking } from 'react-native';
-import { Input as TextInput } from 'heroui-native';
+import { Input } from 'heroui-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
 import { useTheme } from '@/theme/ThemeProvider';
 import type { Anime } from '@/types';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { IconifyIcon } from '@/components/ui/IconifyIcon';
+import { IconifyIcon } from '@/components/IconifyIcon';
 import { useMemo, useCallback, useState } from 'react';
-import { InlineAd } from '@/components/ui/Admob';
-import { Skeleton } from '@/components/ui';
+import { InlineAd } from '@/components/Admob';
+import { Skeleton } from 'heroui-native';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'react-native';
 import { getThemeColor } from '@/theme/themeColors';
@@ -85,7 +85,7 @@ export default function AnimesListScreen() {
 
   const renderAnime = ({ item }: { item: Anime }) => (
     <TouchableOpacity
-      className="bg-surface rounded-xl p-3.5 mb-2 flex-row items-center gap-3"
+      className="mx-4 bg-surface rounded-xl p-3.5 mb-2 flex-row items-center gap-3"
       onPress={() => { Haptics.selectionAsync(); router.push(`/animes/change-group/${item.id}`); }}
       activeOpacity={0.7}
     >
@@ -166,7 +166,7 @@ export default function AnimesListScreen() {
               </View>
               
               <View className="mb-4">
-                <TextInput
+                <Input
                   placeholder="Search animes..."
                   placeholderTextColor={getThemeColor('field-placeholder', isDark)}
                   value={search}
