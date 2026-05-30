@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Image } from 'react-native';
 import { Input } from 'heroui-native';
 import { useRouter, useFocusEffect } from 'expo-router';
@@ -27,7 +27,6 @@ export default function ChannelsListScreen() {
   const {
     channels,
     loadMore,
-    hasNextPage,
     isFetchingNextPage,
     isLoading,
     refetch,
@@ -60,12 +59,7 @@ export default function ChannelsListScreen() {
     return result;
   }, [channels]);
 
-  const getGroupIcon = (icon?: string) => {
-    if (icon) return icon;
-    return 'lucide:folder';
-  };
-
-  const renderChannel = ({ item }: { item: Channel }) => (
+  const renderChannel = useCallback(({ item }: { item: Channel }) => (
     <TouchableOpacity
       className="mx-4 bg-surface rounded-xl p-3.5 mb-2 flex-row items-center gap-3"
       onPress={() => { Haptics.selectionAsync(); router.push(`/channels/change-group/${item.id}`); }}
@@ -87,26 +81,26 @@ export default function ChannelsListScreen() {
         )}
         {item.groupName && (
           <View className="flex-row items-center gap-1 mt-1">
-            <IconifyIcon name={getGroupIcon(item.groupIcon)} size={11} color={getThemeColor('muted', isDark)} />
+            <IconifyIcon name="lucide:folder" size={11} color={getThemeColor('muted', isDark)} />
             <Text className="text-xs text-muted">{item.groupName}</Text>
           </View>
         )}
       </View>
       <IconifyIcon name="lucide:chevron-right" size={16} color={getThemeColor('muted', isDark)} />
     </TouchableOpacity>
-  );
+  ), [isDark, router]);
 
-  const renderFooter = () => {
+  const renderFooter = useCallback(() => {
     if (!isFetchingNextPage) return null;
     return (
       <View className="py-4 items-center">
         <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
       </View>
     );
-  };
+  }, [isFetchingNextPage, isDark]);
 
   const renderSkeleton = () => (
-    <View className="gap-2">
+    <View className="px-4 gap-2">
       {[1, 2, 3, 4, 5].map(i => (
         <View key={i} className="bg-surface rounded-xl p-3.5 flex-row items-center gap-3">
           <Skeleton width={44} height={44} className="rounded-xl" />
@@ -119,36 +113,48 @@ export default function ChannelsListScreen() {
     </View>
   );
 
+  const headerComponent = (
+    <View style={{ paddingHorizontal: 16 }}>
+      <View className="pt-4 pb-2">
+        <DashboardHeader title="Channels" />
+      </View>
+      <View className="mb-4">
+        <Input
+          placeholder="Search channels..."
+          placeholderTextColor={getThemeColor('field-placeholder', isDark)}
+          value={search}
+          onChangeText={setSearch}
+          className="rounded-xl"
+        />
+      </View>
+    </View>
+  );
+
+  const refreshControl = (
+    <RefreshControl
+      refreshing={isRefreshing}
+      onRefresh={handleRefresh}
+      tintColor={getThemeColor('accent', isDark)}
+      colors={[getThemeColor('accent', isDark)]}
+    />
+  );
+
+  if (isLoading && channels.length === 0) {
+    return (
+      <View className="flex-1 bg-background">
+        <View style={{ paddingTop: insets.top }}>
+          {headerComponent}
+        </View>
+        {renderSkeleton()}
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-background">
-        <FlashList
-        ListHeaderComponent={
-          <>
-            <ScrollView>
-              <RefreshControl 
-                refreshing={isRefreshing} 
-                onRefresh={handleRefresh}
-                tintColor={getThemeColor('accent', isDark)}
-                colors={[getThemeColor('accent', isDark)]}
-              />
-            </ScrollView>
-            <View style={{ paddingTop: insets.top, paddingHorizontal: 16 }}>
-              <View className="pt-4 pb-2">
-                <DashboardHeader title="Channels" />
-              </View>
-              
-              <View className="mb-4">
-                <Input
-                  placeholder="Search channels..."
-                  placeholderTextColor={getThemeColor('field-placeholder', isDark)}
-                  value={search}
-                  onChangeText={setSearch}
-                  className="rounded-xl"
-                />
-              </View>
-            </View>
-          </>
-        }
+      <FlashList
+        refreshControl={refreshControl}
+        ListHeaderComponent={headerComponent}
         data={channelsWithAds}
         onEndReached={loadMore}
         renderItem={({ item }) => {
@@ -160,18 +166,14 @@ export default function ChannelsListScreen() {
         keyExtractor={(item, index) => item.id + index}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
-        contentContainerStyle={{ paddingBottom: 16 }}
+        contentContainerStyle={{ paddingTop: insets.top, paddingBottom: 16 }}
         ListEmptyComponent={
-          isLoading ? (
-            renderSkeleton()
-          ) : (
-            <View className="py-16 items-center">
-              <View className="w-16 h-16 rounded-2xl items-center justify-center mb-4" style={{ backgroundColor: getThemeColor('default', isDark) }}>
-                <IconifyIcon name="lucide:tv" size={32} color={getThemeColor('muted', isDark)} />
-              </View>
-              <Text className="text-muted text-center font-medium">No channels found</Text>
+          <View className="py-16 items-center">
+            <View className="w-16 h-16 rounded-2xl items-center justify-center mb-4" style={{ backgroundColor: getThemeColor('default', isDark) }}>
+              <IconifyIcon name="lucide:tv" size={32} color={getThemeColor('muted', isDark)} />
             </View>
-          )
+            <Text className="text-muted text-center font-medium">No channels found</Text>
+          </View>
         }
       />
     </View>

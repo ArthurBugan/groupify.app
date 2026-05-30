@@ -98,8 +98,8 @@ export default function BlogListScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl 
-            refreshing={isRefreshing} 
+          <RefreshControl
+            refreshing={isRefreshing}
             onRefresh={handleRefresh}
             tintColor={getThemeColor('accent', isDark)}
             colors={[getThemeColor('accent', isDark)]}
@@ -107,8 +107,13 @@ export default function BlogListScreen() {
         }
       >
         <View style={{ paddingTop: insets.top, paddingHorizontal: 16 }}>
-          <View className="pt-4 pb-2">
-            <DashboardHeader title="Blog" />
+          <View className="pt-4 pb-3">
+            <View className="flex-row items-center mb-1">
+              <TouchableOpacity onPress={() => { Haptics.selectionAsync(); router.back(); }} className="mr-3 p-1.5 -ml-1 rounded-full" style={{ backgroundColor: getThemeColor('surface', isDark) }}>
+                <IconifyIcon name="lucide:arrow-left" size={20} color={getThemeColor('foreground', isDark)} />
+              </TouchableOpacity>
+              <Text className="text-lg font-semibold text-foreground">Blog</Text>
+            </View>
           </View>
 
           <View className="mb-4">

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl, ScrollView, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, RefreshControl, Linking } from 'react-native';
 import { Input } from 'heroui-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
@@ -37,12 +37,11 @@ export default function AnimesListScreen() {
   const router = useRouter();
   const { isDark } = useTheme();
   const insets = useSafeAreaInsets();
-  
+
   const {
     animes,
     isLoading,
     isFetchingNextPage,
-    hasNextPage,
     loadMore,
     search,
     setSearch,
@@ -78,12 +77,7 @@ export default function AnimesListScreen() {
     return result;
   }, [animes]);
 
-  const getGroupIcon = (icon?: string) => {
-    if (icon) return icon;
-    return 'lucide:folder';
-  };
-
-  const renderAnime = ({ item }: { item: Anime }) => (
+  const renderAnime = useCallback(({ item }: { item: Anime }) => (
     <TouchableOpacity
       className="mx-4 bg-surface rounded-xl p-3.5 mb-2 flex-row items-center gap-3"
       onPress={() => { Haptics.selectionAsync(); router.push(`/animes/change-group/${item.id}`); }}
@@ -105,7 +99,7 @@ export default function AnimesListScreen() {
         )}
         {item.groupIcon && (
           <View className="flex-row items-center gap-1 mt-1">
-            <IconifyIcon name={getGroupIcon(item.groupIcon)} size={11} color={getThemeColor('muted', isDark)} />
+            <IconifyIcon name="lucide:folder" size={11} color={getThemeColor('muted', isDark)} />
             <Text className="text-xs text-muted">{item.groupName}</Text>
           </View>
         )}
@@ -122,19 +116,19 @@ export default function AnimesListScreen() {
       )}
       <IconifyIcon name="lucide:chevron-right" size={16} color={getThemeColor('muted', isDark)} />
     </TouchableOpacity>
-  );
+  ), [isDark, router]);
 
-  const renderFooter = () => {
+  const renderFooter = useCallback(() => {
     if (!isFetchingNextPage) return null;
     return (
       <View className="py-4 items-center">
         <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
       </View>
     );
-  };
+  }, [isFetchingNextPage, isDark]);
 
   const renderSkeleton = () => (
-    <View className="gap-2">
+    <View className="px-4 gap-2">
       {[1, 2, 3, 4, 5].map(i => (
         <View key={i} className="bg-surface rounded-xl p-3.5 flex-row items-center gap-3">
           <Skeleton width={44} height={44} className="rounded-xl" />
@@ -147,36 +141,48 @@ export default function AnimesListScreen() {
     </View>
   );
 
+  const headerComponent = (
+    <View style={{ paddingHorizontal: 16 }}>
+      <View className="pt-4 pb-2">
+        <DashboardHeader title="Animes" />
+      </View>
+      <View className="mb-4">
+        <Input
+          placeholder="Search animes..."
+          placeholderTextColor={getThemeColor('field-placeholder', isDark)}
+          value={search}
+          onChangeText={setSearch}
+          className="rounded-xl"
+        />
+      </View>
+    </View>
+  );
+
+  const refreshControl = (
+    <RefreshControl
+      refreshing={isRefreshing}
+      onRefresh={handleRefresh}
+      tintColor={getThemeColor('accent', isDark)}
+      colors={[getThemeColor('accent', isDark)]}
+    />
+  );
+
+  if (isLoading && animes.length === 0) {
+    return (
+      <View className="flex-1 bg-background">
+        <View style={{ paddingTop: insets.top }}>
+          {headerComponent}
+        </View>
+        {renderSkeleton()}
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-background">
       <FlashList
-        ListHeaderComponent={
-          <>
-            <ScrollView>
-              <RefreshControl 
-                refreshing={isRefreshing} 
-                onRefresh={handleRefresh}
-                tintColor={getThemeColor('accent', isDark)}
-                colors={[getThemeColor('accent', isDark)]}
-              />
-            </ScrollView>
-            <View style={{ paddingTop: insets.top, paddingHorizontal: 16 }}>
-              <View className="pt-4 pb-2">
-                <DashboardHeader title="Animes" />
-              </View>
-              
-              <View className="mb-4">
-                <Input
-                  placeholder="Search animes..."
-                  placeholderTextColor={getThemeColor('field-placeholder', isDark)}
-                  value={search}
-                  onChangeText={setSearch}
-                  className="rounded-xl"
-                />
-              </View>
-            </View>
-          </>
-        }
+        refreshControl={refreshControl}
+        ListHeaderComponent={headerComponent}
         data={animesWithAds}
         renderItem={({ item }) => {
           if ('isAd' in item) {
@@ -188,18 +194,14 @@ export default function AnimesListScreen() {
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
-        contentContainerStyle={{ paddingBottom: 16 }}
+        contentContainerStyle={{ paddingTop: insets.top, paddingBottom: 16 }}
         ListEmptyComponent={
-          isLoading ? (
-            renderSkeleton()
-          ) : (
-            <View className="py-16 items-center">
-              <View className="w-16 h-16 rounded-2xl items-center justify-center mb-4" style={{ backgroundColor: getThemeColor('default', isDark) }}>
-                <IconifyIcon name="lucide:film" size={32} color={getThemeColor('muted', isDark)} />
-              </View>
-              <Text className="text-muted text-center font-medium">No animes found</Text>
+          <View className="py-16 items-center">
+            <View className="w-16 h-16 rounded-2xl items-center justify-center mb-4" style={{ backgroundColor: getThemeColor('default', isDark) }}>
+              <IconifyIcon name="lucide:film" size={32} color={getThemeColor('muted', isDark)} />
             </View>
-          )
+            <Text className="text-muted text-center font-medium">No animes found</Text>
+          </View>
         }
       />
     </View>

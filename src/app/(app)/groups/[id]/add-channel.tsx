@@ -1,53 +1,91 @@
-import { View, Text, TouchableOpacity, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { Image } from 'react-native';
-import { Input } from 'heroui-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Image } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGroup, useBatchUpdateChannels } from '@/hooks';
 import { useChannelsInfinite } from '@/hooks/useChannelsInfinite';
 import { useAnimesInfinite } from '@/hooks/useAnimesInfinite';
 import { useWebsitesInfinite } from '@/hooks/useWebsitesInfinite';
-import { Card, Checkbox, Button } from 'heroui-native';
 import { useTheme } from '@/theme/ThemeProvider';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { Channel, Anime, Website } from '@/types';
+import { getThemeColor } from '@/theme/themeColors';
 import { IconifyIcon } from '@/components/IconifyIcon';
 import { channelsApi } from '@/api/endpoints/channels';
-import { FlashList } from '@shopify/flash-list';
-import { getThemeColor } from '@/theme/themeColors';
-import * as Haptics from 'expo-haptics';
+import type { Channel } from '@/types';
+import { Button } from 'heroui-native';
 
 const TABS = [
   { key: 'youtube', label: 'YouTube' },
   { key: 'anime', label: 'Animes' },
   { key: 'website', label: 'Websites' },
-];
+] as const;
+
+type TabKey = (typeof TABS)[number]['key'];
+
+function CheckIcon({ selected }: { selected: boolean }) {
+  return (
+    <View className={`w-5 h-5 rounded-md border-2 items-center justify-center ${selected ? 'bg-accent border-accent' : 'border-muted'}`}>
+      {selected && <Text className="text-accent-foreground text-xs font-bold">✓</Text>}
+    </View>
+  );
+}
 
 export default function AddChannelToGroupScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: group } = useGroup(id);
-  const { data: groupItems } = useGroup(id);
   const batchUpdateChannels = useBatchUpdateChannels();
   const { isDark } = useTheme();
 
-  const [activeTab, setActiveTab] = useState('youtube');
+  const [activeTab, setActiveTab] = useState<TabKey>('youtube');
   const [search, setSearch] = useState('');
   const [urlInput, setUrlInput] = useState('');
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
-  const [selectedYoutube, setSelectedYoutube] = useState<Channel[]>([]);
-  const [selectedAnime, setSelectedAnime] = useState<Channel[]>([]);
-  const [selectedWebsites, setSelectedWebsites] = useState<Channel[]>([]);
-  const isFetchingMore = useRef(false);
+
+  const [selectedYoutubeIds, setSelectedYoutubeIds] = useState<Set<string>>(new Set());
+  const [selectedAnimeIds, setSelectedAnimeIds] = useState<Set<string>>(new Set());
+  const [selectedWebsiteIds, setSelectedWebsiteIds] = useState<Set<string>>(new Set());
+  const [selectedYoutubeItems, setSelectedYoutubeItems] = useState<Map<string, Channel>>(new Map());
+  const [selectedAnimeItems, setSelectedAnimeItems] = useState<Map<string, Channel>>(new Map());
+  const [selectedWebsiteItems, setSelectedWebsiteItems] = useState<Map<string, Channel>>(new Map());
+
+  const selectedYoutubeIdsRef = useRef(selectedYoutubeIds);
+  selectedYoutubeIdsRef.current = selectedYoutubeIds;
+  const selectedAnimeIdsRef = useRef(selectedAnimeIds);
+  selectedAnimeIdsRef.current = selectedAnimeIds;
+  const selectedWebsiteIdsRef = useRef(selectedWebsiteIds);
+  selectedWebsiteIdsRef.current = selectedWebsiteIds;
+
+  const [selectionVersion, setSelectionVersion] = useState(0);
 
   useEffect(() => {
-    if (groupItems) {
-      setSelectedYoutube(groupItems.channels?.filter(c => !c.contentType || c.contentType === 'youtube') || []);
-      setSelectedAnime(groupItems.channels?.filter(c => c.contentType === 'anime') || []);
-      setSelectedWebsites(groupItems.channels?.filter(c => c.contentType === 'website') || []);
+    const channels = group?.channels || [];
+    const ytIds = new Set<string>();
+    const animeIds = new Set<string>();
+    const webIds = new Set<string>();
+    const ytItems = new Map<string, Channel>();
+    const animeItems = new Map<string, Channel>();
+    const webItems = new Map<string, Channel>();
+    for (const c of channels) {
+      if (!c.contentType || c.contentType === 'youtube') {
+        ytIds.add(c.id);
+        ytItems.set(c.id, c);
+      } else if (c.contentType === 'anime') {
+        animeIds.add(c.id);
+        animeItems.set(c.id, c);
+      } else if (c.contentType === 'website') {
+        webIds.add(c.id);
+        webItems.set(c.id, c);
+      }
     }
-  }, [groupItems]);
+    setSelectedYoutubeIds(ytIds);
+    setSelectedAnimeIds(animeIds);
+    setSelectedWebsiteIds(webIds);
+    setSelectedYoutubeItems(ytItems);
+    setSelectedAnimeItems(animeItems);
+    setSelectedWebsiteItems(webItems);
+  }, [group?.channels]);
 
   const {
     channels,
@@ -67,72 +105,97 @@ export default function AddChannelToGroupScreen() {
     setIsActive: setAnimesIsActive,
   } = useAnimesInfinite();
 
-  useEffect(() => {
-    setIsActive(true);
-    setAnimesIsActive(true);
-  }, [setIsActive, setAnimesIsActive]);
-
+  const [websitesLoaded, setWebsitesLoaded] = useState(false);
   const {
     websites,
     loadMore: loadMoreWebsites,
     isFetchingNextPage: isFetchingNextPageWebsites,
     isLoading: isLoadingWebsites,
-  } = useWebsitesInfinite({ limit: 20 });
+  } = useWebsitesInfinite({ limit: 20, enabled: websitesLoaded });
+
+  useEffect(() => {
+    setIsActive(activeTab === 'youtube');
+    setAnimesIsActive(activeTab === 'anime');
+  }, [activeTab, setIsActive, setAnimesIsActive]);
+
+  useEffect(() => {
+    if (activeTab === 'website' && !websitesLoaded) {
+      setWebsitesLoaded(true);
+    }
+  }, [activeTab, websitesLoaded]);
 
   useEffect(() => {
     setChannelsSearch(search);
     setAnimesSearch(search);
   }, [search]);
 
-  const filteredChannels = channels || [];
-
   const toggleYoutube = useCallback((channel: Channel) => {
-    Haptics.selectionAsync();
-    setSelectedYoutube((prev) => {
-      const exists = prev.some(c => c.id === channel.id);
-      if (exists) {
-        return prev.filter((c) => c.id !== channel.id);
-      }
-      return [...prev, { ...channel, contentType: 'youtube', groupId: id }];
+    setSelectedYoutubeIds(prev => {
+      const next = new Set(prev);
+      if (next.has(channel.id)) next.delete(channel.id);
+      else next.add(channel.id);
+      return next;
     });
+    setSelectedYoutubeItems(prev => {
+      const next = new Map(prev);
+      if (next.has(channel.id)) next.delete(channel.id);
+      else next.set(channel.id, { ...channel, contentType: 'youtube', groupId: id });
+      return next;
+    });
+    setSelectionVersion(v => v + 1);
   }, [id]);
 
   const toggleAnime = useCallback((channel: Channel) => {
-    Haptics.selectionAsync();
-    setSelectedAnime((prev) => {
-      const exists = prev.some(c => c.id === channel.id);
-      if (exists) {
-        return prev.filter((c) => c.id !== channel.id);
-      }
-      return [...prev, { ...channel, contentType: 'anime', groupId: id }];
+    setSelectedAnimeIds(prev => {
+      const next = new Set(prev);
+      if (next.has(channel.id)) next.delete(channel.id);
+      else next.add(channel.id);
+      return next;
     });
+    setSelectedAnimeItems(prev => {
+      const next = new Map(prev);
+      if (next.has(channel.id)) next.delete(channel.id);
+      else next.set(channel.id, { ...channel, contentType: 'anime', groupId: id });
+      return next;
+    });
+    setSelectionVersion(v => v + 1);
   }, [id]);
 
   const toggleWebsite = useCallback((channel: Channel) => {
-    Haptics.selectionAsync();
-    setSelectedWebsites((prev) => {
-      const exists = prev.some(c => c.id === channel.id);
-      if (exists) {
-        return prev.filter((c) => c.id !== channel.id);
-      }
-      return [...prev, { ...channel, contentType: 'website', groupId: id }];
+    setSelectedWebsiteIds(prev => {
+      const next = new Set(prev);
+      if (next.has(channel.id)) next.delete(channel.id);
+      else next.add(channel.id);
+      return next;
     });
-  }, []);
+    setSelectedWebsiteItems(prev => {
+      const next = new Map(prev);
+      if (next.has(channel.id)) next.delete(channel.id);
+      else next.set(channel.id, { ...channel, contentType: 'website', groupId: id });
+      return next;
+    });
+    setSelectionVersion(v => v + 1);
+  }, [id]);
 
   const handleFetchUrl = async () => {
-    Haptics.selectionAsync();
     if (!urlInput.trim()) return;
     setIsFetchingUrl(true);
     try {
       const channel = await channelsApi.fetchUrl(urlInput.trim());
-      const contentType = activeTab === 'youtube' ? 'youtube' : 'website';
-      const setSelected = activeTab === 'youtube' ? setSelectedYoutube : setSelectedWebsites;
-      setSelected((prev: Channel[]) =>
-        prev.some(c => c.id === channel.id)
-          ? prev
-          : [...prev, { ...channel, contentType, groupId: id }]
-      );
+      setSelectedWebsiteIds(prev => {
+        if (prev.has(channel.id)) return prev;
+        const next = new Set(prev);
+        next.add(channel.id);
+        return next;
+      });
+      setSelectedWebsiteItems(prev => {
+        if (prev.has(channel.id)) return prev;
+        const next = new Map(prev);
+        next.set(channel.id, { ...channel, contentType: 'website', groupId: id });
+        return next;
+      });
       setUrlInput('');
+      setSelectionVersion(v => v + 1);
     } catch {
       Alert.alert('Error', 'Failed to fetch channel from URL.');
     } finally {
@@ -141,172 +204,118 @@ export default function AddChannelToGroupScreen() {
   };
 
   const handleSave = async () => {
-    Haptics.selectionAsync();
     try {
-      const allChannels = [
-        ...selectedYoutube.map(ch => ({ ...ch, contentType: ch.contentType || 'youtube' })),
-        ...selectedAnime.map(ch => ({ ...ch, contentType: 'anime' })),
-        ...selectedWebsites.map(ch => ({ ...ch, contentType: 'website' }))
-      ];
-
-      const channelsToSave = allChannels.map(ch => ({
-        id: ch.id,
-        name: ch.name,
-        thumbnail: ch.thumbnail,
-        url: ch.url,
-        groupId: id,
-        contentType: ch.contentType,
-        newContent: false
-      }));
-
-      await batchUpdateChannels.mutateAsync({
-        groupId: id,
-        data: { channels: channelsToSave }
-      });
+      const allChannels: Array<{ id: string; name: string; thumbnail?: string; url: string; groupId: string; contentType: string; newContent: boolean }> = [];
+      for (const ch of selectedYoutubeItems.values()) allChannels.push({ ...ch, contentType: ch.contentType || 'youtube', newContent: false });
+      for (const ch of selectedAnimeItems.values()) allChannels.push({ ...ch, contentType: 'anime', newContent: false });
+      for (const ch of selectedWebsiteItems.values()) allChannels.push({ ...ch, contentType: 'website', newContent: false });
+      await batchUpdateChannels.mutateAsync({ groupId: id, data: { channels: allChannels } });
       router.back();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save channels');
     }
   };
 
-  const renderChannelItem = useCallback(({ item }: { item: Channel }) => {
-    const isSelected = selectedYoutube.some(c => c.id === item.id);
-    return (
-      <TouchableOpacity onPress={() => toggleYoutube(item)} activeOpacity={0.7}>
-        <Card className="shadow-sm mb-2 rounded-xl">
-          <View className="flex-row items-center px-3">
-            <Checkbox
-              isSelected={isSelected}
-              onSelectedChange={() => toggleYoutube(item)}
-            />
-            {item.thumbnail || item.imageUrl ? (
-              <Image
-                key={item.id + (item.thumbnail || item.imageUrl)}
-                source={{ uri: item.thumbnail || item.imageUrl }}
-                style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
-              />
-            ) : (
-              <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
-                <IconifyIcon name="lucide:tv" size={20} color={getThemeColor('foreground', isDark)} />
-              </View>
-            )}
-            <View className="ml-3 flex-1 min-w-0">
-              <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
-              <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
-            </View>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
-  }, [selectedYoutube, toggleYoutube, isDark]);
+  const selectedWebsiteArr = useMemo(() => Array.from(selectedWebsiteItems.values()), [selectedWebsiteItems]);
 
-  const renderAnimeItem = useCallback(({ item }: { item: Anime }) => {
-    const isSelected = selectedAnime.some(c => c.id === item.id);
-    return (
-      <TouchableOpacity onPress={() => toggleAnime(item)} activeOpacity={0.7}>
-        <Card className="shadow-sm mb-2 rounded-xl">
-          <View className="flex-row items-center px-3">
-            <Checkbox
-              isSelected={isSelected}
-              onSelectedChange={() => toggleAnime(item)}
-            />
-            {item.thumbnail || item.imageUrl ? (
-              <Image
-                key={item.id + (item.thumbnail || item.imageUrl)}
-                source={{ uri: item.thumbnail || item.imageUrl }}
-                style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
-              />
-            ) : (
-              <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
-                <IconifyIcon name="lucide:film" size={20} color={getThemeColor('foreground', isDark)} />
-              </View>
-            )}
-            <View className="ml-3 flex-1 min-w-0">
-              <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
-              {item.groupName && (
-                <Text className="text-muted text-xs">{item.groupName}</Text>
-              )}
-            </View>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
-  }, [selectedAnime, toggleAnime, isDark]);
-
-  const renderWebsiteItem = useCallback(({ item }: { item: Website }) => {
-    const isSelected = selectedWebsites.some(c => c.id === item.id);
-    return (
-      <TouchableOpacity onPress={() => toggleWebsite(item)} activeOpacity={0.7}>
-        <Card className="shadow-sm mb-2 rounded-xl">
-          <View className="flex-row items-center px-3">
-            <Checkbox
-              isSelected={isSelected}
-              onSelectedChange={() => toggleWebsite(item)}
-            />
-            {(item.thumbnail || (item as any).imageUrl) ? (
-              <Image
-                key={item.id + (item.thumbnail || (item as any).imageUrl || '')}
-                source={{ uri: item.thumbnail || (item as any).imageUrl }}
-                style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
-              />
-            ) : (
-              <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
-                <IconifyIcon name="lucide:globe" size={20} color={getThemeColor('foreground', isDark)} />
-              </View>
-            )}
-            <View className="ml-3 flex-1 min-w-0">
-              <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
-              <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
-            </View>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
-  }, [selectedWebsites, toggleWebsite, isDark]);
-
-  const currentData = useMemo(() => {
-    switch (activeTab) {
-      case 'youtube': return { data: filteredChannels, loading: isLoading, fetchNext: loadMore, fetchingNext: isFetchingNextPage, renderItem: renderChannelItem };
-      case 'anime': return { data: animes || [], loading: isLoadingAnimes, fetchNext: loadMoreAnimes, fetchingNext: isFetchingNextPageAnimes, renderItem: renderAnimeItem };
-      case 'website': {
-        const merged = [
-          ...selectedWebsites.filter(s => !(websites || []).some(w => w.id === s.id)),
-          ...(websites || []),
-        ];
-        return { data: merged, loading: isLoadingWebsites, fetchNext: loadMoreWebsites, fetchingNext: isFetchingNextPageWebsites, renderItem: renderWebsiteItem };
+  const mergedWebsites = useMemo(() => {
+    const selectedIds = new Set(selectedWebsiteArr.map(w => w.id));
+    const result = [...selectedWebsiteArr];
+    if (websites) {
+      for (const w of websites) {
+        if (!selectedIds.has(w.id)) result.push(w);
       }
     }
-  }, [activeTab, filteredChannels, isLoading, isFetchingNextPage, loadMore, animes, isLoadingAnimes, isFetchingNextPageAnimes, loadMoreAnimes, websites, isLoadingWebsites, isFetchingNextPageWebsites, loadMoreWebsites, selectedWebsites]);
+    return result;
+  }, [selectedWebsiteArr, websites]);
 
-  const totalSelected = selectedYoutube.length + selectedAnime.length + selectedWebsites.length;
+  const listData = useMemo(() => {
+    switch (activeTab) {
+      case 'youtube': return { data: channels || [], loading: isLoading, fetchingNext: isFetchingNextPage };
+      case 'anime': return { data: animes || [], loading: isLoadingAnimes, fetchingNext: isFetchingNextPageAnimes };
+      case 'website': return { data: mergedWebsites, loading: isLoadingWebsites, fetchingNext: isFetchingNextPageWebsites };
+    }
+  }, [activeTab, channels, isLoading, isFetchingNextPage, animes, isLoadingAnimes, isFetchingNextPageAnimes, mergedWebsites, isLoadingWebsites, isFetchingNextPageWebsites]);
+
+  const totalSelected = selectedYoutubeIds.size + selectedAnimeIds.size + selectedWebsiteIds.size;
+  const isFetchingMore = useRef(false);
+
+  const emptyLabel = activeTab === 'youtube' ? 'channels' : activeTab === 'anime' ? 'animes' : 'websites';
+
+  const renderItem = useCallback(({ item }: { item: Channel }) => {
+    const isSelected = activeTab === 'youtube' ? selectedYoutubeIdsRef.current.has(item.id)
+      : activeTab === 'anime' ? selectedAnimeIdsRef.current.has(item.id)
+      : selectedWebsiteIdsRef.current.has(item.id);
+
+    const toggle = () => {
+      if (activeTab === 'youtube') toggleYoutube(item);
+      else if (activeTab === 'anime') toggleAnime(item);
+      else toggleWebsite(item);
+    };
+
+    return (
+      <TouchableOpacity onPress={toggle} activeOpacity={0.7} className="flex-row items-center px-3 py-3 mb-2 bg-surface rounded-xl shadow-sm">
+        <CheckIcon selected={isSelected} />
+        {item.thumbnail || item.imageUrl ? (
+          <Image
+            source={{ uri: item.thumbnail || item.imageUrl }}
+            style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }}
+          />
+        ) : (
+          <View style={{ width: 44, height: 44, borderRadius: 12, marginLeft: 12 }} className="bg-default items-center justify-center">
+            <IconifyIcon name={activeTab === 'youtube' ? 'lucide:tv' : activeTab === 'anime' ? 'lucide:film' : 'lucide:globe'} size={20} color={getThemeColor('foreground', isDark)} />
+          </View>
+        )}
+        <View className="ml-3 flex-1 min-w-0">
+          <Text className="font-medium text-foreground" numberOfLines={1}>{item.name}</Text>
+          {activeTab === 'anime' ? (
+            <Text className="text-muted text-xs" numberOfLines={1}>{(item as any).groupName}</Text>
+          ) : (
+            <Text className="text-muted text-xs" numberOfLines={1}>{item.url}</Text>
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }, [activeTab, toggleYoutube, toggleAnime, toggleWebsite, isDark]);
+
+  const handleEndReached = useCallback(() => {
+    if (isFetchingMore.current) return;
+    isFetchingMore.current = true;
+    const loader = activeTab === 'youtube' ? loadMore()
+      : activeTab === 'anime' ? loadMoreAnimes()
+      : loadMoreWebsites();
+    Promise.resolve(loader).finally(() => {
+      isFetchingMore.current = false;
+    });
+  }, [activeTab, loadMore, loadMoreAnimes, loadMoreWebsites]);
+
+  const bgColor = getThemeColor('background', isDark);
+  const borderColor = getThemeColor('border', isDark);
+  const accentColor = getThemeColor('accent', isDark);
+  const surfaceColor = getThemeColor('surface', isDark);
+  const foregroundColor = getThemeColor('foreground', isDark);
+  const mutedColor = getThemeColor('muted', isDark);
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-background"
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={{ paddingTop: insets.top }} className="flex-1">
-        {/* Header */}
-        <View className="px-5 pt-4 pb-3 border-b" style={{ borderColor: getThemeColor('border', isDark) }}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: bgColor }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <View style={{ flex: 1, paddingTop: insets.top }}>
+        <View className="px-5 pt-4 pb-3 border-b" style={{ borderColor }}>
           <View className="flex-row items-center mb-1">
-            <TouchableOpacity onPress={() => { Haptics.selectionAsync(); router.back(); }} className="mr-3 p-1.5 -ml-1 rounded-full" style={{ backgroundColor: getThemeColor('surface', isDark) }}>
-              <IconifyIcon name="lucide:arrow-left" size={20} color={getThemeColor('foreground', isDark)} />
+            <TouchableOpacity onPress={() => router.back()} className="mr-3 p-1.5 -ml-1 rounded-full" style={{ backgroundColor: surfaceColor }}>
+              <IconifyIcon name="lucide:arrow-left" size={20} color={foregroundColor} />
             </TouchableOpacity>
             <Text className="text-lg font-semibold text-foreground">Add Channels</Text>
           </View>
           <Text className="text-sm text-muted">{group?.name ? `Add channels to ${group.name}` : 'Select channels to add'}</Text>
         </View>
 
-        {/* Tabs */}
         <View className="flex-row mx-5 mt-4 mb-3">
           {TABS.map((tab) => {
-            const count = tab.key === 'youtube' ? selectedYoutube.length : tab.key === 'anime' ? selectedAnime.length : selectedWebsites.length;
+            const count = tab.key === 'youtube' ? selectedYoutubeIds.size
+              : tab.key === 'anime' ? selectedAnimeIds.size
+              : selectedWebsiteIds.size;
             return (
-              <TouchableOpacity
-                key={tab.key}
-                onPress={() => setActiveTab(tab.key)}
-                className="flex-1 py-1.5 items-center relative"
-              >
+              <TouchableOpacity key={tab.key} onPress={() => setActiveTab(tab.key)} className="flex-1 py-1.5 items-center relative">
                 <Text className={`text-sm ${activeTab === tab.key ? 'text-foreground font-semibold' : 'text-muted font-normal'}`}>
                   {tab.label}
                 </Text>
@@ -315,36 +324,50 @@ export default function AddChannelToGroupScreen() {
                     <Text className="text-[10px] text-accent font-bold">{count}</Text>
                   </View>
                 )}
-                {(activeTab === tab.key) && (
-                  <View className="absolute bottom-0 w-8 h-0.5 bg-accent rounded-full" />
-                )}
+                {activeTab === tab.key && <View className="absolute bottom-0 w-8 h-0.5 bg-accent rounded-full" />}
               </TouchableOpacity>
             );
           })}
         </View>
 
-        {/* Search / URL Input */}
         <View className="px-5 pb-3">
           {activeTab !== 'website' ? (
-            <Input
+            <TextInput
               placeholder="Search channels..."
-              placeholderTextColor={getThemeColor('field-placeholder', isDark)}
+              placeholderTextColor={mutedColor}
               value={search}
               onChangeText={setSearch}
-              className="rounded-xl"
+              style={{
+                backgroundColor: surfaceColor,
+                color: foregroundColor,
+                borderRadius: 12,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+                fontSize: 16,
+                borderWidth: 1,
+                borderColor,
+              }}
             />
           ) : (
             <View className="flex-row items-center gap-2">
-              <View className="flex-1">
-                <Input
-                  placeholder="Paste website URL..."
-                  placeholderTextColor={getThemeColor('field-placeholder', isDark)}
-                  value={urlInput}
-                  onChangeText={setUrlInput}
-                  onSubmitEditing={handleFetchUrl}
-                  className="rounded-xl"
-                />
-              </View>
+              <TextInput
+                placeholder="Paste website URL..."
+                placeholderTextColor={mutedColor}
+                value={urlInput}
+                onChangeText={setUrlInput}
+                onSubmitEditing={handleFetchUrl}
+                style={{
+                  flex: 1,
+                  backgroundColor: surfaceColor,
+                  color: foregroundColor,
+                  borderRadius: 12,
+                  paddingHorizontal: 16,
+                  paddingVertical: 12,
+                  fontSize: 16,
+                  borderWidth: 1,
+                  borderColor,
+                }}
+              />
               <TouchableOpacity
                 onPress={handleFetchUrl}
                 disabled={isFetchingUrl || !urlInput.trim()}
@@ -361,42 +384,32 @@ export default function AddChannelToGroupScreen() {
           )}
         </View>
 
-        {/* List */}
         <View className="flex-1 px-5 pb-40 py-2">
-          <FlashList
+          <FlatList
             key={activeTab}
-            data={currentData?.data ?? []}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={currentData?.renderItem as any}
-            onEndReached={() => {
-              if (isFetchingMore.current) return;
-              if (!currentData?.fetchNext) return;
-              isFetchingMore.current = true;
-              Promise.resolve(currentData.fetchNext()).finally(() => {
-                isFetchingMore.current = false;
-              });
-            }}
+            data={listData.data}
+            keyExtractor={(item, index) => String(item.id) + index}
+            renderItem={renderItem}
+            extraData={selectionVersion}
+            onEndReached={handleEndReached}
             onEndReachedThreshold={0.5}
-            className="flex-1"
-            estimatedItemSize={72}
+            showsVerticalScrollIndicator={false}
             ListFooterComponent={
-              currentData?.fetchingNext ? (
+              listData.fetchingNext ? (
                 <View className="py-4 items-center">
-                  <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
+                  <ActivityIndicator size="small" color={accentColor} />
                 </View>
               ) : null
             }
             ListEmptyComponent={
-              currentData?.loading ? (
+              listData.loading ? (
                 <View className="py-8 items-center">
-                  <ActivityIndicator size="small" color={getThemeColor('accent', isDark)} />
+                  <ActivityIndicator size="small" color={accentColor} />
                 </View>
               ) : (
                 <View className="py-12 items-center">
                   <IconifyIcon name="lucide:search-x" size={40} className="text-muted mb-3" />
-                  <Text className="text-muted text-center font-medium">
-                    No {activeTab === 'youtube' ? 'channels' : activeTab === 'anime' ? 'animes' : 'websites'} found
-                  </Text>
+                  <Text className="text-muted text-center font-medium">No {emptyLabel} found</Text>
                 </View>
               )
             }
@@ -404,8 +417,7 @@ export default function AddChannelToGroupScreen() {
         </View>
       </View>
 
-      {/* Bottom Bar */}
-      <View style={{ paddingBottom: insets.bottom }} className="absolute bottom-0 left-0 right-0 px-5 py-3 bg-background border-t" style={{ borderColor: getThemeColor('border', isDark) }}>
+      <View style={{ paddingBottom: insets.bottom, borderColor }} className="absolute bottom-0 left-0 right-0 px-5 py-3 bg-background border-t">
         <Button onPress={handleSave} fullWidth loading={batchUpdateChannels.isPending}>
           {batchUpdateChannels.isPending ? 'Saving...' : `Add Selected (${totalSelected})`}
         </Button>
