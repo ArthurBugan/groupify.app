@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Platform } from 'react-native';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { 
   MobileAds, 
   BannerAd, 
@@ -139,15 +140,20 @@ export const loadInterstitial = () => {
   });
 };
 
-const AdMobManager = ({ style }) => {
+const AdMobManager = ({ style }: { style?: any }) => {
   useEffect(() => {
-    // Initialize MobileAds
-    MobileAds()
-      .initialize()
-      .then(adapterStatuses => {
-        // Initialization complete
-        console.log('AdMob Initialization complete', adapterStatuses);
-      });
+    let cancelled = false;
+    const init = async () => {
+      await requestTrackingPermissionsAsync();
+      if (cancelled) return;
+      MobileAds()
+        .initialize()
+        .then(adapterStatuses => {
+          console.log('AdMob Initialization complete', adapterStatuses);
+        });
+    };
+    init();
+    return () => { cancelled = true; };
   }, []);
 
   // Banner Ad Component

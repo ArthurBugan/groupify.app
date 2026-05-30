@@ -1,13 +1,14 @@
-import { TouchableOpacity, View, ScrollView } from 'react-native';
+import { TouchableOpacity, View, ScrollView, Modal, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ListGroup, Button, Avatar, Separator, Text, Switch } from 'heroui-native';
-import { useCurrentUser } from '@/hooks';
+import { Button, Avatar, Separator, Text, Switch, Checkbox } from 'heroui-native';
+import { useCurrentUser, useDeleteAccount } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { useTheme } from '@/theme/ThemeProvider';
 import { IconifyIcon } from '@/components/IconifyIcon';
 import { getThemeColor } from '@/theme/themeColors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import { useState } from 'react';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -15,11 +16,28 @@ export default function SettingsScreen() {
   const { isDark } = useTheme();
   const logout = useAuthStore((s) => s.logout);
   const insets = useSafeAreaInsets();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [ackDataLoss, setAckDataLoss] = useState(false);
+  const [ackNoRecovery, setAckNoRecovery] = useState(false);
+  const deleteAccountMutation = useDeleteAccount();
 
   const handleLogout = async () => {
     Haptics.selectionAsync();
     logout();
     router.replace('/(auth)/login');
+  };
+
+  const canDelete = deleteConfirm === 'DELETE' && ackDataLoss && ackNoRecovery;
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccountMutation.mutateAsync();
+      setDeleteOpen(false);
+      router.replace('/(auth)/login');
+    } catch {
+      Alert.alert('Error', 'Failed to delete account. Please try again.');
+    }
   };
 
   return (
@@ -33,22 +51,6 @@ export default function SettingsScreen() {
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-foreground">Settings</Text>
           <View className="w-10" />
-        </View>
-
-        {/* Profile Card */}
-        <View className="bg-surface rounded-2xl p-4 mb-5 border border-border/50">
-          <View className="flex-row items-center gap-4">
-            <Avatar name={user?.name} size="lg" />
-            <View className="flex-1">
-              <Text className="text-base font-semibold text-foreground">
-                {user?.name || 'User'}
-              </Text>
-              <Text className="text-sm text-muted">{user?.email}</Text>
-            </View>
-            <Button variant="flat" size="sm" onPress={() => { Haptics.selectionAsync(); router.push('/settings/account'); }}>
-              <Text className="text-accent font-medium">Edit</Text>
-            </Button>
-          </View>
         </View>
 
         {/* Settings Sections */}
@@ -164,6 +166,27 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        {/* Danger Zone */}
+        <View className="bg-surface rounded-2xl overflow-hidden border border-danger/30 mt-4">
+          <View className="px-4 py-3">
+            <Text className="text-xs font-semibold text-danger uppercase tracking-wider">Danger Zone</Text>
+          </View>
+          <TouchableOpacity
+            className="flex-row items-center px-4 py-3.5"
+            onPress={() => { Haptics.selectionAsync(); setDeleteOpen(true); setDeleteConfirm(''); setAckDataLoss(false); setAckNoRecovery(false); }}
+            activeOpacity={0.7}
+          >
+            <View className="w-9 h-9 rounded-lg items-center justify-center mr-3 bg-danger/10">
+              <IconifyIcon name="lucide:trash-2" size={20} color={getThemeColor('danger', isDark)} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-medium text-danger">Delete Account</Text>
+              <Text className="text-xs text-muted">Permanently remove your account and all data</Text>
+            </View>
+            <IconifyIcon name="lucide:chevron-right" size={18} color={getThemeColor('muted', isDark)} />
+          </TouchableOpacity>
+        </View>
+
         {/* Sign Out Button */}
         <View className="mt-auto pt-5">
           <TouchableOpacity
@@ -177,6 +200,73 @@ export default function SettingsScreen() {
         </View>
       </View>
       </ScrollView>
+
+      {/* Delete Account Confirmation Modal */}
+      <Modal visible={deleteOpen} transparent animationType="fade" onRequestClose={() => setDeleteOpen(false)}>
+        <View className="flex-1 bg-black/50 justify-end">
+          <View className="bg-background rounded-t-3xl p-6" style={{ paddingBottom: insets.bottom + 24 }}>
+            <View className="items-center mb-4">
+              <View className="w-12 h-1 bg-muted rounded-full mb-4" />
+              <View className="w-14 h-14 bg-danger/10 rounded-2xl items-center justify-center mb-3">
+                <IconifyIcon name="lucide:alert-triangle" size={28} color={getThemeColor('danger', isDark)} />
+              </View>
+              <Text className="text-lg font-bold text-foreground text-center">Delete Account?</Text>
+              <Text className="text-sm text-muted text-center mt-1">This cannot be undone.</Text>
+            </View>
+
+            <Text className="text-sm text-muted mb-4">
+              All your data including groups, channels, and settings will be permanently deleted.
+            </Text>
+
+            <View className="gap-3 mb-4">
+              <View className="flex-row items-center gap-3">
+                <Checkbox isSelected={ackDataLoss} onSelectedChange={setAckDataLoss} />
+                <Text className="text-sm text-foreground flex-1">I understand all data will be lost</Text>
+              </View>
+              <View className="flex-row items-center gap-3">
+                <Checkbox isSelected={ackNoRecovery} onSelectedChange={setAckNoRecovery} />
+                <Text className="text-sm text-foreground flex-1">This action cannot be undone</Text>
+              </View>
+            </View>
+
+            <View
+              className="rounded-xl px-4 py-3 mb-5"
+              style={{ backgroundColor: getThemeColor('surface', isDark), borderWidth: 1, borderColor: getThemeColor('border', isDark) }}
+            >
+              <TextInput
+                className="text-foreground text-base py-1"
+                placeholder="Type DELETE to confirm"
+                placeholderTextColor={getThemeColor('muted', isDark)}
+                value={deleteConfirm}
+                onChangeText={setDeleteConfirm}
+                autoCapitalize="characters"
+              />
+            </View>
+
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                className="flex-1 items-center py-3.5 rounded-xl"
+                style={{ backgroundColor: getThemeColor('surface', isDark) }}
+                onPress={() => setDeleteOpen(false)}
+                activeOpacity={0.7}
+              >
+                <Text className="text-foreground font-medium">Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className={`flex-1 items-center py-3.5 rounded-xl ${!canDelete ? 'opacity-50' : ''}`}
+                style={{ backgroundColor: getThemeColor('danger', isDark) }}
+                onPress={handleDeleteAccount}
+                activeOpacity={0.7}
+                disabled={!canDelete || deleteAccountMutation.isPending}
+              >
+                <Text className="text-white font-semibold">
+                  {deleteAccountMutation.isPending ? 'Deleting...' : 'Delete Account'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

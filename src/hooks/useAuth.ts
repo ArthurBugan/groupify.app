@@ -57,3 +57,16 @@ export const useForgotPassword = () => {
     mutationFn: (data: ForgotPasswordRequest) => authApi.forgotPassword(data),
   });
 };
+
+export const useDeleteAccount = () => {
+  const queryClient = useQueryClient();
+  const logout = useAuthStore((s) => s.logout);
+
+  return useMutation({
+    mutationFn: () => authApi.deleteAccount(),
+    onSuccess: async () => {
+      await logout();
+      queryClient.clear();
+    },
+  });
+};

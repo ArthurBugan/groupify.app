@@ -11,7 +11,8 @@
       "appleTeamId": "UM6SZWPURL",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "GADDelayAppMeasurementInit": true
       },
       "supportsTablet": true
     },
@@ -134,7 +135,13 @@
         }
       ],
       "react-native-enriched-markdown",
-      "expo-image"
+      [
+        "expo-iap",
+        {
+          "iapkitApiKey": "${process.env.EXPO_PUBLIC_IAPKIT_API_KEY}"
+        }
+      ],
+      "expo-tracking-transparency"
     ],
     "icon": "./assets/images/ios-icon-default.png",
     "web": {
@@ -149,6 +156,6 @@
       }
     },
     "owner": "arthurbugan",
-    "version": "1.13.0"
+    "version": "1.15.0"
   }
 }

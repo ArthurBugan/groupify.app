@@ -161,3 +161,25 @@ export interface PaymentRequest {
 export interface CheckoutResponse {
   url: string;
 }
+
+export interface IAPReceiptVerificationRequest {
+  platform: 'ios' | 'android';
+  product_id: string;
+  receipt: string;
+  transaction_id: string;
+}
+
+export interface IAPReceiptVerificationResponse {
+  success: boolean;
+  plan_name: string;
+}
+
+export const IAP_PRODUCT_IDS: Record<string, string> = {
+  basic: 'groupify_basic_monthly',
+  pro: 'groupify_pro_monthly',
+};
+
+export const PLAN_BY_IAP_PRODUCT: Record<string, string> = {
+  groupify_basic_monthly: 'basic',
+  groupify_pro_monthly: 'pro',
+};

@@ -96,6 +96,19 @@ export default function GroupShelfScreen() {
         }
       >
         <View style={{ paddingTop: insets.top, paddingHorizontal: 16 }}>
+          {/* Header */}
+          <View className="flex-row items-center justify-between py-4">
+            <TouchableOpacity 
+              onPress={() => { Haptics.selectionAsync(); router.back(); }}
+              className="w-10 h-10 rounded-full items-center justify-center"
+              style={{ backgroundColor: getThemeColor('surface', isDark) }}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <IconifyIcon name="lucide:arrow-left" size={20} color={getThemeColor('foreground', isDark)} />
+            </TouchableOpacity>
+            <Text className="text-lg font-semibold text-foreground">Group Shelf</Text>
+            <View className="w-10" />
+          </View>
           <View className="pt-4 pb-2">
             <Text className="text-2xl font-bold text-foreground">Groupshelf</Text>
             <Text className="text-muted text-sm mt-1">Discover and copy groups from other users</Text>
