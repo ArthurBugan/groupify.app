@@ -42,6 +42,8 @@ export default function BillingScreen() {
   const accent = getThemeColor('accent', isDark);
   const foreground = getThemeColor('foreground', isDark);
 
+  console.log(connected, products, purchasing);
+
   return (
     <View className="flex-1" style={{ backgroundColor: bg }}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: bg }}>

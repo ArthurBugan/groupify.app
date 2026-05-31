@@ -21,7 +21,20 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/android-icon-background.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "nestfeed.app"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "plugins": [
       "expo-router",
@@ -156,6 +169,6 @@
       }
     },
     "owner": "arthurbugan",
-    "version": "1.15.0"
+    "version": "1.17.0"
   }
 }

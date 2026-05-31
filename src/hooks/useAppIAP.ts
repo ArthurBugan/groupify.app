@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useIAP, ErrorCode, type Purchase } from 'expo-iap';
+import { useIAP, ErrorCode, type Purchase, initConnection } from 'expo-iap';
 import { paymentsApi } from '@/api/endpoints';
 import { IAP_PRODUCT_IDS, PLAN_BY_IAP_PRODUCT } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
@@ -46,7 +46,12 @@ export function useAppIAP() {
   });
 
   useEffect(() => {
-    fetchProducts({ skus: Object.values(IAP_PRODUCT_IDS), type: 'subs' });
+    async function initIAP() {
+      const connected = await initConnection();
+      if (!connected) return;
+      fetchProducts({ skus: Object.values(IAP_PRODUCT_IDS), type: 'subs' });
+    }
+    initIAP();
   }, [fetchProducts]);
 
   const buySubscription = useCallback(async (planName: string) => {

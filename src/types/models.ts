@@ -175,11 +175,15 @@ export interface IAPReceiptVerificationResponse {
 }
 
 export const IAP_PRODUCT_IDS: Record<string, string> = {
-  basic: 'groupify_basic_monthly',
-  pro: 'groupify_pro_monthly',
+  Basic: 'Basic',
+  basic: 'basic',
+  Pro: 'Pro',
+  pro: 'pro',
 };
 
 export const PLAN_BY_IAP_PRODUCT: Record<string, string> = {
-  groupify_basic_monthly: 'basic',
-  groupify_pro_monthly: 'pro',
+  Basic: 'Basic',
+  basic: 'basic',
+  Pro: 'Pro',
+  pro: 'pro',
 };
